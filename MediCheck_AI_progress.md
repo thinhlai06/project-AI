@@ -2,7 +2,7 @@
 
 > **Đọc file này đầu tiên khi mở session mới.** File ghi trạng thái hiện tại, việc tiếp theo và cách làm việc. Quyết định kỹ thuật và bằng chứng: `MediCheck_decisions.md`. Tài liệu ôn bảo vệ: `MediCheck_AI_tong_hop.md`.
 >
-> Cập nhật lần cuối: 2026-11-08 (sau phiên S3, chốt bản cuối).
+> Cập nhật lần cuối: 2026-11-08 (sau khi chạy test và giao `backend/` cho nhóm app).
 
 Ký hiệu: ✅ xong · 🔄 đang làm · ⏳ chưa làm
 
@@ -45,7 +45,7 @@ Ký hiệu: ✅ xong · 🔄 đang làm · ⏳ chưa làm
 
 ## 3. Cách làm việc và môi trường
 
-- Người dùng lo phần AI và chốt tài liệu. Claude đóng vai senior DL/CV, tự quyết lựa chọn kỹ thuật kèm bằng chứng, phản biện nhiều góc, ghi vào `MediCheck_decisions.md`. Chuẩn an toàn ≤ 2% không bao giờ nới.
+- Phụ trách AI lo phần AI và chốt tài liệu; lựa chọn kỹ thuật được quyết theo hướng senior DL/CV, kèm bằng chứng, phản biện nhiều góc, ghi vào `MediCheck_decisions.md`. Chuẩn an toàn ≤ 2% không bao giờ nới.
 - Sau mỗi task: cập nhật mọi tài liệu liên quan (decisions, progress, brainstorm nếu là quyết định sản phẩm, tong_hop, `vaipe_analysis.md` khi liên quan) và hàng đợi `.docx` (mục 6).
 - **Kaggle:** quota 30 giờ/tuần, **không reset đến 15/11**; còn ~17 giờ (đã dùng S0 ~0,6 + S1 3,5 + S2 4,8 + S3 3,0 giờ, cộng các lần embedding ~1,3 giờ). Bản cuối không cần train thêm.
   - Token chỉ ở `C:\Users\Adminnitrator\.kaggle\` (không ghi vào tài liệu).
@@ -57,7 +57,7 @@ Ký hiệu: ✅ xong · 🔄 đang làm · ⏳ chưa làm
   - Dùng `--workers 0` (Windows lỗi 1455).
   - Không kill toàn bộ python; chỉ dừng đúng PID.
 - `.ocrenv`: môi trường CPU riêng cho Paddle + VietOCR.
-- **Test khóa** trong code đến lần đánh giá cuối.
+- **Test đã dùng một lần** (08/11, mục 14.1): không chạy lại, không chỉnh mô hình hay ngưỡng theo test. Code vẫn khóa (`unseal_test=True`).
 - **Repo nhóm** (công khai): https://github.com/thinhlai06/project-AI. Thư mục `D:\project AI` là bản git của repo. `.gitignore` chỉ cho phép đẩy các file `.md` ở thư mục gốc và mô hình cuối (`out/onnx_final/`, `best.pt` + `model.pt` cuối, bảng tra). Đẩy lại sau mỗi lần cập nhật tài liệu. README là trang giới thiệu cho cả nhóm.
 
 ---
@@ -77,6 +77,9 @@ Ký hiệu: ✅ xong · 🔄 đang làm · ⏳ chưa làm
 | S2 | 08/11 | D2-B ảnh ngoài; R3-B mở toàn bộ; R2-B CosFace; R7 EfficientNet-B0 | Chọn D2-B (98,6%) và R3-B (94,5%); bỏ CosFace; EffNet 85,9% làm mốc |
 | local | 08/11 | Cả pipeline (`e2e.py`), cỡ ảnh upload, ONNX | App gửi 2048 px; giao thức cal/ev; mục tiêu fit 1,8% |
 | S3 | 08/11 | R3-B seed 1; R5-B ảnh 448 | Seed lệch 0,4; 448 hòa khi chạy thật → bản cuối R3-B seed 1; không chạy S4 |
+| local | 08/11 | 7 sơ đồ pipeline (`docs/diagrams/`) | Mermaid + PNG, nhúng vào các file `.md` |
+| local | 08/11 | Module suy luận + FastAPI (`backend/`), kiểm trên val | 90,9% báo xanh qua module; bảng tra triển khai đổi sang bảng chỉ lập từ train (138 tên) |
+| local | 08/11 | **Test một lần** qua module | **90,2% báo xanh, cận trên 1,09% / 1,31%** → đạt |
 
 ---
 

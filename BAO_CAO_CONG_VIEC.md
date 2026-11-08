@@ -22,7 +22,7 @@ Mỗi phần việc có một báo cáo ngắn khoảng 100 từ. Phân tích ch
 ## Task 4 – Chạy test một lần (08/11/2026) ✅
 
 **Đã làm:**
-- Ghi trước con số chính thức và đẩy lên repo (commit `bb87bd9`).
+- Ghi trước con số chính thức và đẩy lên repo (commit "Pre-register the single test-fold evaluation").
 - Sau đó mới mở khóa test và chạy **một lần** qua đúng máy chủ: 1.230 cảnh, 36 phút.
 
 **Kết quả chính thức:**

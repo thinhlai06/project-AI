@@ -4,7 +4,7 @@
 >
 > Nguồn số liệu: `MediCheck_decisions.md` (quyết định + bằng chứng), `MediCheck_AI_progress.md` (tiến độ), `vaipe_analysis.md` (dữ liệu). Khi số trong file này khác các file đó, các file đó đúng.
 >
-> Cập nhật: 2026-11-08, sau khi chốt bản cuối. Mọi số là số **val**; số **test** điền sau lần chạy test duy nhất.
+> Cập nhật: 2026-11-08, sau khi chạy test. Số **test** (chạy một lần) là số chính thức; các số khác là số val dùng để chọn mô hình.
 
 ---
 
@@ -475,7 +475,7 @@ app: câu nói tổng + giọng nói + khoanh trên ảnh
 
 ## 11. Kết quả và file xuất ra
 
-### 11.1. Kết quả theo từng bước cải tiến (val; test chưa đọc)
+### 11.1. Kết quả theo từng bước cải tiến (val; dòng cuối là test chính thức)
 | Cấu hình | Báo xanh | Cận trên FA 107 | Cận trên viên lạ |
 |---|---|---|---|
 | DINOv2-S đóng băng, đầu cosine (baseline) | 62,1% | 2,13% | 0,89% |
@@ -505,7 +505,9 @@ Các dòng trên đo trên crop nhãn thật (không có detector), đối thủ
 - `medicheck_ai/eval.py`: đánh giá (điểm cảnh, ghép, bootstrap, quy tắc kép, khóa test, chỉ số detector, cả chuỗi theo cal/ev).
 - `medicheck_ai/recognizer.py`, `medicheck_ai/detector.py`: train và đánh giá.
 - `medicheck_ai/e2e.py`: đánh giá cả chuỗi. `medicheck_ai/export_onnx.py`: xuất và kiểm ONNX.
-- `tests/test_eval.py`: 7 kiểm thử tự động.
+- `tests/test_eval.py`: 7 kiểm thử tự động của phần đánh giá.
+- `backend/medicheck_server/infer.py` (module suy luận ONNX), `backend/medicheck_server/app.py` (FastAPI), `backend/API.md` (hợp đồng API cho nhóm app), `backend/tests/test_decide.py` (8 kiểm thử luật quyết định).
+- `medicheck_ai/validate_infer.py`: kiểm cả chuỗi qua module trên val; chạy trên test đúng một lần.
 - `kaggle/*`: script các phiên Kaggle. `scripts/*`: tiền xử lý và thử nghiệm C1–C2b.
 
 ---
@@ -549,7 +551,7 @@ Các dòng trên đo trên crop nhãn thật (không có detector), đối thủ
 | Sao app gửi ảnh 2048 px? | Đo trên val: 1280 px mất 3 điểm vì crop viên mờ; 2048 px chỉ kém ảnh gốc 0,7 điểm mà nhẹ hơn 10 lần (~290 KB) |
 | Máy chủ có cần GPU không? | Không: ONNX trên CPU ~1 giây cho 4 viên (đo thật), dưới mục tiêu 3 giây |
 | Bộ dữ liệu bổ sung dùng thế nào? Có rò rỉ không? | Mục 4.3: chỉ mượn box, không mượn ảnh VAIPE của tác giả; Negatives + ảnh ngoài vào train detector; VAIPE-test kiểm độc lập |
-| Test có bị "nhìn trộm" không? | Test khóa trong code; chọn mọi thứ trên val; con số chính thức được ghi và đẩy lên repo **trước** khi chạy (commit `bb87bd9`); test chạy một lần qua đúng module app dùng, báo nguyên số. Test (90,2%) gần val (90,9%) |
+| Test có bị "nhìn trộm" không? | Test khóa trong code; chọn mọi thứ trên val; con số chính thức được ghi và đẩy lên repo **trước** khi chạy (commit "Pre-register the single test-fold evaluation"); test chạy một lần qua đúng module app dùng, báo nguyên số. Test (90,2%) gần val (90,9%) |
 | Nếu viên thuốc không có trong danh mục? | Không khớp lớp nào đủ chắc → vàng/đỏ "hãy kiểm vỏ hộp"; thuốc ngoài danh mục chỉ nhắc lịch |
 | Màu viên thay đổi thì sao? | Augmentation màu khi train; app không dùng màu để mô tả |
 | Sao không train lại OCR? | Không có dữ liệu chữ viết đơn để train thêm; mô hình công bố sẵn đã đạt 49/49 dòng trên PDF sạch |

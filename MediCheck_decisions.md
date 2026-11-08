@@ -1,6 +1,6 @@
 # MediCheck VN – Sổ quyết định kỹ thuật (cập nhật 2026-11-08)
 
-> Nguồn quyết định kỹ thuật cao nhất của dự án. Khi các tài liệu khác mâu thuẫn với file này, file này đúng. Người dùng giao phần chọn phương án kỹ thuật/UX cho Claude (kèm bằng chứng); các lựa chọn người dùng tự chốt được ghi rõ "người dùng chọn".
+> Nguồn quyết định kỹ thuật cao nhất của dự án. Khi các tài liệu khác mâu thuẫn với file này, file này đúng. Phần chọn phương án kỹ thuật/UX được quyết kèm bằng chứng; các lựa chọn do người phụ trách AI tự chốt được ghi rõ "người dùng chọn".
 >
 > Mục 0–11: quyết định đang có hiệu lực. Mục 12: bằng chứng (thử nghiệm đã chạy, đã gộp gọn). Tiến độ và việc tiếp theo: `MediCheck_AI_progress.md`.
 
@@ -204,7 +204,7 @@ Quyết định:
 | Phần | Việc | Ai |
 |---|---|---|
 | Module suy luận | Ảnh + danh sách thuốc của cữ → 2 mô hình ONNX → crop lề 13% → ghép, trừ đối thủ, ngưỡng → xanh/đỏ/vàng từng viên (đúng logic đã đo) | **AI** |
-| Lớp API | Bọc module thành `POST /v1/pills/verify` (FastAPI) | Backend cắm module vào; AI viết nếu nhóm đồng ý |
+| Lớp API | Bọc module thành `POST /v1/pills/verify` (FastAPI) | **AI viết** (người dùng chọn): `backend/medicheck_server/app.py`, hợp đồng `backend/API.md` |
 | App | Chụp, thu nhỏ 2048 px, gửi lên, hiển thị, đọc giọng nói | Mobile |
 
 ### Thiết kế database trên điện thoại
@@ -275,7 +275,7 @@ Kaggle: bản cuối không cần train thêm; ~17 giờ quota còn lại giữ 
 
 ## 12. Bằng chứng các quyết định (thử nghiệm đã chạy)
 
-Mọi số đo trên **val**; test chưa đọc. Báo xanh / cận trên FA 107 / cận trên viên lạ (%) nếu không ghi khác.
+Mọi số đo trong mục này trên **val**; test chỉ được đọc một lần, kết quả ở mục 14.1. Báo xanh / cận trên FA 107 / cận trên viên lạ (%) nếu không ghi khác.
 
 ### 12.1. Thử nghiệm trên embedding đóng băng (C1, C2, C2b, C7; 06–07/11)
 
@@ -458,7 +458,7 @@ Code: `backend/medicheck_server/infer.py` (module `PillVerifier`), `backend/medi
 Ghi **trước khi mở khóa test** để không chọn số sau khi thấy kết quả:
 - **Chạy một lần duy nhất**, bằng lệnh `python -m medicheck_ai.validate_infer --fold test --unseal-test --out out/infer_test`.
 - Đường đi giống hệt app: ảnh gốc → 2048 px JPEG q85 → module `PillVerifier` (ONNX, CPU).
-- Dùng `deploy_config.json` và bảng tra như đã đóng băng ở commit `0713118`. Không đổi gì sau khi xem kết quả.
+- Dùng `deploy_config.json` và bảng tra như đã đóng băng ở commit "Add inference module + FastAPI server". Không đổi gì sau khi xem kết quả.
 - **Số chính thức** (`deployment_fixed_threshold`): ngưỡng cố định 0,0529, đo trên **toàn bộ** cảnh test. Gồm:
   - tỉ lệ cữ đúng được báo xanh;
   - cận trên 95% (bootstrap theo nhóm đơn) của chấp nhận nhầm viên 107 và viên lạ đã biết (3 + 3 phép tráo mỗi cảnh).

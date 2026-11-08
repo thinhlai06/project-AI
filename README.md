@@ -126,7 +126,7 @@ Lưu ý:
 
 - **VAIPE_PILL** (dữ liệu cuộc thi AI4VN 2022, Hugging Face `Elfsong/VAIPE_PILL`): 9.502 ảnh viên thuốc, 107 lớp, 1.173 đơn thuốc, 141 tên thuốc.
 - **Bộ bổ trợ** Kaggle `alexanderyyy/pills-detection-dataset` (CC BY-NC-SA 4.0): chỉ dùng cho detector.
-- **Chia train/val/test theo nhóm đơn gần trùng.** Tập test khóa đến lần chạy cuối.
+- **Chia train/val/test theo nhóm đơn gần trùng.** Tập test bị khóa suốt quá trình chọn mô hình và đã chạy đúng một lần (08/11).
 
 ---
 
