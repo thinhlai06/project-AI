@@ -34,6 +34,10 @@ Hai mô hình chạy nối tiếp, sau đó là một bước ghép với đơn 
   → xanh / đỏ / vàng cho từng viên
 ```
 
+![Kiểm thuốc khi app chạy](docs/diagrams/02_suy_luan_kiem_thuoc.png)
+
+*Sơ đồ: `docs/diagrams/02_suy_luan_kiem_thuoc.png` (nguồn sửa được: `docs/diagrams/02_suy_luan_kiem_thuoc.mmd`).*
+
 | | Detector | Bộ nhận dạng |
 |---|---|---|
 | Mô hình | YOLO26s (Ultralytics), 1 lớp "pill" | DINOv3 ViT-S/16 (~21 triệu tham số) + đầu cosine 107 lớp |
@@ -60,6 +64,10 @@ Lưu ý:
 ---
 
 ## Dành cho nhóm app / backend
+
+![Tổng quan hệ thống](docs/diagrams/01_tong_quan_he_thong.png)
+
+*Sơ đồ: `docs/diagrams/01_tong_quan_he_thong.png` (nguồn sửa được: `docs/diagrams/01_tong_quan_he_thong.mmd`).*
 
 - **App không chạy mô hình.** App chụp ảnh, xoay theo EXIF, thu về **cạnh dài 2048 px, JPEG chất lượng 85** (~290 KB), rồi gửi lên máy chủ kèm tên thuốc của cữ hiện tại:
   - `POST /v1/pills/verify`: kiểm viên thuốc;
@@ -102,6 +110,8 @@ Lưu ý:
 | `out/s2/det/d2b/weights/best.pt`, `eval_val.json` | Detector cuối dạng PyTorch + số đo trên val |
 | `out/s3/r3b_seed1/model.pt`, `final.json` | Bộ nhận dạng cuối dạng PyTorch + số đo trên val |
 | `out/v2/lookup_name_classes.csv` | Bảng tra tên thuốc → lớp viên |
+| `docs/diagrams/` | 7 sơ đồ pipeline (ảnh PNG + nguồn Mermaid `.mmd`): tổng quan hệ thống, kiểm thuốc khi app chạy, tiền xử lý dữ liệu, train và chọn mô hình, đánh giá cả chuỗi, OCR, luồng người dùng |
+| [BAO_CAO_CONG_VIEC.md](BAO_CAO_CONG_VIEC.md) | Báo cáo ngắn sau mỗi phần việc |
 | [LICENSE-DINOv3.md](LICENSE-DINOv3.md) | Giấy phép DINOv3 (bắt buộc kèm theo khi phân phối trọng số dẫn xuất từ DINOv3) |
 
 **Nên đọc theo thứ tự:**

@@ -1,0 +1,37 @@
+flowchart TB
+  classDef app fill:#e8f1fb,stroke:#3b78c4,color:#10243e
+  classDef srv fill:#eef7ee,stroke:#3d8b3d,color:#132b13
+  classDef file fill:#fff6e0,stroke:#c99a2e,color:#3a2a05
+  classDef db fill:#f3ecfa,stroke:#7d55b3,color:#25163a
+
+  subgraph APP["📱 App điện thoại (Flutter) – không chạy mô hình"]
+    direction LR
+    A1["Chọn ảnh/PDF đơn<br/>(hoặc chụp đơn giấy)"]:::app
+    A2["Màn xác nhận đơn<br/>(bắt buộc, sửa bằng chọn)"]:::app
+    A3[("SQLite (drift)<br/>đơn · lịch · lịch sử uống")]:::db
+    A4["Nhắc theo buổi<br/>+ màn 'Cữ sáng cần uống'"]:::app
+    A5["Chụp thuốc trên lòng bàn tay<br/>→ xoay EXIF → thu về 2048 px, JPEG q85"]:::app
+    A6["Hiện kết quả: khoanh từng viên<br/>xanh / đỏ / vàng + giọng nói"]:::app
+    A7["'Tôi đã uống' / 'Tôi đã kiểm vỏ hộp'"]:::app
+    A1 --> A2 --> A3 --> A4 --> A5
+    A6 --> A7 --> A3
+  end
+
+  subgraph SRV["🖥️ Máy chủ FastAPI (chỉ CPU, không lưu ảnh, không database)"]
+    direction LR
+    S1["POST /v1/prescriptions/parse<br/>PP-OCRv5 → VietOCR → parser → khớp 141 tên"]:::srv
+    S2["POST /v1/pills/verify<br/>module suy luận"]:::srv
+    F1["detector.onnx<br/>YOLO26s · 36 MB"]:::file
+    F2["recognizer.onnx<br/>DINOv3 ViT-S/16 · 83 MB"]:::file
+    F3["deploy_config.json<br/>ngưỡng 0,0529 · đối thủ 0,5 · 93 lớp đo được"]:::file
+    F4["lookup_name_classes.csv<br/>tên thuốc → lớp được phép"]:::file
+    F1 --> S2
+    F2 --> S2
+    F3 --> S2
+    F4 --> S2
+  end
+
+  A1 -- "ảnh/PDF đơn" --> S1
+  S1 -- "tên thuốc, số lượng, buổi uống,<br/>trước/sau ăn, ngày kê, chẩn đoán" --> A2
+  A5 -- "ảnh 2048 px + tên thuốc của cữ" --> S2
+  S2 -- "từng viên: trạng thái, box, lý do<br/>+ câu nói tổng" --> A6

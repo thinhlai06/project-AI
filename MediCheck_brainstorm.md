@@ -58,6 +58,14 @@ Trợ lý AI kiểm tra an toàn dùng thuốc qua camera điện thoại. Đố
 
 ## 4. Thiết kế các luồng
 
+![Luồng người dùng](docs/diagrams/07_luong_nguoi_dung.png)
+
+*Sơ đồ: `docs/diagrams/07_luong_nguoi_dung.png` (nguồn sửa được: `docs/diagrams/07_luong_nguoi_dung.mmd`).*
+
+![Tổng quan hệ thống](docs/diagrams/01_tong_quan_he_thong.png)
+
+*Sơ đồ: `docs/diagrams/01_tong_quan_he_thong.png` (nguồn sửa được: `docs/diagrams/01_tong_quan_he_thong.mmd`).*
+
 ### 4.1. Đơn thuốc → lịch uống
 - Đường chính **chọn ảnh/PDF đơn** từ điện thoại (đúng loại dữ liệu đã đo: 49/49 dòng đúng trên PDF sạch). Chụp giấy là đường phụ, có kiểm chất lượng ảnh.
 - **Màn xác nhận bắt buộc** trên mọi đơn:

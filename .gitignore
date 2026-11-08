@@ -3,6 +3,9 @@
 !/.gitignore
 !/*.md
 
+# Sơ đồ pipeline
+!/docs/
+
 !/out/
 /out/*
 

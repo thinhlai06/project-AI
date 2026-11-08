@@ -1,0 +1,49 @@
+flowchart TD
+  classDef prep fill:#e8f1fb,stroke:#3b78c4,color:#10243e
+  classDef run fill:#eef7ee,stroke:#3d8b3d,color:#132b13
+  classDef win fill:#d9f2d9,stroke:#2e7d32,color:#0f2e10
+  classDef lose fill:#f6e3e3,stroke:#b14a4a,color:#3d1010
+  classDef final fill:#fff6e0,stroke:#c99a2e,color:#3a2a05
+
+  subgraph PREP["Chuẩn bị rẻ, trên máy local (C1–C9)"]
+    P1["C1: loss 107 theo đơn + trừ đối thủ<br/>62% → 70,9% · sinh quy tắc an toàn kép"]:::prep
+    P2["C2b: so 7 backbone đóng băng<br/>DINOv3 ViT-S/16 CLS 82,1%"]:::prep
+    P3["C4: nhãn detector v3 · C7: module đánh giá"]:::prep
+    P4["C9: code train + smoke test Kaggle<br/>augmentation chuyển lên GPU"]:::prep
+    P1 --> P2 --> P3 --> P4
+  end
+
+  subgraph S1["Phiên S1 (Kaggle 2×T4, 3,5 giờ)"]
+    S1D["GPU0 · D1-A YOLO26s MuSGD<br/>đếm đúng 98,0%"]:::win
+    S1A["GPU1 · R1-A DINOv3-S, mở 2 block<br/>92,6% · an toàn"]:::win
+    S1B["GPU1 · R1-B DINOv2-S<br/>93,6% nhưng viên lạ 2,23% > 2%"]:::lose
+  end
+
+  subgraph S2["Phiên S2 (4,8 giờ) – mỗi nhánh đổi 1 yếu tố"]
+    S2D["D2-B + 3.051 ảnh ngoài<br/>đếm đúng 98,6%"]:::win
+    S2R3["R3-B mở toàn bộ + LLRD 0,75<br/>94,5% · hơn ở mọi hệ số đối thủ"]:::win
+    S2R2["R2-B CosFace 0,2<br/>tốt nhất 92,2%"]:::lose
+    S2R7["R7 EfficientNet-B0 (mốc CNN)<br/>85,9%"]:::lose
+  end
+
+  subgraph S3["Phiên S3 (3,0 giờ)"]
+    S3a["R3-B seed 1<br/>lệch seed 0 chỉ 0,4 điểm → cải tiến là thật"]:::win
+    S3b["R5-B ảnh 448<br/>hòa khi chạy cả chuỗi, chậm 1,4×"]:::lose
+  end
+
+  RULE{{"Quy tắc chọn (đặt trước):<br/>vượt 2% → loại · chênh < 1,5 điểm → hòa, chọn bản rẻ<br/>chỉ chọn trên val · test khóa"}}
+
+  FIN["BẢN CUỐI: D2-B + R3-B seed 1 @384<br/>đối thủ 0,5 · ngưỡng 0,0529 (mục tiêu 1,8%)<br/>cả chuỗi 89,5% · an toàn 1,49% / 1,84%<br/>→ xuất ONNX (out/onnx_final)"]:::final
+
+  P4 --> S1
+  S1D -- "mốc detector" --> S2D
+  S1A -- "mốc nhận dạng" --> S2R3
+  S1A --> S2R2
+  S1A --> S2R7
+  S2R3 --> S3a
+  S2R3 --> S3b
+  RULE -.-> S1
+  RULE -.-> S2
+  RULE -.-> S3
+  S2D --> FIN
+  S3a --> FIN

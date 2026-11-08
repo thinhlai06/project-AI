@@ -1,0 +1,48 @@
+flowchart TD
+  classDef io fill:#e8f1fb,stroke:#3b78c4,color:#10243e
+  classDef model fill:#ffe9e0,stroke:#d0622f,color:#3d1606
+  classDef rule fill:#eef7ee,stroke:#3d8b3d,color:#132b13
+  classDef out fill:#d9f2d9,stroke:#2e7d32,color:#0f2e10
+  classDef stop fill:#fdf0c4,stroke:#b8860b,color:#3a2a05
+  classDef bad fill:#f6e3e3,stroke:#b14a4a,color:#3d1010
+
+  IN["Đầu vào từ app<br/>ảnh cữ (cạnh dài 2048 px, đã xoay EXIF)<br/>+ thuốc của cữ hiện tại (tên, số viên) + các thuốc khác trong đơn"]:::io
+  Q{"Kiểm chất lượng ảnh<br/>mờ? tối? quá nhỏ?"}:::rule
+  QY["VÀNG do ảnh<br/>'Ảnh tối quá, hãy bật đèn' → chụp lại 1 lần"]:::stop
+  D["① Detector YOLO26s (ONNX)<br/>letterbox 640×640 → tối đa 300 box (NMS nằm trong file)<br/>giữ box có độ tin cậy ≥ 0,5"]:::model
+  K["Chỉ giữ viên có tâm trong khung chụp"]:::rule
+  C["② Cắt từng viên: box + lề 13% cạnh dài → cạnh dài 512<br/>đệm xám thành vuông 384×384, chuẩn hóa ImageNet"]:::rule
+  R["③ Bộ nhận dạng DINOv3 ViT-S/16 (ONNX)<br/>embedding 384 số → cosine với 107 vector mẫu"]:::model
+  L["④ Bảng tra tên thuốc → tập lớp được phép<br/>mỗi viên kỳ vọng của cữ = 1 'ô' (~5 lớp được phép)"]:::rule
+  S["⑤ Điểm cặp (viên i, ô j)<br/>= cosine lớn nhất tới lớp được phép của ô j<br/>− 0,5 × cosine lớn nhất tới lớp ngoài cả đơn"]:::rule
+  M["⑥ Ghép tối ưu viên ↔ ô (linear_sum_assignment)<br/>chạy được cả khi số viên ≠ số ô"]:::rule
+  T{"⑦ Với mỗi viên đã ghép:<br/>điểm ≥ 0,0529 và lớp thuộc 93 lớp đo được?"}:::rule
+  G["Viên XANH"]:::out
+  RD{"Viên không xanh / viên dư:<br/>khớp chắc thuốc của cữ khác?<br/>hoặc chắc chắn ngoài đơn?"}:::rule
+  RED["Viên ĐỎ<br/>'Viên này là thuốc buổi tối' /<br/>'không khớp thuốc nào trong đơn'"]:::bad
+  Y["Viên VÀNG<br/>'App chưa xác nhận được viên này, hãy kiểm vỏ hộp'"]:::stop
+  MISS["Ô không có viên nào ghép<br/>→ 'Còn thiếu 1 viên …'"]:::stop
+  AGG{"Tổng hợp cữ"}:::rule
+  OK["CỮ XANH: đủ số viên và mọi viên xanh<br/>'Đúng hết. 3 viên khớp cữ sáng.'"]:::out
+  NOK["CỮ CHƯA XANH: câu tổng nêu viên đỏ / vàng / thiếu<br/>khoanh từng viên trên ảnh"]:::stop
+  OUT["Trả về app: từng viên (trạng thái, box, lý do) + câu nói tổng<br/>~1 giây cho 4 viên trên CPU"]:::io
+
+  IN --> Q
+  Q -- "không đạt" --> QY
+  Q -- "đạt" --> D --> K --> C --> R --> S
+  L --> S
+  S --> M --> T
+  M --> MISS
+  T -- "có" --> G
+  T -- "không" --> RD
+  M -- "viên dư" --> RD
+  RD -- "có" --> RED
+  RD -- "không" --> Y
+  G --> AGG
+  RED --> AGG
+  Y --> AGG
+  MISS --> AGG
+  AGG -- "đủ và toàn xanh" --> OK
+  AGG -- "còn lại" --> NOK
+  OK --> OUT
+  NOK --> OUT

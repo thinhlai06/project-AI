@@ -1,0 +1,20 @@
+flowchart TD
+  classDef io fill:#e8f1fb,stroke:#3b78c4,color:#10243e
+  classDef model fill:#ffe9e0,stroke:#d0622f,color:#3d1606
+  classDef rule fill:#eef7ee,stroke:#3d8b3d,color:#132b13
+  classDef out fill:#fff6e0,stroke:#c99a2e,color:#3a2a05
+
+  IN["Ảnh/PDF đơn (đường chính)<br/>hoặc ảnh chụp đơn giấy (đường phụ)"]:::io
+  PDF["PDF → ảnh (pypdfium2)"]:::rule
+  QG["Chụp giấy: kiểm chất lượng<br/>+ chỉnh nghiêng, gom hàng (chưa làm)"]:::rule
+  TD["PP-OCRv5 mobile detection<br/>tìm các dòng chữ"]:::model
+  TR["VietOCR vgg_transformer<br/>đọc chữ tiếng Việt có dấu<br/>(lịch uống đúng 98% trên 318 ô)"]:::model
+  PA["Parser quy tắc theo 2 mẫu đơn BHYT<br/>SL: … · Sáng/Trưa/Chiều/Tối N viên · 1/2 · khi cần<br/>trước/sau ăn · ngày kê · 'Chẩn đoán:'"]:::rule
+  FM["Khớp mờ với từ điển 141 tên thuốc<br/>(chịu lỗi đọc 1–2 ký tự)"]:::rule
+  LK["Bảng tra tên → tập lớp viên được phép<br/>gắn 'chấm ảnh' hoặc 'chỉ nhắc lịch'"]:::rule
+  OUT["Kết quả cho app: từng dòng thuốc + lịch theo buổi<br/>+ chẩn đoán ('Bệnh: …', chỉ hiển thị)"]:::out
+  CF["Màn xác nhận BẮT BUỘC trên app<br/>dòng không chắc / thiếu lịch tô vàng"]:::io
+
+  IN --> PDF --> TD
+  IN --> QG --> TD
+  TD --> TR --> PA --> FM --> LK --> OUT --> CF

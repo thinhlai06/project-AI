@@ -1,0 +1,46 @@
+flowchart TD
+  classDef src fill:#e8f1fb,stroke:#3b78c4,color:#10243e
+  classDef step fill:#eef7ee,stroke:#3d8b3d,color:#132b13
+  classDef det fill:#ffe9e0,stroke:#d0622f,color:#3d1606
+  classDef rec fill:#f3ecfa,stroke:#7d55b3,color:#25163a
+  classDef out fill:#fff6e0,stroke:#c99a2e,color:#3a2a05
+
+  V["VAIPE_PILL (HF, 22 GB parquet)<br/>9.502 ảnh viên · 32.828 box · 107 lớp + lớp 107<br/>1.173 đơn · 141 tên thuốc"]:::src
+  X["Bộ bổ trợ Kaggle (12.067 ảnh, 1 lớp 'pill')<br/>reannotated · mosaic · Negatives · ảnh ngoài · VAIPE-test"]:::src
+
+  E["1. Xoay theo EXIF<br/>(4.217 ảnh có cờ xoay; box tính trên ảnh đã xoay)"]:::step
+  L2["2. Sửa nhãn tự động → nhãn v2<br/>Tydol lớp 1 → 60 · đơn 119/120 · 55 box ngoài đơn"]:::step
+  G["3. Gom 1.038 nhóm đơn gần trùng<br/>(cosine ≥ 0,98 · pHash · số phiếu + ngày + thuốc)"]:::step
+  SP["Chia 70/15/15 theo nhóm đơn (split v2)<br/>train 6.256 · val 1.604 · test 1.576 ảnh (KHÓA)"]:::out
+
+  subgraph DET["Nhánh DETECTOR"]
+    D1["4. Nhãn v3: truy box chặt từ reannotated/mosaic<br/>tên + pHash + ghép IoU → 94,9% ảnh; còn lại box gốc × 0,953"]:::det
+    D2["5. Ảnh cạnh dài 1280, JPEG q92 · nhãn YOLO 1 lớp"]:::det
+    D3["6. + 439 ảnh Negatives + 3.051 ảnh ngoài (chỉ train)<br/>không dùng NIH, không train trên VAIPE-test"]:::det
+    D4["Dataset Kaggle thinhlai/medicheck-det (1,9 GB)"]:::out
+    D1 --> D2 --> D3 --> D4
+  end
+
+  subgraph REC["Nhánh NHẬN DẠNG"]
+    R1["4'. Crop box gốc + lề 10%, cạnh dài 512<br/>(lớp 0–106 và viên 107)"]:::rec
+    R2["5'. Khi train, trên GPU: dao động box ±8% · xoay 0–360°<br/>lật · màu · mờ · giảm độ phân giải"]:::rec
+    R3["6'. Đệm xám thành vuông 384×384, chuẩn hóa ImageNet"]:::rec
+    R4["Dataset Kaggle thinhlai/medicheck-crops (1,3 GB)"]:::out
+    R1 --> R4
+    R4 -. "lúc train" .-> R2 --> R3
+  end
+
+  subgraph PRES["Nhánh ĐƠN THUỐC"]
+    P1["a. Chuẩn hóa tên thuốc · sửa mapping lỗi"]:::step
+    P2["b. Bảng tra TÊN → TẬP LỚP ĐƯỢC PHÉP<br/>(chỉ lập từ train)"]:::out
+    P3["c. Tách lịch: buổi · số viên · 1/2 · khi cần · trước/sau ăn"]:::step
+    P1 --> P2
+    P1 --> P3
+  end
+
+  V --> E --> L2 --> G --> SP
+  SP --> D1
+  X -- "chỉ mượn box chặt" --> D1
+  X -- "Negatives + ảnh ngoài" --> D3
+  SP --> R1
+  V --> P1

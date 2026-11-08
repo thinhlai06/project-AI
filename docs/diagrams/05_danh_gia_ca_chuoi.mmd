@@ -1,0 +1,28 @@
+flowchart TD
+  classDef data fill:#e8f1fb,stroke:#3b78c4,color:#10243e
+  classDef step fill:#eef7ee,stroke:#3d8b3d,color:#132b13
+  classDef atk fill:#f6e3e3,stroke:#b14a4a,color:#3d1010
+  classDef out fill:#fff6e0,stroke:#c99a2e,color:#3a2a05
+
+  VAL["Val: 1.244 cảnh đúng (mọi viên thuộc đơn)<br/>269 nhóm đơn · TB 2,85 viên/cảnh"]:::data
+  IMG["Thu ảnh về 2048 px, JPEG q85<br/>(giống ảnh app gửi lên)"]:::step
+  DET["Detector → crop lề 13% → nhận dạng<br/>(cảnh có số box ≠ số viên → không xanh)"]:::step
+  SC["Điểm cảnh = cặp yếu nhất sau ghép tối ưu"]:::step
+
+  subgraph ATK["Phép tấn công (mỗi cảnh × 3 lần mỗi loại)"]
+    A1["(a) tráo 1 viên bằng viên lớp 107<br/>(viên không thuộc đơn)"]:::atk
+    A2["(b) tráo bằng viên lạ đã biết<br/>(lớp 0–106 không được phép trong đơn)"]:::atk
+  end
+
+  SPLIT["Chia nhóm đơn val thành 2 nửa: cal | ev<br/>lặp 5 cách chia"]:::step
+  FIT["Trên nửa CAL: chọn ngưỡng thấp nhất<br/>mà cận trên 95% (bootstrap 1.000 lần theo nhóm đơn)<br/>của CẢ HAI tấn công ≤ 1,8%"]:::step
+  MEAS["Trên nửa EV (chưa dùng để chọn):<br/>đo % cảnh đúng báo xanh + cận trên chấp nhận nhầm"]:::step
+  AVG["Trung bình 5 cách chia"]:::out
+  RES["Bản cuối: 89,5% báo xanh<br/>FA 107 ≤ 1,49% · viên lạ ≤ 1,84%"]:::out
+  DEPLOY["Ngưỡng triển khai: fit trên TOÀN BỘ val<br/>(crop nhãn thật, mục tiêu 1,8%) → 0,0529"]:::out
+  TEST["Test (khóa): chạy MỘT lần với ngưỡng cố định<br/>→ số chính thức cho báo cáo"]:::data
+
+  VAL --> IMG --> DET --> SC
+  VAL --> ATK --> SC
+  SC --> SPLIT --> FIT --> MEAS --> AVG --> RES
+  RES --> DEPLOY --> TEST

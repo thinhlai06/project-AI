@@ -52,6 +52,10 @@ Còn lại: module suy luận dùng ONNX, kiểm lại trên val, chạy test **
  → điểm có trừ đối thủ → ghép tối ưu (linear_sum_assignment) → so ngưỡng → xanh / đỏ / vàng
 ```
 
+![Kiểm thuốc khi app chạy](docs/diagrams/02_suy_luan_kiem_thuoc.png)
+
+*Sơ đồ: `docs/diagrams/02_suy_luan_kiem_thuoc.png` (nguồn sửa được: `docs/diagrams/02_suy_luan_kiem_thuoc.mmd`).*
+
 Lý do chọn danh mục + embedding (so trên 400 đơn, DINOv2 chưa fine-tune): danh mục đúng trong ứng viên 93,1% so với 80–84% của "làm quen 1–3 ảnh", nên làm quen thuốc để giai đoạn 2.
 
 ---
@@ -188,6 +192,10 @@ Quyết định:
 | Train | Kaggle Notebook (2 × T4), PyTorch, `timm`, `ultralytics` (AGPL-3.0) |
 | Triển khai demo | Laptop chạy FastAPI, điện thoại nối qua Wi-Fi LAN hoặc tunnel HTTPS. Không dùng Hugging Face Spaces |
 
+![Tổng quan hệ thống](docs/diagrams/01_tong_quan_he_thong.png)
+
+*Sơ đồ: `docs/diagrams/01_tong_quan_he_thong.png` (nguồn sửa được: `docs/diagrams/01_tong_quan_he_thong.mmd`).*
+
 **API:** `POST /v1/prescriptions/parse` và `POST /v1/pills/verify`. App gửi ảnh viên cạnh dài **2048 px, JPEG q85, đã xoay EXIF** (~290 KB; mục 12.5) kèm danh sách tên thuốc và cữ hiện tại. **App không chạy mô hình.**
 
 **Phân công phần nhận dạng viên:**
@@ -306,6 +314,10 @@ Mọi số đo trên **val**; test chưa đọc. Báo xanh / cận trên FA 107 
 
 ### 12.4. Kết quả train trên Kaggle (S1–S3; 08/11)
 
+![Train và chọn mô hình](docs/diagrams/04_train_va_chon_mo_hinh.png)
+
+*Sơ đồ: `docs/diagrams/04_train_va_chon_mo_hinh.png` (nguồn sửa được: `docs/diagrams/04_train_va_chon_mo_hinh.mmd`).*
+
 Ba phiên: S1 3,5 giờ (`thinhlai/medicheck-s1`), S2 4,8 giờ (`-s2`), S3 3,0 giờ (`-s3`); output `out/s1/`, `out/s2/`, `out/s3/`.
 
 **Detector** (đếm đúng số viên ở ngưỡng 0,5, nhánh NMS):
@@ -330,6 +342,10 @@ Smoke test 2 epoch đã đếm đúng 98,1% → detector chạm trần sớm. VA
 Phát hiện phụ: sau fine-tune, đối thủ 0,5 tốt hơn 0,25 (+2,7 điểm) và vẫn an toàn (0,75 vượt 2% FA 107). TTA 8 góc +0,7 điểm, chậm 8 lần → không dùng. Báo xanh theo epoch đi ngang từ epoch 12–17. Tốc độ train T4: R1-A 84 phút, R3-B 128–145 phút, R5-B 181 phút (10,5 GB).
 
 ### 12.5. Đánh giá cả pipeline (`medicheck_ai/e2e.py`, local; 08/11)
+
+![Đánh giá cả chuỗi](docs/diagrams/05_danh_gia_ca_chuoi.png)
+
+*Sơ đồ: `docs/diagrams/05_danh_gia_ca_chuoi.png` (nguồn sửa được: `docs/diagrams/05_danh_gia_ca_chuoi.mmd`).*
 
 Crop từ box detector (lề 13%), 1.244 cảnh val; cảnh có số box khác số viên → không xanh.
 

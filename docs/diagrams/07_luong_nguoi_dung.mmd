@@ -1,0 +1,29 @@
+flowchart TD
+  classDef scr fill:#e8f1fb,stroke:#3b78c4,color:#10243e
+  classDef act fill:#eef7ee,stroke:#3d8b3d,color:#132b13
+  classDef warn fill:#fdf0c4,stroke:#b8860b,color:#3a2a05
+  classDef bad fill:#f6e3e3,stroke:#b14a4a,color:#3d1010
+
+  O["Lần đầu: 'Chọn đơn thuốc' hoặc 'Thử với đơn mẫu'<br/>(hướng dẫn bằng giọng nói)"]:::scr
+  X["Màn xác nhận đơn: thẻ chữ to, đọc to<br/>'Đúng rồi' · sửa bằng chọn · 'Gửi người thân kiểm tra'"]:::scr
+  MS{"Có dòng thiếu lịch?"}:::act
+  MSY["Nhập theo lời dặn bác sĩ, hoặc 'Để sau'"]:::warn
+  RM["Đến giờ (7:00 · 11:30 · 17:00 · 20:00):<br/>thông báo + 'Đến giờ uống thuốc sáng, 3 viên'"]:::scr
+  LIST["Màn 'Cữ sáng cần uống':<br/>ảnh mẫu từng viên + tên chữ to"]:::scr
+  CAP["Đặt thuốc lên lòng bàn tay → bấm nút chụp to"]:::act
+  RES{"Kết quả (nói 1 câu trước)"}:::act
+  ALLG["'Đúng hết. 3 viên khớp cữ sáng.'"]:::scr
+  TAKE["'Tôi đã uống' → ghi giờ, tắt nhắc"]:::act
+  YEL["Viên vàng: khoanh trên ảnh,<br/>bỏ viên xanh ra → chụp lại tối đa 1 lần"]:::warn
+  CHK["Vẫn vàng: 'Hãy kiểm vỏ hộp'<br/>→ 'Tôi đã kiểm vỏ hộp'"]:::warn
+  RED["Viên đỏ: 'Viên này là thuốc buổi tối'<br/>→ bỏ viên đó ra → chụp lại"]:::bad
+  DUP["Quét lại trong cùng cữ:<br/>'Cữ sáng đã uống lúc 7:05'"]:::scr
+
+  O --> X --> MS
+  MS -- "có" --> MSY --> RM
+  MS -- "không" --> RM
+  RM --> LIST --> CAP --> RES
+  RES -- "tất cả xanh" --> ALLG --> TAKE --> DUP
+  RES -- "có viên vàng" --> YEL --> CAP
+  YEL -- "đã chụp lại 1 lần" --> CHK --> TAKE
+  RES -- "có viên đỏ" --> RED --> CAP
