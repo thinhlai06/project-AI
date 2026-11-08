@@ -3,20 +3,19 @@
 !/.gitignore
 !/*.md
 
+# Máy chủ AI (module suy luận + FastAPI)
+!/backend/
+
 # Sơ đồ pipeline
 !/docs/
 
 !/out/
 /out/*
 
-# Bản triển khai (ONNX + cấu hình); detector.pt trùng với out/s2/det/d2b/weights/best.pt
+# Bản triển khai (ONNX + cấu hình + bảng tra chỉ lập từ train); detector.pt trùng với out/s2/det/d2b/weights/best.pt
 !/out/onnx_final/
 /out/onnx_final/detector.pt
 
-# Bảng tra tên thuốc -> tập lớp được phép (cần khi dùng mô hình)
-!/out/v2/
-/out/v2/*
-!/out/v2/lookup_name_classes.csv
 
 # Detector cuối (PyTorch) + kết quả đo
 !/out/s2/
@@ -37,3 +36,7 @@
 /out/s3/r3b_seed1/*
 !/out/s3/r3b_seed1/model.pt
 !/out/s3/r3b_seed1/final.json
+
+# Python cache
+__pycache__/
+*.pyc

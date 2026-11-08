@@ -1,0 +1,10 @@
+# MediCheck AI server (CPU only, Python 3.10+). Versions = the ones the module was validated with.
+onnxruntime==1.23.2
+numpy==2.2.6
+opencv-python-headless==5.0.0.93
+pillow==12.3.0
+scipy==1.15.3
+fastapi==0.115.12
+uvicorn==0.34.2
+python-multipart==0.0.20
+pydantic==2.14.3

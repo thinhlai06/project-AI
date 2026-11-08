@@ -15,8 +15,8 @@ Ký hiệu: ✅ xong · 🔄 đang làm · ⏳ chưa làm
 | A. Thử nghiệm chọn hướng | C1–C9 (local + smoke test), S1–S3 trên Kaggle | ✅ |
 | B. Chốt mô hình | Detector D2-B + bộ nhận dạng R3-B seed 1, ngưỡng 0,0529 | ✅ |
 | C. Xuất file triển khai | `out/onnx_final/`: `detector.onnx`, `recognizer.onnx`, `deploy_config.json` (khớp PyTorch) | ✅ |
-| D. Module suy luận | Code Python dùng 2 file ONNX: ảnh + thuốc của cữ → xanh/đỏ/vàng từng viên | ⏳ **việc tiếp theo** |
-| E. Test một lần | Chạy test khóa qua module D, báo nguyên số | ⏳ sau D |
+| D. Module suy luận + máy chủ API | `backend/`: module `PillVerifier` + FastAPI `POST /v1/pills/verify` + `API.md`; kiểm trên val qua module: 90,9% báo xanh, 1,19% / 1,79% | ✅ 08/11 |
+| E. Test một lần | Chạy test khóa qua module D, báo nguyên số | ⏳ **việc tiếp theo** |
 
 **Bản cuối** (chi tiết `MediCheck_decisions.md` mục 0):
 - **Detector:** YOLO26s, ngưỡng tin cậy 0,5, nhánh NMS.
@@ -31,11 +31,11 @@ Ký hiệu: ✅ xong · 🔄 đang làm · ⏳ chưa làm
 
 | # | Việc | Ghi chú |
 |---|---|---|
-| 1 | **Module suy luận** (`medicheck_ai/infer.py` dự kiến): đọc `deploy_config.json`; ảnh → detector ONNX → lọc viên trong khung → crop lề 13% → recognizer ONNX → điểm trừ đối thủ với tập lớp được phép (bảng tra) → ghép tối ưu → ngưỡng → kết quả từng viên + câu nói | Thuộc phần AI. Lớp API FastAPI bọc ngoài: hỏi nhóm ai làm |
-| 2 | Chạy lại cả pipeline trên val **qua module** (ảnh 2048 px, cal/ev 5 cách chia, mục tiêu 1,8) | Phải ≈ 89,5% / 1,49 / 1,84; lệch nhiều là lỗi code |
+| 1 | ✅ Module suy luận + server (`backend/`), kiểm trên val (`MediCheck_decisions.md` mục 13) | |
+| 2 | **Chạy test một lần** qua module: `python -m medicheck_ai.validate_infer --fold test --unseal-test --out out/infer_test` | Không chỉnh gì sau khi xem |
 | 3 | Cổng 22/11: kiểm `deploy_config.json`, đo độ trễ trên laptop demo | Không cần train |
 | 4 | OCR (23–29/11): chỉnh nghiêng, gom hàng, parser chẩn đoán, đo độ chính xác | |
-| 5 | **Chạy test một lần** qua module (dùng `Bench(fold="test", unseal_test=True)`), ghi nguyên số | Local, ~10–15 phút; không chỉnh gì sau khi xem |
+| 5 | Giao nhóm mobile: `backend/API.md` + chạy máy chủ demo | |
 | 6 | Đồng bộ báo cáo `.docx` theo hàng đợi mục 6; thêm hình (ma trận nhầm, ví dụ ca vàng) | |
 | 7 | Sau dự án: người dùng tạo lại token Kaggle | |
 
@@ -87,9 +87,11 @@ Ký hiệu: ✅ xong · 🔄 đang làm · ⏳ chưa làm
 | `out/s3/r3b_seed1/model.pt` | Bộ nhận dạng cuối (PyTorch) + `final.json`, `log.jsonl` |
 | `out/s1/`, `out/s2/`, `out/s3/` | Output các phiên Kaggle (mọi nhánh, log, `summary.json`, `gpu_monitor.csv`) |
 | `out/e2e_s1/`, `out/e2e_s2/`, `out/e2e_s3_seed1/`, `out/e2e_s3_448/` | Kết quả cả pipeline (`e2e_orig2048*.json`), crop từ detector |
-| `out/v2/` | Nhãn v2, bộ chia v2, bảng tra `lookup_name_classes.csv` |
+| `out/v2/` | Nhãn v2, bộ chia v2, `lookup_name_classes.csv` (141 tên, lập từ **mọi fold**: chỉ để tham khảo, không dùng để triển khai hay đo) |
 | `out/v3det/` | Nhãn detector v3 |
-| `medicheck_ai/` | `eval.py`, `recognizer.py`, `detector.py`, `e2e.py`, `export_onnx.py` |
+| `backend/` | **Máy chủ AI** (lên repo): `medicheck_server/infer.py` (module), `app.py` (FastAPI), `API.md`, `requirements.txt`, `tests/` |
+| `out/infer_val/` | Kiểm module trên val (`validate.json`, `red_raw.npz`, cache) |
+| `medicheck_ai/` | `eval.py`, `recognizer.py`, `detector.py`, `e2e.py`, `export_onnx.py`, `validate_infer.py` (chỉ ở máy local) |
 | `tests/test_eval.py` | 7 kiểm thử (chạy: `.venv/Scripts/python.exe tests/test_eval.py`) |
 | `kaggle/` | Script kernel các phiên (`medicheck-s1..s3`, smoke, embed, backbones) và thư mục nguồn dataset |
 | `scripts/` | Tiền xử lý dữ liệu và thử nghiệm C1–C2b |

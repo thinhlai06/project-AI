@@ -1,4 +1,4 @@
-﻿name,classes
+name,classes
 "alfachim 4,2mg",7 28
 alverin 40mg,98
 amcardia-5 5mg,8
@@ -26,7 +26,7 @@ carudxan 2mg,23
 "cefadroxil 0,5g",19 24 43
 "cefadroxil 500mg 0,5g",19 24 43
 cefadroxil 500mg 500mg,19 43
-"cefalexin (firstlexin 500) 0,5g",26 61
+"cefalexin (firstlexin 500) 0,5g",26
 cefixim 200 200mg,17
 "cephalexin 250mg 0,25g",25
 "cephalexin pmp 500 0,5g",26
@@ -44,8 +44,8 @@ dixirein 375mg,2 21
 dorocron - mr 30mg,42
 dromasm fort 80mg,36 48
 drotaverin clohydrat (dromasm fort) 80mg,36 48
-"droxicef 0,5g",19 43
-"droxicef 500mg 0,5g",19 43
+"droxicef 0,5g",43
+"droxicef 500mg 0,5g",43
 dưỡng tâm an thần,44
 "ebitac 12.5 10mg + 12,5mg",45
 enalapril 5mg,46
@@ -56,7 +56,7 @@ famogast 40mg,50
 fibrofin-145 145mg,58
 fudcime 200mg 200mg,34
 "gaphyton s 100mg+75mg+7,5mg",69
-gliclazid (golddicron) 30mg,37 42
+gliclazid (golddicron) 30mg,37
 glucofast 500 500mg,54
 glucofast 850 850mg,53 55 57
 gluzitop mr 60 60mg,38
@@ -85,7 +85,6 @@ meglucon 1000 1000mg,56
 meglucon tab 850mg 3x10's 850mg,55
 "meloxicam 7,5mg",81
 menison 16mg 16mg,73 75
-menison 4mg,74
 menison 4mg 4mg,74
 metformin (meglucon 1000) 1000 mg,56
 metformin (metformin 500) 500mg,54
@@ -105,7 +104,6 @@ normagut 250mg,85
 "novoxim-500 0,5g",10 82
 olanzapin 10mg (olanxol),86
 omeprazol (kagasdine) 20mg,87
-otdxicam 7.5mg,81
 pamlonor 5mg,8
 panactol 500mg,88 89 90 91 99
 paracetamol (partamol tab.) 500mg,89 91 99
@@ -137,6 +135,5 @@ vina-ad 2000ui+ 400ui,103
 vipredni 16mg 16mg,73 75 77
 "vitamin b1 + b6 + b12 (savi 3b) 100mg+100mg+0,15mg",104
 vitamin c stada 1g 1g,105
-vitaminad 2500ui+200ui,103
 "xitoran 0,5g",24 43
 "đinh lăng, bạch quả (hoạt huyết dưỡng não) 150mg+20mg",64

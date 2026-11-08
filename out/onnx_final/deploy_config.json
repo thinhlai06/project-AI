@@ -127,5 +127,20 @@
   "green": 89.44789492190912,
   "far_hi": 1.4909578805092776,
   "foreign_hi": 1.8388354077913125
+ },
+ "lookup": {
+  "file": "lookup_name_classes.csv",
+  "source": "train fold only (eval.Bench.n2c), the lookup used for every measurement",
+  "names": 138
+ },
+ "red": {
+  "other_dose_threshold": 0.0529,
+  "outside_threshold": 0.3,
+  "note": "UX only (red never makes a dose green). Calibrated on val via the module: wrongly red correct pills 0.31% (outside) / <=0.21% (other dose); red catches 63% of known foreign pills and 95% of pills of another dose (out/infer_val)"
+ },
+ "quality": {
+  "min_brightness": 50.0,
+  "min_sharpness": 4.0,
+  "note": "0.5th percentile of val photos (mean gray 0-255; Laplacian variance at long side 1024). Only adds advice to a non-green result"
  }
 }

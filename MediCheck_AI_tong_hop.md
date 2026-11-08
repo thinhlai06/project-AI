@@ -33,8 +33,8 @@ Nguyên tắc số 1: **báo xanh nhầm là lỗi nguy hiểm nhất.** Ngưỡ
 | A. Tuyển chọn | Thử nhiều "ứng viên" (nhiều cấu hình mô hình) để tìm người giỏi nhất | ✅ Xong (phiên Kaggle S1–S3) |
 | B. Chốt người | Chọn một ứng viên, khóa lại | ✅ Xong |
 | C. Đóng gói | Chuyển mô hình sang file ONNX để máy chủ chạy | ✅ Xong (`out/onnx_final/`) |
-| D. Viết "bản hướng dẫn công việc" | Module suy luận: code biết cắt ảnh, gọi mô hình, ghép với đơn, trả xanh/đỏ/vàng | ⏳ Việc tiếp theo |
-| E. Thi cuối kỳ | Chạy test **một lần** để có điểm chính thức | ⏳ Sau D |
+| D. Viết "bản hướng dẫn công việc" | Module suy luận + máy chủ API (`backend/`): cắt ảnh, gọi mô hình, ghép với đơn, trả xanh/đỏ/vàng | ✅ Xong; kiểm trên val: 90,9% báo xanh, an toàn ≤ 2% |
+| E. Thi cuối kỳ | Chạy test **một lần** để có điểm chính thức | ⏳ Việc tiếp theo |
 
 ![Tổng quan hệ thống](docs/diagrams/01_tong_quan_he_thong.png)
 
@@ -416,7 +416,7 @@ Mục đích: quota GPU có hạn, phải bắt lỗi đường ống trước, 
 *Sơ đồ: `docs/diagrams/05_danh_gia_ca_chuoi.png` (nguồn sửa được: `docs/diagrams/05_danh_gia_ca_chuoi.mmd`).*
 
 ### 9.4. Việc còn lại
-1. **Module suy luận** dùng 2 file ONNX + `deploy_config.json`. Chạy lại cả chuỗi trên val qua module: phải ≈ 89,5%.
+1. ✅ **Module suy luận** (`backend/medicheck_server/infer.py`) + server FastAPI. Trên val qua module: 91,1% (cal/ev), 90,9% ở ngưỡng cố định; an toàn 1,19% / 1,79%. Báo đỏ: "thuốc cữ khác" bắt 95% viên nhầm cữ; "không thuộc đơn" ngưỡng 0,30 để chỉ 0,31% viên đúng bị báo đỏ oan.
 2. **Cổng 22/11:** kiểm cấu hình triển khai, đo độ trễ trên laptop demo.
 3. **Test một lần** (tháng 12): mở khóa test, chạy qua module, báo nguyên số, không chỉnh gì sau khi xem.
 
@@ -496,7 +496,7 @@ Các dòng trên đo trên crop nhãn thật (không có detector), đối thủ
 | `out/onnx_final/detector.onnx` | YOLO26s D2-B, NMS nhúng trong file, 36 MB | Máy chủ (ONNX Runtime, CPU) |
 | `out/onnx_final/recognizer.onnx` | DINOv3 R3-B seed 1 + vector mẫu 107 lớp; ra embedding và cosine; 83 MB | Máy chủ |
 | `out/onnx_final/deploy_config.json` | Ngưỡng 0,0529, hệ số đối thủ 0,5, 93 lớp đo được, ngưỡng tin cậy detector 0,5, lề crop 13%, cỡ ảnh gửi lên, nguồn mô hình | Máy chủ |
-| `out/v2/lookup_name_classes.csv` | Bảng tra tên thuốc → tập lớp được phép | Máy chủ, khớp với kết quả OCR |
+| `out/onnx_final/lookup_name_classes.csv` | Bảng tra tên thuốc → tập lớp được phép, **chỉ lập từ train** (138 tên), đúng bảng đã dùng khi đo | Máy chủ, khớp với kết quả OCR |
 | `out/s2/det/d2b/`, `out/s3/r3b_seed1/` | Bản PyTorch của mô hình cuối, `final.json`, `eval_val.json`, `log.jsonl` | Báo cáo, bảo vệ |
 | Mô hình OCR | VietOCR `vgg_transformer`, PP-OCRv5 mobile det (trọng số công bố, không train lại) | Máy chủ |
 
@@ -540,6 +540,8 @@ Các dòng trên đo trên crop nhãn thật (không có detector), đối thủ
 | Sao bỏ CosFace dù top-1 cao nhất? | App cần **tách được** đúng/sai bằng một ngưỡng. CosFace làm điểm lớp đúng và đối thủ sát nhau → báo xanh ở mức an toàn thấp hơn (92,2% so với 94,5%) |
 | Sao chọn mở toàn bộ backbone khi chỉ hơn ~1,5–1,9 điểm? | Hơn ở mọi hệ số đối thủ (+1,9 đến +2,9), an toàn hơn, suy luận nhanh như cũ; train lại seed 1 cho thấy độ nhiễu chỉ 0,4 điểm |
 | Thử nhiều hướng rồi chọn có phải "chọn may" không? | Không: mỗi A/B đổi 1 yếu tố, quy tắc chọn đặt trước (an toàn bắt buộc, hòa < 1,5 điểm), test khóa đến cuối. Độ nhiễu đã được đo bằng seed |
+| Màu đỏ có đáng tin không? | Đỏ chỉ là lời khuyên, không ảnh hưởng an toàn của màu xanh. Ngưỡng đỏ chọn để báo oan viên đúng rất ít (≤ 0,31%): "đừng uống" sai có thể làm người cao tuổi bỏ liều. Viên lạ không đỏ thì vẫn vàng "hãy kiểm vỏ hộp" |
+| Bảng tra tên → lớp lấy từ đâu? | Chỉ từ tập train (138 tên), đúng bảng dùng khi đo. Bảng lập từ mọi fold sẽ làm test bị rò rỉ nhãn |
 | Ngưỡng báo xanh chọn thế nào? | Chọn trên một nửa nhóm đơn, đo cả chuỗi trên nửa còn lại, lặp 5 lần. Mục tiêu fit 1,8% chứ không phải 2%, vì crop của detector làm viên lạ lọt nhiều hơn ~0,1 điểm; dư 0,2 để chắc ≤ 2%, đổi lại mất 1,4 điểm báo xanh |
 | Còn quota sao không thử thêm? | Hai lần train giống hệt lệch ~1 điểm khi chạy cả chuỗi. Các hướng còn lại (ảnh 512, ghép mô hình, train lâu hơn) hứa hẹn ≤ 1 điểm, không phân biệt được với nhiễu |
 | Sao không thử YOLO26m / ViT-B? | Bản nhỏ đã chạm trần; bản to chậm 2–3 lần khi chạy cho người cao tuổi, tốn 4–11 giờ train mỗi lần |

@@ -24,7 +24,7 @@
 | **Cữ đúng được báo xanh, cả pipeline** (ảnh 2048 px, cal/ev 5 cách chia) | **89,5%** |
 | Cận trên 95% chấp nhận nhầm: viên 107 / viên lạ đã biết | 1,49% / 1,84% (chuẩn ≤ 2%) |
 
-Còn lại: module suy luận dùng ONNX, kiểm lại trên val, chạy test **một lần** (mục 9).
+**Module suy luận + máy chủ API** (mục 13): `backend/`. Qua module trên val, ngưỡng cố định: **90,9% báo xanh**, cận trên 1,19% / 1,79%. Còn lại: chạy test **một lần** (mục 9).
 
 ---
 
@@ -147,7 +147,7 @@ Không nhóm đơn nào nằm ở nhiều phần. 86 lớp có ≥ 3 nhóm có m
 | 7 | Đơn thiếu lịch | Không suy liều, chỉ khóa thuốc đó (người dùng chọn) | 12,6% số đơn |
 | 8 | Liều 1/2, khi cần | 1/2: nhắc lịch, không chấm ảnh, tính vào số viên kỳ vọng dạng "không chấm". Khi cần: chỉ hiển thị, không nhắc | 62 dòng ở 58 đơn; 2 dòng khi cần |
 | 9 | Trước/sau ăn | Hiển thị và đọc nguyên văn, không đổi giờ (người dùng chọn) | 366 dòng (12,9%) |
-| 10 | Tên hay hoạt chất | Kiểm **đúng tên trên đơn**: viên thuộc tập lớp được phép của tên đó (người dùng chọn) | Bảng tra `out/v2/lookup_name_classes.csv` |
+| 10 | Tên hay hoạt chất | Kiểm **đúng tên trên đơn**: viên thuộc tập lớp được phép của tên đó (người dùng chọn) | Bảng tra triển khai `out/onnx_final/lookup_name_classes.csv` (chỉ lập từ train, 138 tên; mục 13) |
 | 11 | Mô tả viên | Bỏ mô tả màu và hình. Dùng vị trí, khoanh trên ảnh, ảnh mẫu tối đa 3 hình kèm "ảnh minh họa" | Màu không ổn định |
 | 12 | VAIPE-test | Kiểm detector độc lập và demo; không đánh giá phân loại | Không có nhãn lớp; box do bên thứ ba gán |
 | 13 | Bộ Kaggle bổ trợ | Nhãn detector v3 (box chặt truy từ VAIPE-reannotated/mosaic) + Negatives + ảnh ngoài vào train detector. Không dùng NIH, không train trên VAIPE-test, không dùng ảnh thu nhỏ của tác giả | Chỉ có 1 lớp nên chỉ bổ trợ detector. CC BY-NC-SA |
@@ -228,10 +228,11 @@ Bảo mật: **không lưu họ tên, số BHYT, ảnh đơn hay ảnh thuốc**
 | Thời gian | AI | Mobile |
 |---|---|---|
 | ✅ 3–8/11 | Dữ liệu, thử nghiệm C1–C9, train S1–S3 trên Kaggle, đánh giá cả pipeline, ONNX bản cuối | Khung app, database, màn đơn thuốc, lịch, nhắc, mock API |
-| 9–22/11 | **Module suy luận ONNX** → kiểm lại cả pipeline trên val qua module (phải ≈ 89,5%) → giao backend. **Cổng 22/11:** kiểm `deploy_config.json`, độ trễ trên laptop demo | Màn chụp, kết quả xanh/vàng/đỏ, TTS |
+| ✅ 8/11 | Module suy luận + server FastAPI (`backend/`), kiểm trên val qua module (mục 13) | |
+| 9–22/11 | Chạy test một lần qua module; giao `backend/API.md` cho nhóm mobile. **Cổng 22/11:** đo độ trễ trên laptop demo | Màn chụp, kết quả xanh/vàng/đỏ, TTS, gọi API thật |
 | 23–29/11 | OCR: chỉnh nghiêng, gom hàng, parser chẩn đoán, đo độ chính xác | Màn xác nhận đơn, đơn thiếu lịch |
-| 30/11–6/12 | Ghép OCR + bảng tra + module suy luận vào FastAPI | Tích hợp API thật |
-| 7–20/12 | **Chạy test một lần** qua module suy luận, báo nguyên số; đồng bộ báo cáo `.docx` | Sửa lỗi, "Tôi đã uống", chế độ demo |
+| 30/11–6/12 | Thêm `POST /v1/prescriptions/parse` (OCR) vào server | Tích hợp API đọc đơn |
+| 7–20/12 | Đồng bộ báo cáo `.docx`, hình cho báo cáo | Sửa lỗi, "Tôi đã uống", chế độ demo |
 | 21–31/12 | Báo cáo, demo | Báo cáo, demo |
 
 Kaggle: bản cuối không cần train thêm; ~17 giờ quota còn lại giữ để dự phòng (quota không reset đến 15/11).
@@ -401,3 +402,47 @@ ONNX Runtime 1.23.2, CPU i5-10400F 4 luồng (máy chủ không có GPU). Bản 
 ### 12.8. Phản biện đã xử lý (07/11)
 
 Người dùng yêu cầu mọi quyết định được phản biện từ nhiều góc (hiệu năng, an toàn, thời gian/quota, ràng buộc dữ liệu, khả năng bảo vệ). Giữ: chia theo nhóm đơn, quy tắc an toàn kép, loss 107 theo đơn, crop 512, nhãn v3. Bổ sung từ phản biện: so backbone (→ DINOv3), A/B margin loss, cỡ detector, optimizer, ảnh ngoài cho detector (đã chạy hoặc đã bỏ có lý do ở 12.4, 12.7).
+
+---
+
+## 13. Module suy luận, máy chủ API và kiểm trên val (task 2–3, 08/11/2026)
+
+Code: `backend/medicheck_server/infer.py` (module `PillVerifier`), `backend/medicheck_server/app.py` (FastAPI), `backend/API.md` (hợp đồng API cho nhóm mobile), `backend/tests/test_decide.py` (7 kiểm thử), `medicheck_ai/validate_infer.py` (kiểm cả chuỗi qua module; chỉ ở máy local). Kết quả `out/infer_val/validate.json`.
+
+**Quyết định thiết kế và phản biện:**
+| Quyết định | Phương án khác | Vì sao chọn |
+|---|---|---|
+| AI viết luôn module + server FastAPI + tài liệu API (người dùng chọn) | Chỉ viết hàm Python | Nhóm không có người backend; một người giữ logic an toàn thì không lệch |
+| Máy chủ chỉ cần onnxruntime, numpy, OpenCV, Pillow, SciPy (không PyTorch) | Chạy bằng PyTorch | Cài nhẹ, khởi động ~3 giây, chạy trên laptop CPU; ONNX đã kiểm khớp PyTorch |
+| Tái tạo đúng từng bước đã đo: letterbox Ultralytics, crop lề 13% → cạnh 512, đệm xám 128 thành 384, điểm có trừ đối thủ 0,5, ghép tối ưu, 93 lớp đo được, ngưỡng 0,0529 | Viết lại "gần đúng" | Kiểm trên cùng ma trận cosine của val: điểm cảnh trùng **tuyệt đối** với `eval.scene_score` (chênh 0,0; 1.244/1.244 cảnh cùng kết luận) |
+| **Bảng tra triển khai = bảng chỉ lập từ train (138 tên)**, đóng gói trong `out/onnx_final/` | `out/v2/lookup_name_classes.csv` (141 tên) | File v2 lập từ **mọi fold** (cả test): dùng nó thì lần chạy test bị rò rỉ nhãn, và máy chủ khác cái đã đo. Cái giá: 3 tên (menison 4mg, otdxicam 7.5mg, vitaminad) thành "chỉ nhắc lịch". Tài liệu cũ ghi file v2 "chỉ lập từ train" là sai, đã sửa |
+| Cữ xanh khi **số viên = số viên kỳ vọng** và mọi viên xanh (máy chủ không có nhãn để so khung) | Như code đánh giá: mỗi box phải trùng khung nhãn thật | Chỉ có cách này chạy được ngoài đời. Đã đo lại an toàn theo đúng luật này (bảng dưới) |
+| **Đỏ "thuốc cữ khác"**: viên khớp thuốc của cữ khác trong đơn (không tính lớp trùng với cữ này), cùng công thức điểm, ngưỡng 0,0529 | Không báo đỏ, chỉ vàng | Lỗi hay gặp nhất là nhầm buổi; đo trên val: bắt 95% viên bị chuyển sang cữ khác, báo oan ≤ 0,21% viên đúng |
+| **Đỏ "không thuộc đơn"**: cosine lớp ngoài đơn − 0,5 × cosine lớp trong đơn ≥ **0,30** | Ngưỡng 0,0529 (= ngưỡng xanh) hoặc 0,25 | Ở 0,0529, 2,67% viên đúng bị báo đỏ oan. 0,25: báo oan 0,91%, bắt 85% viên lạ. **0,30: báo oan 0,31%, bắt 63% viên lạ đã biết.** Viên lạ không đỏ thì vẫn vàng (an toàn). "Đừng uống" sai cho người cao tuổi có thể làm bỏ liều → ưu tiên báo oan thấp |
+| Đỏ chỉ là lời khuyên | — | Không bao giờ làm cữ thành xanh → con số an toàn không đổi |
+| Kiểm chất lượng ảnh: tối nếu độ sáng < 50, mờ nếu độ nét Laplacian < 4 (mức 0,5% thấp nhất của ảnh val) | Chặn ảnh xấu trước khi nhận dạng | Chặn trước sẽ biến cữ xanh thành vàng (mất báo xanh) mà không thêm an toàn. Chỉ thêm lời khuyên "chụp lại" khi cữ đã không xanh |
+| `unchecked_count`, `frame` trong API | Bỏ | Thuốc "chỉ nhắc lịch"/nửa viên không bị báo đỏ oan; vỉ thuốc ngoài khung không bị đếm |
+
+**Kiểm cả chuỗi qua module trên val:**
+- **Đầu vào:** ảnh gốc → 2048 px JPEG q85 → module.
+- **Môi trường:** ONNX trên CPU, 1.244 cảnh, mỗi cảnh 3 + 3 phép tấn công.
+- **Giao thức:** như mục 12.5, mục tiêu fit 1,8%.
+
+| Đo | Báo xanh | Cận trên FA 107 | Cận trên viên lạ |
+|---|---|---|---|
+| PyTorch trước đây (cal/ev, fit trên crop nhãn thật) | 89,45 | 1,49 | 1,84 |
+| **Module, cal/ev, fit trên crop nhãn thật** | **91,07** | **1,52** | **1,81** |
+| Module, cal/ev, fit trên điểm của chính module | 90,43 | 1,35 | 1,64 |
+| Module, **ngưỡng triển khai cố định 0,0529**, toàn bộ val | 90,92 | 1,19 | 1,79 |
+
+- Module cao hơn ~1,6 điểm, an toàn tương đương.
+- Lý do chính: luật đếm của máy chủ cho 98,55% cảnh đủ điều kiện, so với 97,67% của luật "box phải trùng khung nhãn" trong code đánh giá. Ngoài ra crop không bị nén JPEG lại.
+- Cách chia tệ nhất: FA 2,29%, viên lạ 2,52%, giống mức của PyTorch (mục 12.5).
+
+**Đặc điểm khác đo được trên val:**
+- **Kết quả cữ ở ngưỡng cố định:** 1.131 xanh, 18 "partial" (có thuốc chỉ nhắc lịch), 95 chưa xanh.
+- **Độ trễ trên CPU i5-10400F, 6 luồng:** đọc ảnh 34 ms, detector 130 ms, nhận dạng 183 ms/viên. Cữ 3 viên mất khoảng 0,7 giây.
+- **Phép tấn công đi qua module:**
+  - viên 107: 1,2% lọt xanh, phần còn lại đỏ/vàng;
+  - viên lạ đã biết: 1,6% lọt xanh.
+  - Đây là tỉ lệ thô trên từng phép thử, khác với cận trên theo cảnh.

@@ -15,8 +15,8 @@ Repo này chứa **tài liệu dự án** và **mô hình AI cuối cùng** (ch�
 | Thử nghiệm chọn mô hình (3 phiên train trên Kaggle) | ✅ Xong |
 | Chốt mô hình cuối | ✅ Xong |
 | Xuất file ONNX để máy chủ chạy | ✅ Xong (`out/onnx_final/`) |
-| Module suy luận (code ghép 2 mô hình + luật xanh/đỏ/vàng) | ⏳ Đang làm |
-| Chạy tập test (một lần duy nhất) | ⏳ Sau khi có module |
+| Module suy luận + máy chủ API (`backend/`) | ✅ Xong, kiểm trên val: 90,9% báo xanh, an toàn ≤ 2% |
+| Chạy tập test (một lần duy nhất) | ⏳ Đang làm |
 | OCR đơn thuốc: chỉnh nghiêng, gom hàng, tách chẩn đoán | ⏳ 23–29/11 |
 
 ---
@@ -72,7 +72,7 @@ Lưu ý:
 - **App không chạy mô hình.** App chụp ảnh, xoay theo EXIF, thu về **cạnh dài 2048 px, JPEG chất lượng 85** (~290 KB), rồi gửi lên máy chủ kèm tên thuốc của cữ hiện tại:
   - `POST /v1/pills/verify`: kiểm viên thuốc;
   - `POST /v1/prescriptions/parse`: đọc đơn.
-- Máy chủ (FastAPI, chỉ CPU) chạy 2 file ONNX bằng ONNX Runtime. Module suy luận do phần AI viết; lớp API bọc ngoài sẽ thống nhất trong nhóm.
+- Máy chủ (FastAPI, chỉ CPU) chạy 2 file ONNX bằng ONNX Runtime: **[backend/API.md](backend/API.md)** (cách chạy, request/response, ví dụ). Chạy: `pip install -r backend/requirements.txt` rồi `uvicorn backend.medicheck_server.app:app --host 0.0.0.0 --port 8000`, xem `/docs`.
 - Kết quả trả về từng viên: trạng thái xanh/đỏ/vàng, vị trí box (để khoanh trên ảnh) và lý do.
 - Trạng thái và câu nói cho người dùng: [MediCheck_decisions.md](MediCheck_decisions.md) mục 5.
 - Các luồng màn hình: [MediCheck_brainstorm.md](MediCheck_brainstorm.md) mục 4.
@@ -92,7 +92,7 @@ Lưu ý:
 - danh sách 93 lớp được phép báo xanh (14 lớp còn lại luôn báo vàng);
 - cỡ ảnh gửi lên.
 
-`out/v2/lookup_name_classes.csv` là bảng tra **tên thuốc trên đơn → các lớp viên được phép**.
+`out/onnx_final/lookup_name_classes.csv` là bảng tra **tên thuốc trên đơn → các lớp viên được phép** (138 tên, chỉ lập từ tập train, đúng bảng đã dùng khi đo an toàn).
 
 ---
 
@@ -109,7 +109,7 @@ Lưu ý:
 | `out/onnx_final/` | **Bản triển khai:** `detector.onnx`, `recognizer.onnx`, `deploy_config.json`, `export.json` (kết quả kiểm khớp PyTorch, độ trễ) |
 | `out/s2/det/d2b/weights/best.pt`, `eval_val.json` | Detector cuối dạng PyTorch + số đo trên val |
 | `out/s3/r3b_seed1/model.pt`, `final.json` | Bộ nhận dạng cuối dạng PyTorch + số đo trên val |
-| `out/v2/lookup_name_classes.csv` | Bảng tra tên thuốc → lớp viên |
+| [backend/](backend/) | **Máy chủ AI**: module suy luận (`medicheck_server/infer.py`), FastAPI (`app.py`), [API.md](backend/API.md), `requirements.txt`, kiểm thử |
 | `docs/diagrams/` | 7 sơ đồ pipeline (ảnh PNG + nguồn Mermaid `.mmd`): tổng quan hệ thống, kiểm thuốc khi app chạy, tiền xử lý dữ liệu, train và chọn mô hình, đánh giá cả chuỗi, OCR, luồng người dùng |
 | [BAO_CAO_CONG_VIEC.md](BAO_CAO_CONG_VIEC.md) | Báo cáo ngắn sau mỗi phần việc |
 | [LICENSE-DINOv3.md](LICENSE-DINOv3.md) | Giấy phép DINOv3 (bắt buộc kèm theo khi phân phối trọng số dẫn xuất từ DINOv3) |
