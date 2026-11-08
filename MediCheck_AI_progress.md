@@ -100,6 +100,7 @@ Ký hiệu: ✅ xong · 🔄 đang làm · ⏳ chưa làm
 | `tests/test_eval.py` | 7 kiểm thử (chạy: `.venv/Scripts/python.exe tests/test_eval.py`) |
 | `kaggle/` | Script kernel các phiên (`medicheck-s1..s3`, smoke, embed, backbones) và thư mục nguồn dataset |
 | `scripts/` | Tiền xử lý dữ liệu và thử nghiệm C1–C2b |
+| `demo/` | **Chỉ ở máy local, không lên repo** (ảnh VAIPE): 4 ảnh thuốc + 4 đơn từ tập test, payload, kết quả module, ảnh mẫu thuốc để mua, `HUONG_DAN_DEMO.md` |
 | `docs/diagrams/` | 7 sơ đồ pipeline: `.mmd` (nguồn Mermaid, sửa được) + `.png` (nhúng vào các file `.md`, dán được vào báo cáo). Sửa pipeline thì sửa `.mmd` rồi render lại: `npx -p @mermaid-js/mermaid-cli@11.4.2 mmdc -i x.mmd -o x.png -s 2 -b white` |
 | `BAO_CAO_CONG_VIEC.md` | Báo cáo ngắn (~100 từ) sau mỗi task cho người dùng |
 
