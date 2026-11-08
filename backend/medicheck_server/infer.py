@@ -212,16 +212,19 @@ class PillVerifier:
                 if comp_cls[k] in self.measurable:
                     rx = so
             p.update(red_other_raw=ro, red_out_raw=rx)
+            # an extra pill may belong to a reminder-only line of this dose (its classes are unknown, so it looks
+            # "outside the prescription"): while such pills are expected, extra pills are never red "not in prescription"
+            maybe_unchecked = p["line_id"] is None and n_extra_yellow < unchecked
             best = None
             if ro >= self.thr_red_other:
                 best = (ro, "other_dose", ro_line)
-            if rx >= self.thr_red_out and (best is None or rx > best[0]):
+            if not maybe_unchecked and rx >= self.thr_red_out and (best is None or rx > best[0]):
                 best = (rx, "not_in_prescription", None)
             if best is not None:
                 p.update(status="red", reason=best[1], red_score=best[0])
                 if best[2] is not None:
                     p.update(other_line_id=best[2].line_id, other_name=best[2].name, other_sessions=list(best[2].sessions))
-            elif p["line_id"] is None and n_extra_yellow < unchecked:
+            elif maybe_unchecked:
                 n_extra_yellow += 1
                 p.update(status="yellow", reason="not_checkable")   # may be a pill of a reminder-only line
             else:

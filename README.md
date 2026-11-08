@@ -16,7 +16,7 @@ Repo này chứa **tài liệu dự án** và **mô hình AI cuối cùng** (ch�
 | Chốt mô hình cuối | ✅ Xong |
 | Xuất file ONNX để máy chủ chạy | ✅ Xong (`out/onnx_final/`) |
 | Module suy luận + máy chủ API (`backend/`) | ✅ Xong, kiểm trên val: 90,9% báo xanh, an toàn ≤ 2% |
-| Chạy tập test (một lần duy nhất) | ⏳ Đang làm |
+| Chạy tập test (một lần duy nhất) | ✅ **90,2% báo xanh, an toàn ≤ 2%** |
 | OCR đơn thuốc: chỉnh nghiêng, gom hàng, tách chẩn đoán | ⏳ 23–29/11 |
 
 ---
@@ -47,18 +47,18 @@ Hai mô hình chạy nối tiếp, sau đó là một bước ghép với đơn 
 
 Khoảng **1 giây cho 4 viên** trên CPU laptop, nên máy chủ không cần GPU.
 
-### Kết quả (trên tập validation)
+### Kết quả
 
-| Chỉ số | Kết quả |
-|---|---|
-| **Cữ thuốc đúng được báo xanh** (chạy cả chuỗi từ ảnh) | **89,5%** (mục tiêu ≥ 70%) |
-| Báo xanh nhầm khi có viên ngoài đơn (cận trên 95%) | ≤ 1,49% (chuẩn ≤ 2%) |
-| Báo xanh nhầm khi có viên lạ đã biết (cận trên 95%) | ≤ 1,84% (chuẩn ≤ 2%) |
-| Detector đếm đúng số viên | 98,7% số ảnh |
-| Nhận đúng loại thuốc từng viên | 95,8% số viên |
+| Chỉ số | **Test (chính thức, chạy 1 lần)** | Val |
+|---|---|---|
+| **Cữ thuốc đúng được báo xanh** (chạy cả chuỗi từ ảnh, qua máy chủ thật) | **90,2%** (mục tiêu ≥ 70%) | 90,9% |
+| Báo xanh nhầm khi có viên ngoài đơn (cận trên 95%) | **≤ 1,09%** (chuẩn ≤ 2%) | ≤ 1,19% |
+| Báo xanh nhầm khi có viên lạ đã biết (cận trên 95%) | **≤ 1,31%** (chuẩn ≤ 2%) | ≤ 1,79% |
+| Detector đếm đúng số viên | 98,5% | 98,6% |
+| Nhận đúng loại thuốc từng viên | – | 95,8% |
 
 Lưu ý:
-- Đây là số **validation**. Số chính thức là **test**, chỉ chạy một lần khi mọi thứ đã khóa, và sẽ cập nhật vào đây.
+- Số **test** là số chính thức: tập test bị khóa suốt quá trình chọn mô hình, chỉ chạy một lần; con số chính thức được đăng ký trước khi chạy.
 - Phần cữ không được báo xanh sẽ báo **vàng** ("hãy kiểm vỏ hộp"), không phải báo sai.
 
 ---

@@ -16,13 +16,15 @@ Ký hiệu: ✅ xong · 🔄 đang làm · ⏳ chưa làm
 | B. Chốt mô hình | Detector D2-B + bộ nhận dạng R3-B seed 1, ngưỡng 0,0529 | ✅ |
 | C. Xuất file triển khai | `out/onnx_final/`: `detector.onnx`, `recognizer.onnx`, `deploy_config.json` (khớp PyTorch) | ✅ |
 | D. Module suy luận + máy chủ API | `backend/`: module `PillVerifier` + FastAPI `POST /v1/pills/verify` + `API.md`; kiểm trên val qua module: 90,9% báo xanh, 1,19% / 1,79% | ✅ 08/11 |
-| E. Test một lần | Chạy test khóa qua module D, báo nguyên số | ⏳ **việc tiếp theo** |
+| E. Test một lần | Chạy test khóa qua module D: **90,2% báo xanh, cận trên 1,09% / 1,31%** → đạt | ✅ 08/11 |
+| F. Giao nhóm app | `backend/` + `API.md` (cách chạy, JSON, code Dart, demo Wi-Fi) trên repo | ✅ 08/11 |
 
 **Bản cuối** (chi tiết `MediCheck_decisions.md` mục 0):
 - **Detector:** YOLO26s, ngưỡng tin cậy 0,5, nhánh NMS.
 - **Bộ nhận dạng:** DINOv3 ViT-S/16 @384, mở toàn bộ + LLRD 0,75, seed 1.
 - **Quyết định:** đối thủ 0,5, ngưỡng 0,0529 (fit với mục tiêu cận trên 1,8%), 14 lớp luôn vàng.
-- **Val:** cả pipeline 89,5% cữ đúng được báo xanh; cận trên nhận nhầm 1,49% (viên 107) / 1,84% (viên lạ). Detector đếm đúng 98,7%; nhận dạng đúng trong ứng viên 95,8%.
+- **Test (chạy một lần, số chính thức): 90,2% cữ đúng được báo xanh; cận trên nhận nhầm 1,09% (viên ngoài đơn) / 1,31% (viên lạ) → đạt chuẩn ≤ 2%.**
+- **Val:** qua module 90,9% (PyTorch trước đây 89,5%); cận trên 1,19% / 1,79%. Detector đếm đúng 98,7%; nhận dạng đúng trong ứng viên 95,8%.
 - **Tốc độ:** CPU ~1 giây cho 4 viên.
 
 ---
@@ -32,10 +34,10 @@ Ký hiệu: ✅ xong · 🔄 đang làm · ⏳ chưa làm
 | # | Việc | Ghi chú |
 |---|---|---|
 | 1 | ✅ Module suy luận + server (`backend/`), kiểm trên val (`MediCheck_decisions.md` mục 13) | |
-| 2 | **Chạy test một lần** qua module: `python -m medicheck_ai.validate_infer --fold test --unseal-test --out out/infer_test` | Không chỉnh gì sau khi xem |
+| 2 | ✅ Test một lần (`MediCheck_decisions.md` mục 14.1) và giao `backend/` cho nhóm app | |
 | 3 | Cổng 22/11: kiểm `deploy_config.json`, đo độ trễ trên laptop demo | Không cần train |
 | 4 | OCR (23–29/11): chỉnh nghiêng, gom hàng, parser chẩn đoán, đo độ chính xác | |
-| 5 | Giao nhóm mobile: `backend/API.md` + chạy máy chủ demo | |
+| 5 | Hỗ trợ nhóm mobile ghép `POST /v1/pills/verify`; thêm OCR `POST /v1/prescriptions/parse` vào server | |
 | 6 | Đồng bộ báo cáo `.docx` theo hàng đợi mục 6; thêm hình (ma trận nhầm, ví dụ ca vàng) | |
 | 7 | Sau dự án: người dùng tạo lại token Kaggle | |
 
@@ -90,7 +92,7 @@ Ký hiệu: ✅ xong · 🔄 đang làm · ⏳ chưa làm
 | `out/v2/` | Nhãn v2, bộ chia v2, `lookup_name_classes.csv` (141 tên, lập từ **mọi fold**: chỉ để tham khảo, không dùng để triển khai hay đo) |
 | `out/v3det/` | Nhãn detector v3 |
 | `backend/` | **Máy chủ AI** (lên repo): `medicheck_server/infer.py` (module), `app.py` (FastAPI), `API.md`, `requirements.txt`, `tests/` |
-| `out/infer_val/` | Kiểm module trên val (`validate.json`, `red_raw.npz`, cache) |
+| `out/infer_val/`, `out/infer_test/` | Kiểm module trên val và **kết quả test chính thức** (`validate.json`, `red_raw.npz`, cache) |
 | `medicheck_ai/` | `eval.py`, `recognizer.py`, `detector.py`, `e2e.py`, `export_onnx.py`, `validate_infer.py` (chỉ ở máy local) |
 | `tests/test_eval.py` | 7 kiểm thử (chạy: `.venv/Scripts/python.exe tests/test_eval.py`) |
 | `kaggle/` | Script kernel các phiên (`medicheck-s1..s3`, smoke, embed, backbones) và thư mục nguồn dataset |
@@ -126,4 +128,5 @@ Ký hiệu: ✅ xong · 🔄 đang làm · ⏳ chưa làm
     - AGPL-3.0, DINOv3 License;
     - số val lạc quan nhẹ do chọn trên val;
     - ~17% ảnh có viên nền không nhãn.
-11. **Sau khi chạy test:** điền số test vào bảng kết quả và dòng "Content to be updated" ở kết luận.
+11. **Số test (đã có):** 90,2% báo xanh, cận trên 1,09% / 1,31%, detector đếm đúng 98,5%. Điền vào bảng kết quả, Bảng 3.5/3.6, dòng "Content to be updated" ở kết luận.
+12. Module suy luận + API (`backend/`), sơ đồ `docs/diagrams/` (dán làm hình), giới hạn báo đỏ oan 1,4% trên test.

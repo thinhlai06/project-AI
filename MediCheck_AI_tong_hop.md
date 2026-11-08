@@ -20,7 +20,7 @@ MediCheck giúp người cao tuổi **uống đúng thuốc theo đơn**. App c�
 
 Nguyên tắc số 1: **báo xanh nhầm là lỗi nguy hiểm nhất.** Ngưỡng được chọn sao cho **cận trên khoảng tin cậy 95% của tỉ lệ chấp nhận nhầm ≤ 2%**, cho cả viên ngoài đơn lẫn viên lạ đã biết. Sau đó mới tối đa hóa tỉ lệ cữ đúng được báo xanh (mục tiêu ≥ 70%).
 
-**Kết quả bản cuối, chạy cả chuỗi trên val:** **89,5% cữ đúng được báo xanh**. Nhận nhầm ≤ 1,49% (viên ngoài đơn) và ≤ 1,84% (viên lạ). Chạy trên CPU khoảng 1 giây cho 4 viên.
+**Kết quả chính thức trên tập test (chạy một lần):** **90,2% cữ đúng được báo xanh**. Nhận nhầm ≤ 1,09% (viên ngoài đơn) và ≤ 1,31% (viên lạ), đạt chuẩn ≤ 2%. Val: 90,9%. Chạy trên CPU khoảng 0,7 giây cho 3 viên.
 
 ---
 
@@ -34,7 +34,7 @@ Nguyên tắc số 1: **báo xanh nhầm là lỗi nguy hiểm nhất.** Ngưỡ
 | B. Chốt người | Chọn một ứng viên, khóa lại | ✅ Xong |
 | C. Đóng gói | Chuyển mô hình sang file ONNX để máy chủ chạy | ✅ Xong (`out/onnx_final/`) |
 | D. Viết "bản hướng dẫn công việc" | Module suy luận + máy chủ API (`backend/`): cắt ảnh, gọi mô hình, ghép với đơn, trả xanh/đỏ/vàng | ✅ Xong; kiểm trên val: 90,9% báo xanh, an toàn ≤ 2% |
-| E. Thi cuối kỳ | Chạy test **một lần** để có điểm chính thức | ⏳ Việc tiếp theo |
+| E. Thi cuối kỳ | Chạy test **một lần** để có điểm chính thức | ✅ **90,2% báo xanh, an toàn 1,09% / 1,31%** |
 
 ![Tổng quan hệ thống](docs/diagrams/01_tong_quan_he_thong.png)
 
@@ -418,7 +418,7 @@ Mục đích: quota GPU có hạn, phải bắt lỗi đường ống trước, 
 ### 9.4. Việc còn lại
 1. ✅ **Module suy luận** (`backend/medicheck_server/infer.py`) + server FastAPI. Trên val qua module: 91,1% (cal/ev), 90,9% ở ngưỡng cố định; an toàn 1,19% / 1,79%. Báo đỏ: "thuốc cữ khác" bắt 95% viên nhầm cữ; "không thuộc đơn" ngưỡng 0,30 để chỉ 0,31% viên đúng bị báo đỏ oan.
 2. **Cổng 22/11:** kiểm cấu hình triển khai, đo độ trễ trên laptop demo.
-3. **Test một lần** (tháng 12): mở khóa test, chạy qua module, báo nguyên số, không chỉnh gì sau khi xem.
+3. ✅ **Test một lần** (08/11, đăng ký trước con số chính thức): 90,2% báo xanh, cận trên 1,09% / 1,31%, detector đếm đúng 98,5%. Không chỉnh gì sau khi xem.
 
 ### 9.5. Pipeline khi app chạy
 ```
@@ -467,7 +467,7 @@ app: câu nói tổng + giọng nói + khoanh trên ảnh
 ### 10.4. Bậc mục tiêu
 | Cảnh đúng được báo xanh | Hành động |
 |---|---|
-| ≥ 70% | Đạt mục tiêu (bản cuối 89,5%) |
+| ≥ 70% | Đạt mục tiêu (test 90,2%) |
 | 50–70% | Vẫn báo xanh, nhiều vàng hơn, ghi rõ trong báo cáo |
 | < 50% | Bỏ báo xanh tự động, chỉ nhắc lịch |
 
@@ -486,7 +486,8 @@ app: câu nói tổng + giọng nói + khoanh trên ảnh
 | EfficientNet-B0 fine-tune (S2, mốc CNN) | 85,9% | 1,68% | 1,87% |
 | DINOv3-S mở toàn bộ + LLRD (S2 seed 0 / S3 seed 1) | 94,5% / 94,4% | 1,64% / 1,60% | 1,92% / 1,83% |
 | **BẢN CUỐI, cả chuỗi: D2-B + R3-B seed 1, ảnh 2048 px, cal/ev, mục tiêu 1,8%** | **89,5%** | **1,49%** | **1,84%** |
-| Test (chạy 1 lần) | _điền sau_ | | |
+| Qua module suy luận (ONNX, máy chủ thật), val, ngưỡng cố định | 90,9% | 1,19% | 1,79% |
+| **TEST (chạy 1 lần, số chính thức)** | **90,2%** | **1,09%** | **1,31%** |
 
 Các dòng trên đo trên crop nhãn thật (không có detector), đối thủ 0,5, mục tiêu 2,0, trừ dòng bản cuối. Số chính thức để báo cáo là dòng **cả chuỗi**. Số trên crop cao hơn khoảng 4 điểm: 1,3% cảnh detector đếm sai số viên, phần còn lại do khung box.
 
@@ -514,7 +515,7 @@ Các dòng trên đo trên crop nhãn thật (không có detector), đối thủ
 - Chỉ phủ 141 tên thuốc của một hệ thống bệnh viện; thuốc ngoài danh mục chỉ được nhắc lịch.
 - Test cùng nguồn chụp với train, nên có thể lạc quan hơn thực tế.
 - Viên lạ dùng để train và để đo đều từ cùng nguồn → số an toàn có thể lạc quan với thuốc hoàn toàn mới.
-- Số val lạc quan nhẹ vì val đã dùng để chọn cấu hình, ngưỡng, seed; số chính thức là test.
+- Báo đỏ "không thuộc đơn" báo oan 1,40% viên đúng trên test (val 0,11%); đỏ chỉ là lời khuyên, luôn kèm "hãy kiểm vỏ hộp".
 - Chưa thử trên ảnh chụp giấy thật và với người cao tuổi thật.
 - Không kiểm hàm lượng. Một số lớp gộp nhiều thuốc trông giống nhau (2, 37, 40, 104).
 - Sửa nhãn bằng luật + so ảnh, không có dược sĩ xác nhận. Nhãn box chặt do mô hình của tác giả bộ bổ sung gán rồi duyệt tay; ~17% ảnh có viên ở nền không nhãn.
@@ -527,8 +528,8 @@ Các dòng trên đo trên crop nhãn thật (không có detector), đối thủ
 
 | Câu hỏi | Gợi ý trả lời |
 |---|---|
-| **Accuracy của mô hình là bao nhiêu?** | "Trên tập validation, chạy cả chuỗi từ ảnh đến kết quả, hệ thống báo xanh đúng **89,5%** số cữ thuốc. Xác suất báo xanh nhầm cho viên ngoài đơn hoặc viên lạ đều dưới 2% (cận trên 95%: 1,49% và 1,84%). Từng tầng: detector đếm đúng số viên 98,7%, nhận dạng đúng thuốc từng viên 95,8%." Kèm số test khi đã chạy |
-| Sao 89,5% thấp hơn 95,8%? | 95,8% là từng viên; 89,5% là cả cữ, chỉ xanh khi **mọi viên** đúng và detector đếm đúng. Phần không xanh là vàng "kiểm tra lại", không phải báo sai |
+| **Accuracy của mô hình là bao nhiêu?** | "Trên tập test độc lập, chạy một lần qua đúng máy chủ app dùng, hệ thống báo xanh đúng **90,2%** số cữ thuốc. Xác suất báo xanh nhầm khi có viên ngoài đơn hoặc viên lạ có cận trên 95% là **1,09% và 1,31%**, dưới chuẩn 2%. Từng tầng: detector đếm đúng số viên 98,5%, nhận dạng đúng thuốc từng viên 95,8% (val)." |
+| Sao 90,2% thấp hơn 95,8%? | 95,8% là từng viên; 90,2% là cả cữ, chỉ xanh khi **mọi viên** đúng và detector đếm đúng. Phần không xanh là vàng "kiểm tra lại", không phải báo sai |
 | Sao không train một mô hình phân loại 107 lớp cho xong? | Phân loại đóng luôn trả về một lớp, kể cả viên lạ. Ta cần **từ chối** khi không chắc và đo được lỗi chấp nhận nhầm. Embedding + cosine + ngưỡng làm được việc đó |
 | Sao cần detector, không cắt ảnh bằng tay? | Một ảnh có nhiều viên; app phải đếm số viên và crop từng viên tự động |
 | 2% lấy ở đâu ra? | Mục tiêu an toàn dự án tự đặt: lỗi nguy hiểm hiếm và kiểm chứng được bằng cận trên. Không nới để tăng điểm; điểm chỉ tăng bằng mô hình tốt hơn |
@@ -548,7 +549,7 @@ Các dòng trên đo trên crop nhãn thật (không có detector), đối thủ
 | Sao app gửi ảnh 2048 px? | Đo trên val: 1280 px mất 3 điểm vì crop viên mờ; 2048 px chỉ kém ảnh gốc 0,7 điểm mà nhẹ hơn 10 lần (~290 KB) |
 | Máy chủ có cần GPU không? | Không: ONNX trên CPU ~1 giây cho 4 viên (đo thật), dưới mục tiêu 3 giây |
 | Bộ dữ liệu bổ sung dùng thế nào? Có rò rỉ không? | Mục 4.3: chỉ mượn box, không mượn ảnh VAIPE của tác giả; Negatives + ảnh ngoài vào train detector; VAIPE-test kiểm độc lập |
-| Test có bị "nhìn trộm" không? | Test khóa trong code; chọn mọi thứ trên val; test chạy một lần qua đúng module app dùng, báo nguyên số |
+| Test có bị "nhìn trộm" không? | Test khóa trong code; chọn mọi thứ trên val; con số chính thức được ghi và đẩy lên repo **trước** khi chạy (commit `bb87bd9`); test chạy một lần qua đúng module app dùng, báo nguyên số. Test (90,2%) gần val (90,9%) |
 | Nếu viên thuốc không có trong danh mục? | Không khớp lớp nào đủ chắc → vàng/đỏ "hãy kiểm vỏ hộp"; thuốc ngoài danh mục chỉ nhắc lịch |
 | Màu viên thay đổi thì sao? | Augmentation màu khi train; app không dùng màu để mô tả |
 | Sao không train lại OCR? | Không có dữ liệu chữ viết đơn để train thêm; mô hình công bố sẵn đã đạt 49/49 dòng trên PDF sạch |

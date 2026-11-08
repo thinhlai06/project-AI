@@ -16,15 +16,17 @@
 | File triển khai | `detector.onnx` (36 MB), `recognizer.onnx` (83 MB), `deploy_config.json` – khớp PyTorch | `out/onnx_final/` |
 | Tốc độ (CPU i5-10400F) | Detector ~140 ms/ảnh, nhận dạng ~190 ms/viên → ~1 giây cho 4 viên | mục 12.6 |
 
-**Kết quả trên val** (test chưa chạy):
+**Kết quả** (test chạy một lần ngày 08/11, mục 14.1):
 | Chỉ số | Giá trị |
 |---|---|
-| Detector đếm đúng số viên (ảnh) | 98,7% (mAP50 99,4, recall 99,45) |
+| **TEST – cữ đúng được báo xanh** (qua module, ngưỡng cố định) | **90,2%** |
+| **TEST – cận trên 95% chấp nhận nhầm: viên 107 / viên lạ** | **1,09% / 1,31%** (chuẩn ≤ 2%) |
+| Detector đếm đúng số viên (ảnh) | 98,7% (mAP50 99,4, recall 99,45); test 98,5% |
 | Nhận dạng đúng trong ứng viên (viên, crop nhãn thật) | 95,8% |
-| **Cữ đúng được báo xanh, cả pipeline** (ảnh 2048 px, cal/ev 5 cách chia) | **89,5%** |
-| Cận trên 95% chấp nhận nhầm: viên 107 / viên lạ đã biết | 1,49% / 1,84% (chuẩn ≤ 2%) |
+| Cữ đúng được báo xanh, cả pipeline, val (PyTorch, cal/ev 5 cách chia) | 89,5% (qua module: 90,9%) |
+| Cận trên 95% chấp nhận nhầm, val (PyTorch): viên 107 / viên lạ đã biết | 1,49% / 1,84% (qua module: 1,19% / 1,79%) |
 
-**Module suy luận + máy chủ API** (mục 13): `backend/`. Qua module trên val, ngưỡng cố định: **90,9% báo xanh**, cận trên 1,19% / 1,79%. Còn lại: chạy test **một lần** (mục 9).
+**Module suy luận + máy chủ API** (mục 13): `backend/`, tài liệu cho nhóm app `backend/API.md`. Qua module trên val: 90,9% báo xanh, cận trên 1,19% / 1,79%. **Test (chạy một lần, số chính thức): 90,2% cữ đúng được báo xanh; cận trên nhận nhầm 1,09% (viên ngoài đơn) / 1,31% (viên lạ) → đạt chuẩn ≤ 2%.**
 
 ---
 
@@ -99,7 +101,7 @@ Lý do chọn danh mục + embedding (so trên 400 đơn, DINOv2 chưa fine-tune
 
 | Cảnh đúng được báo xanh | Hành động |
 |---|---|
-| ≥ 70% | Đạt mục tiêu (bản cuối: 89,5% trên val) |
+| ≥ 70% | Đạt mục tiêu (test: 90,2%) |
 | 50–70% | Vẫn báo xanh, nhiều vàng hơn, ghi rõ trong báo cáo |
 | < 50% | Bỏ báo xanh tự động, app nhắc lịch và gợi ý kiểm tra |
 
@@ -229,7 +231,8 @@ Bảo mật: **không lưu họ tên, số BHYT, ảnh đơn hay ảnh thuốc**
 |---|---|---|
 | ✅ 3–8/11 | Dữ liệu, thử nghiệm C1–C9, train S1–S3 trên Kaggle, đánh giá cả pipeline, ONNX bản cuối | Khung app, database, màn đơn thuốc, lịch, nhắc, mock API |
 | ✅ 8/11 | Module suy luận + server FastAPI (`backend/`), kiểm trên val qua module (mục 13) | |
-| 9–22/11 | Chạy test một lần qua module; giao `backend/API.md` cho nhóm mobile. **Cổng 22/11:** đo độ trễ trên laptop demo | Màn chụp, kết quả xanh/vàng/đỏ, TTS, gọi API thật |
+| ✅ 8/11 | Chạy test một lần qua module (mục 14.1); giao `backend/` + `API.md` cho nhóm mobile | |
+| 9–22/11 | **Cổng 22/11:** đo độ trễ trên laptop demo, hỗ trợ nhóm mobile ghép API | Màn chụp, kết quả xanh/vàng/đỏ, TTS, gọi API thật |
 | 23–29/11 | OCR: chỉnh nghiêng, gom hàng, parser chẩn đoán, đo độ chính xác | Màn xác nhận đơn, đơn thiếu lịch |
 | 30/11–6/12 | Thêm `POST /v1/prescriptions/parse` (OCR) vào server | Tích hợp API đọc đơn |
 | 7–20/12 | Đồng bộ báo cáo `.docx`, hình cho báo cáo | Sửa lỗi, "Tôi đã uống", chế độ demo |
@@ -247,7 +250,8 @@ Kaggle: bản cuối không cần train thêm; ~17 giờ quota còn lại giữ 
 - App không kiểm hàm lượng. Lớp 2, 37, 40, 104 gộp nhiều thuốc hoặc hàm lượng; nhãn đơn 401 chưa xác định được.
 - Sửa nhãn bằng luật + so ảnh, không có chuyên gia dược xác nhận. Nhãn box chặt (v3) do mô hình của tác giả bộ bổ sung gán rồi duyệt tay; ~17% ảnh còn viên ở nền không có nhãn.
 - Viên lạ dùng để train (lớp 107 của train) và để đo đều cùng nguồn dữ liệu → chấp nhận nhầm đo được có thể lạc quan với thuốc hoàn toàn mới.
-- Số val lạc quan nhẹ vì val đã dùng để chọn cấu hình, ngưỡng và seed (chọn seed 1 thay seed 0: ≤ ~0,5 điểm). Số chính thức là test chạy một lần.
+- Val đã dùng để chọn cấu hình, ngưỡng và seed; test (chạy một lần) cho số gần bằng val (báo xanh 90,2% so với 90,9%), nên mức lạc quan nhỏ.
+- Báo đỏ "không khớp thuốc nào trong đơn" có thể báo oan viên đúng: 0,11% trên val nhưng 1,40% trên test (mục 14.1). Đỏ luôn kèm "hãy kiểm vỏ hộp" và không ảnh hưởng báo xanh.
 - App là công cụ hỗ trợ, không thay thế dược sĩ.
 - DINOv3 theo DINOv3 License của Meta (không phải mã nguồn mở OSI): phát hành phải kèm bản giấy phép; bài công bố phải ghi nhận DINOv3.
 - `ultralytics` và trọng số YOLO26 theo AGPL-3.0: phát hành dịch vụ ra ngoài phải công bố mã nguồn backend. Bộ bổ trợ Kaggle CC BY-NC-SA (không thương mại).
@@ -466,3 +470,32 @@ Ghi **trước khi mở khóa test** để không chọn số sau khi thấy k�
   - số đếm đúng của detector;
   - độ trễ.
   - Các số "cal/ev" trong file kết quả fit lại ngưỡng trên test, nên **không** phải số chính thức.
+
+### 14.1. Kết quả test (chạy một lần, 08/11/2026)
+
+`out/infer_test/validate.json`, 1.230 cảnh test (mỗi cảnh 3 + 3 phép tráo), ONNX trên CPU, 36 phút. Bảng tra 138 tên khớp với code đánh giá; 93 lớp đo được.
+
+**Số chính thức** (ngưỡng cố định 0,0529, toàn bộ test):
+| Chỉ số | Test | Val (cùng cách đo, qua module) | Tiêu chí |
+|---|---|---|---|
+| **Cữ đúng được báo xanh** | **90,16%** (1.109 xanh, 8 partial, 113 chưa xanh) | 90,92% | ≥ 70% → **đạt** |
+| **Cận trên 95% chấp nhận nhầm viên 107** | **1,09%** (trung bình 0,76%) | 1,19% | ≤ 2% → **đạt** |
+| **Cận trên 95% chấp nhận nhầm viên lạ đã biết** | **1,31%** (trung bình 1,00%) | 1,79% | ≤ 2% → **đạt** |
+
+Test gần bằng val (báo xanh −0,8 điểm, an toàn còn tốt hơn), nên việc chọn trên val không làm số lạc quan đáng kể.
+
+**Số phụ** (mô tả):
+- **Detector:** đếm đúng số viên ở 98,54% cảnh (val 98,55%).
+- **Báo đỏ:**
+  - viên bị chuyển sang cữ khác: bắt 95,8%, báo oan 0,22%;
+  - viên lạ đã biết: 64,3% bị báo đỏ "không thuộc đơn";
+  - viên 107: 0,2% đỏ, còn lại vàng.
+  - **Viên đúng bị báo đỏ oan: 1,40%** (val 0,11%). Mức này cao hơn val. Theo đăng ký trước, ngưỡng đỏ không được chỉnh theo test. Đỏ chỉ là lời khuyên (luôn kèm "hãy kiểm vỏ hộp") và không ảnh hưởng con số an toàn; ghi vào giới hạn.
+- **Độ trễ CPU:** detector 119 ms, nhận dạng 168 ms/viên.
+- Số "cal/ev" trong file (90,1–90,2%) fit lại ngưỡng trên test, chỉ để tham khảo.
+
+**Thay đổi sau khi đóng băng (khai báo):**
+- **Nội dung:** trong lúc test đang chạy, phép thử server bằng curl phát hiện lỗi: viên của thuốc "chỉ nhắc lịch" có thể bị báo đỏ "không khớp thuốc nào trong đơn".
+- **Cách sửa:** khi cữ còn viên chỉ nhắc lịch, viên dư được báo vàng "chưa kiểm được bằng hình".
+- **Thời điểm:** sửa trước khi xem kết quả test.
+- **Phạm vi:** chỉ đổi đỏ → vàng, không ảnh hưởng báo xanh hay an toàn. Số báo đỏ oan ở trên đã tính bằng module đã sửa; module lúc chạy test cho 1,57%.

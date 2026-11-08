@@ -126,7 +126,7 @@ Trợ lý AI kiểm tra an toàn dùng thuốc qua camera điện thoại. Đố
 - Lần đầu chụp đơn: *"Đặt đơn lên mặt bàn, giữ máy ngang phía trên đơn. Bấm nút tròn lớn khi đơn nằm gọn trong khung."* + ảnh minh họa + nút "Tôi hiểu rồi".
 - Lần đầu chụp thuốc: *"Xòe bàn tay ra, đặt thuốc lên lòng bàn tay, các viên rời nhau. Cầm máy bằng tay kia, chụp từ trên xuống."* + ảnh minh họa + nút "Bỏ qua" to. Từ lần 2 vào thẳng màn chụp.
 - Mọi kết quả quan trọng đọc to bằng TTS; nút 🔊 nghe lại ở mỗi màn; giọng nói mặc định bật, tắt được trong cài đặt.
-- Chữ lớn, tương phản cao, một nút chính mỗi màn. Tránh quá nhiều vàng ở lần đầu: ngưỡng được chọn để báo xanh tối đa trong chuẩn an toàn (89,5% cữ đúng báo xanh trên val).
+- Chữ lớn, tương phản cao, một nút chính mỗi màn. Tránh quá nhiều vàng ở lần đầu: ngưỡng được chọn để báo xanh tối đa trong chuẩn an toàn (90,2% cữ đúng báo xanh trên tập test).
 
 ### 4.7. Hành trình một ngày của bác Lan
 1. **Lần đầu:** chọn ảnh đơn → app đọc to lịch (thẻ chữ to) → 1 dòng vàng (thiếu lịch) → chọn "Để sau" → bấm "Gửi người thân kiểm tra" qua Zalo.
@@ -172,6 +172,7 @@ Mỗi cữ: **mở thông báo → chụp → "Tôi đã uống"** = 3 chạm.
 
 | Ngày | Quyết định |
 |---|---|
+| 2026-11-08 | **Máy chủ AI + test chính thức:** API `POST /v1/pills/verify` (`backend/API.md`) trả trạng thái từng viên, box để khoanh, câu nói và thuốc còn thiếu. Đỏ có 2 loại: "thuốc buổi khác" và "không khớp thuốc nào trong đơn" (ngưỡng chặt để ít báo oan). Viên của thuốc chỉ nhắc lịch luôn vàng, không đỏ. Kiểm chất lượng ảnh chỉ thêm lời khuyên, không làm mất xanh. **Test: 90,2% cữ đúng báo xanh, an toàn ≤ 2%** |
 | 2026-11-08 | **Bản cuối phần AI:** YOLO26s + DINOv3 ViT-S/16, cả chuỗi 89,5% cữ đúng báo xanh trên val, an toàn ≤ 2%, ~1 giây cho 4 viên trên CPU. App gửi ảnh 2048 px JPEG q85, không chạy mô hình trên máy. Chi tiết `MediCheck_decisions.md` mục 0, 12 |
 | 2026-11-07 | OCR tách thêm chẩn đoán, hiển thị "Bệnh: …", chỉ UI/UX (người dùng chọn) |
 | 2026-11-06 | Train chuyển sang Kaggle (người dùng chọn). Giữ chuẩn chấp nhận nhầm ≤ 2%, không nới |

@@ -55,6 +55,13 @@ def test_reminder_only_line():
     assert r["status"] == "partial" and r["unchecked"] == 1
 
 
+def test_reminder_only_pill_never_red_outside():
+    # the pill of a drug the lookup does not know looks "outside the prescription": it must be yellow, not red
+    r = V.decide(np.stack([pill(CA), pill(OUTSIDE, 0.9)]), [Line("a", A_NAME, 1), Line("x", "thuốc không có trong danh mục", 1)], [], session="sang")
+    assert r["status"] == "partial" and [p["status"] for p in r["pills"]] == ["green", "yellow"]
+    assert r["pills"][1]["reason"] == "not_checkable"
+
+
 def test_unmeasurable_class_never_green():
     um = sorted(set(range(NCLS)) - V.measurable)
     name = next((n for n, cl in V.lookup.items() if cl and cl <= set(um)), None)

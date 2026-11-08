@@ -4,6 +4,44 @@ Mỗi phần việc có một báo cáo ngắn khoảng 100 từ. Phân tích ch
 
 ---
 
+## Task 5 – Giao module và file ONNX cho nhóm app (08/11/2026) ✅
+
+**Đã làm:**
+- Trên repo có `backend/` (module + server), mô hình `out/onnx_final/`, [backend/API.md](backend/API.md) và README.
+- `API.md` gồm: cách chạy máy chủ, định dạng JSON gửi/nhận, ví dụ curl, **code Dart gọi API**, hướng dẫn demo qua Wi-Fi (firewall, Android cleartext).
+- Đã chạy máy chủ thật bằng uvicorn và gọi bằng curl: "Đúng hết. 5 viên khớp cữ sáng.", 1,6 giây.
+
+**Quyết định và phản biện:**
+- **Code Dart** dùng gói `image` (xoay EXIF, thu về 2048 px, JPEG q85), không dùng gói nén ảnh của hệ điều hành. Như vậy ảnh gửi lên giống đúng ảnh đã đo.
+- **Tìm và sửa lỗi:**
+  - viên của thuốc "chỉ nhắc lịch" từng bị báo đỏ oan, nay báo vàng;
+  - gõ payload có dấu trên dòng lệnh Windows làm hỏng tên thuốc. Đã ghi lưu ý UTF-8 vào `API.md`.
+
+**Cần bạn:** gửi link `backend/API.md` cho 2 bạn mobile.
+
+## Task 4 – Chạy test một lần (08/11/2026) ✅
+
+**Đã làm:**
+- Ghi trước con số chính thức và đẩy lên repo (commit `bb87bd9`).
+- Sau đó mới mở khóa test và chạy **một lần** qua đúng máy chủ: 1.230 cảnh, 36 phút.
+
+**Kết quả chính thức:**
+| | Test | Val |
+|---|---|---|
+| **Cữ đúng được báo xanh** | **90,2%** | 90,9% |
+| Cận trên nhận nhầm viên ngoài đơn | **1,09%** | 1,19% |
+| Cận trên nhận nhầm viên lạ | **1,31%** | 1,79% |
+| Detector đếm đúng | 98,5% | 98,6% |
+
+Cả hai chỉ số an toàn đạt chuẩn ≤ 2%; báo xanh vượt mục tiêu 70%. Test sát val, chứng tỏ cách chọn mô hình trên val không "học tủ".
+
+**Điểm cần biết:**
+- Trên test có 1,4% viên đúng bị báo đỏ oan (val 0,1%).
+- Theo nguyên tắc, tôi **không chỉnh** gì dựa trên test.
+- Đỏ chỉ là lời khuyên, luôn kèm "hãy kiểm vỏ hộp", và không ảnh hưởng an toàn. Đã ghi vào phần giới hạn.
+
+---
+
 ## Task 3 – Kiểm module trên tập val (08/11/2026) ✅
 
 **Đã làm:** cho toàn bộ 1.244 cảnh val đi đúng đường của app: ảnh 2048 px → module ONNX trên CPU, kèm các phép tráo viên lạ.

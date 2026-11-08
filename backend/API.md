@@ -103,11 +103,62 @@ Khung khoanh gợi ý: xanh = nét liền, vàng = nét đứt, đỏ = nét dà
 
 ### Ví dụ gọi bằng curl
 
+`payload` phải gửi dạng **UTF-8**. Trên Windows (Git Bash/PowerShell), gõ tên thuốc có dấu thẳng trên dòng lệnh có thể làm hỏng dấu. Khi đó máy chủ không nhận ra tên thuốc và coi là "chỉ nhắc lịch". Cách an toàn: ghi payload ra file UTF-8 rồi gửi bằng `-F "payload=<payload.json"`.
+
 ```bash
 curl -X POST http://localhost:8000/v1/pills/verify \
   -F "image=@cu_sang.jpg;type=image/jpeg" \
   -F 'payload={"session":"sang","session_lines":[{"line_id":"12","name":"cardilopin 5mg","count":2}],"other_lines":[]}'
 ```
+
+### Ví dụ gọi từ Flutter (Dart)
+
+Cần các gói `http` và `image` (v4). Nên chuẩn bị ảnh trong isolate (`compute`) để không đứng giao diện.
+
+```dart
+import 'dart:convert';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+import 'package:image/image.dart' as img;
+
+/// Xoay theo EXIF, thu cạnh dài về 2048 px, nén JPEG q85 (đúng cỡ ảnh mô hình đã được đo).
+Uint8List prepareUpload(Uint8List raw) {
+  final im = img.bakeOrientation(img.decodeImage(raw)!);
+  final longSide = im.width > im.height ? im.width : im.height;
+  final out = longSide <= 2048
+      ? im
+      : (im.width >= im.height
+          ? img.copyResize(im, width: 2048, interpolation: img.Interpolation.average)
+          : img.copyResize(im, height: 2048, interpolation: img.Interpolation.average));
+  return Uint8List.fromList(img.encodeJpg(out, quality: 85));
+}
+
+Future<Map<String, dynamic>> verifyDose(String baseUrl, File photo, Map<String, dynamic> payload) async {
+  final jpg = await compute(prepareUpload, await photo.readAsBytes());
+  final req = http.MultipartRequest('POST', Uri.parse('$baseUrl/v1/pills/verify'))
+    ..files.add(http.MultipartFile.fromBytes('image', jpg, filename: 'dose.jpg'))
+    ..fields['payload'] = jsonEncode(payload);
+  final res = await http.Response.fromStream(await req.send().timeout(const Duration(seconds: 20)));
+  if (res.statusCode != 200) {
+    throw Exception('verify ${res.statusCode}: ${utf8.decode(res.bodyBytes)}');
+  }
+  return jsonDecode(utf8.decode(res.bodyBytes)) as Map<String, dynamic>;   // tiếng Việt: luôn decode UTF-8
+}
+```
+
+**Payload** dựng từ SQLite:
+- `session_lines`: các `drug_line` của cữ hiện tại có `check_mode = chấm ảnh`, với `count` = `dose_schedule.amount`.
+- `other_lines`: các dòng còn lại của cùng đơn, kèm danh sách `session` của chúng.
+- `unchecked_count`: tổng số viên của các dòng "chỉ nhắc lịch" hoặc nửa viên trong cữ.
+
+### Chạy demo qua Wi-Fi (laptop làm máy chủ)
+
+- **Mạng:** laptop và điện thoại cùng một mạng Wi-Fi. Lấy IP laptop bằng lệnh `ipconfig`, ví dụ `192.168.1.10`. App gọi `http://192.168.1.10:8000`.
+- **Firewall:** lần đầu chạy, Windows hỏi cho phép Python qua firewall, hãy chọn **Private networks**.
+- **Android:** gọi HTTP thường trong mạng LAN cần `android:usesCleartextTraffic="true"` trong `AndroidManifest.xml`, hoặc cấu hình network security cho IP đó.
+- **Nếu không cùng mạng:** dùng tunnel HTTPS (ví dụ `cloudflared tunnel --url http://localhost:8000`).
+- **Thời gian chờ:** đặt tối thiểu 20 giây. Bình thường mỗi lần kiểm mất 1–2 giây; lần gọi đầu sau khi khởi động có thể chậm hơn.
 
 ## `POST /v1/prescriptions/parse`
 
