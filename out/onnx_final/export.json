@@ -1,0 +1,17 @@
+{
+ "recognizer": {
+  "file": "out/onnx_final\\recognizer.onnx",
+  "mb": 82.8,
+  "size": 384,
+  "max_abs_cos_diff": 8.50483775138855e-06,
+  "top1_agree": 100.0,
+  "cpu_ms_1": 187.9,
+  "cpu_ms_4": 869.6
+ },
+ "detector": {
+  "file": "out\\onnx_final\\detector.onnx",
+  "mb": 36.4,
+  "count_same_pct": 100.0,
+  "cpu_ms": 141.7
+ }
+}
