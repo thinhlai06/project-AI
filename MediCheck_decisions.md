@@ -446,3 +446,23 @@ Code: `backend/medicheck_server/infer.py` (module `PillVerifier`), `backend/medi
   - viên 107: 1,2% lọt xanh, phần còn lại đỏ/vàng;
   - viên lạ đã biết: 1,6% lọt xanh.
   - Đây là tỉ lệ thô trên từng phép thử, khác với cận trên theo cảnh.
+
+---
+
+## 14. Đánh giá trên tập test – đăng ký trước khi chạy (08/11/2026)
+
+Ghi **trước khi mở khóa test** để không chọn số sau khi thấy kết quả:
+- **Chạy một lần duy nhất**, bằng lệnh `python -m medicheck_ai.validate_infer --fold test --unseal-test --out out/infer_test`.
+- Đường đi giống hệt app: ảnh gốc → 2048 px JPEG q85 → module `PillVerifier` (ONNX, CPU).
+- Dùng `deploy_config.json` và bảng tra như đã đóng băng ở commit `0713118`. Không đổi gì sau khi xem kết quả.
+- **Số chính thức** (`deployment_fixed_threshold`): ngưỡng cố định 0,0529, đo trên **toàn bộ** cảnh test. Gồm:
+  - tỉ lệ cữ đúng được báo xanh;
+  - cận trên 95% (bootstrap theo nhóm đơn) của chấp nhận nhầm viên 107 và viên lạ đã biết (3 + 3 phép tráo mỗi cảnh).
+- **Tiêu chí:**
+  - **Đạt an toàn** khi cả hai cận trên ≤ 2%. Nếu vượt thì báo cáo nguyên số và ghi rõ là không đạt; không chỉnh ngưỡng.
+  - **Đạt mục tiêu tiện dụng** khi báo xanh ≥ 70%.
+- **Số phụ** (chỉ mô tả, không dùng để chỉnh gì):
+  - tỉ lệ báo đỏ oan và tỉ lệ bắt viên lạ/nhầm cữ ở ngưỡng đỏ đã chốt;
+  - số đếm đúng của detector;
+  - độ trễ.
+  - Các số "cal/ev" trong file kết quả fit lại ngưỡng trên test, nên **không** phải số chính thức.
