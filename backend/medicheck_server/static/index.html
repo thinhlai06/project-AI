@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MediCheck – Demo</title>
+<style>
+  :root { --bg:#f4f6f8; --card:#fff; --ink:#1d2733; --mut:#5f6b7a; --line:#d9dee5; --blue:#2463b7;
+          --green:#1f8a3b; --red:#c62828; --yellow:#b8860b; --ybg:#fff7dc; --gbg:#e8f5ec; --rbg:#fdecea; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:"Segoe UI",Arial,sans-serif; background:var(--bg); color:var(--ink); font-size:16px; }
+  header { background:var(--blue); color:#fff; padding:14px 20px; display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+  header h1 { margin:0; font-size:22px; }
+  header .st { font-size:14px; opacity:.9; }
+  main { max-width:1180px; margin:0 auto; padding:16px; display:grid; gap:16px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px 18px; }
+  .card h2 { margin:0 0 4px; font-size:19px; }
+  .sub { color:var(--mut); margin:0 0 12px; font-size:14px; }
+  .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  button, .file { background:var(--blue); color:#fff; border:0; border-radius:8px; padding:10px 16px; font-size:15px; cursor:pointer; }
+  button.ghost { background:#fff; color:var(--blue); border:1px solid var(--blue); }
+  button:disabled { opacity:.45; cursor:default; }
+  .file input { display:none; }
+  table { border-collapse:collapse; width:100%; font-size:14px; margin-top:10px; }
+  th, td { border-bottom:1px solid var(--line); padding:6px 6px; text-align:left; vertical-align:middle; }
+  th { background:#eef2f7; font-weight:600; }
+  td input { width:52px; padding:4px; font-size:14px; }
+  td select { max-width:280px; font-size:14px; padding:3px; }
+  tr.rev td { background:var(--ybg); }
+  .tag { display:inline-block; font-size:12px; border-radius:10px; padding:1px 8px; background:#eef2f7; color:var(--mut); }
+  .tag.y { background:var(--ybg); color:#7a5a00; }
+  .meta { margin-top:8px; font-size:15px; }
+  .sessions button { min-width:92px; }
+  .sessions button.on { background:var(--ink); }
+  .expect { margin:10px 0 0; padding-left:20px; }
+  .grid2 { display:grid; grid-template-columns: minmax(0,1.2fr) minmax(0,1fr); gap:16px; margin-top:12px; }
+  @media (max-width:860px){ .grid2 { grid-template-columns: 1fr; } }
+  canvas { width:100%; height:auto; border-radius:8px; border:1px solid var(--line); background:#fafafa; }
+  .summary { font-size:21px; font-weight:600; padding:12px 14px; border-radius:8px; margin-bottom:10px; }
+  .summary.green { background:var(--gbg); color:var(--green); }
+  .summary.not_green, .summary.partial { background:var(--ybg); color:#6f5200; }
+  .summary.hasred { background:var(--rbg); color:var(--red); }
+  .pill { border:1px solid var(--line); border-left-width:6px; border-radius:6px; padding:8px 10px; margin-bottom:8px; font-size:15px; }
+  .pill.green { border-left-color:var(--green); } .pill.red { border-left-color:var(--red); } .pill.yellow { border-left-color:var(--yellow); }
+  .small { color:var(--mut); font-size:13px; }
+  .busy { color:var(--mut); font-style:italic; }
+  .err { color:var(--red); }
+</style>
+</head>
+<body>
+<header>
+  <h1>MediCheck – Demo</h1>
+  <span class="st" id="health">Đang kết nối máy chủ…</span>
+</header>
+<main>
+  <!-- ======================= FLOW 1 ======================= -->
+  <section class="card">
+    <h2>Luồng 1 · Đọc đơn thuốc</h2>
+    <p class="sub">Chọn ảnh hoặc PDF đơn thuốc. Máy chủ đọc chữ (OCR), tách tên thuốc, số lượng, lịch uống, rồi khớp tên với danh mục. Người dùng kiểm tra và sửa trước khi xác nhận.</p>
+    <div class="row">
+      <label class="file">Chọn ảnh / PDF đơn<input type="file" id="presFile" accept="image/*,application/pdf"></label>
+      <span id="presStatus" class="small"></span>
+    </div>
+    <div id="presResult"></div>
+  </section>
+
+  <!-- ======================= FLOW 2 ======================= -->
+  <section class="card">
+    <h2>Luồng 2 · Kiểm thuốc theo cữ</h2>
+    <p class="sub">Chọn cữ, đặt đúng các viên của cữ lên lòng bàn tay rồi chụp. Ảnh được thu về cạnh dài 2048 px (như app) trước khi gửi.</p>
+    <div class="row sessions" id="sessions">
+      <button data-s="sang" disabled>Sáng</button><button data-s="trua" disabled>Trưa</button>
+      <button data-s="chieu" disabled>Chiều</button><button data-s="toi" disabled>Tối</button>
+      <span class="small" id="sesHint">Hãy xác nhận đơn ở luồng 1 trước.</span>
+    </div>
+    <div id="expect"></div>
+    <div class="row" style="margin-top:10px">
+      <label class="file" id="pillBtn" style="opacity:.45">Chọn ảnh thuốc trên tay<input type="file" id="pillFile" accept="image/*" disabled></label>
+      <span id="pillStatus" class="small"></span>
+    </div>
+    <div class="grid2" id="pillOut" style="display:none">
+      <div><canvas id="cv"></canvas></div>
+      <div>
+        <div id="summary" class="summary"></div>
+        <div class="row" style="margin-bottom:10px"><button class="ghost" id="speak">🔊 Đọc to</button></div>
+        <div id="pills"></div>
+        <div id="meta" class="small"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+const SES = { sang: "Sáng", trua: "Trưa", chieu: "Chiều", toi: "Tối" };
+const COL = { green: "#1f8a3b", red: "#c62828", yellow: "#d9a400" };
+let catalog = [], confirmed = null, session = null, lastSummary = "";
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+async function init() {
+  try {
+    const h = await (await fetch("/health")).json();
+    $("health").textContent = h.ok ? `Máy chủ sẵn sàng · mô hình ${h.model_version}` : "Máy chủ chưa sẵn sàng";
+    catalog = (await (await fetch("/v1/catalog")).json()).names;
+  } catch (e) { $("health").textContent = "Không kết nối được máy chủ"; }
+}
+
+// ---------------- Flow 1: prescription
+$("presFile").addEventListener("change", async (ev) => {
+  const f = ev.target.files[0]; if (!f) return;
+  $("presStatus").innerHTML = '<span class="busy">Đang đọc đơn…</span>'; $("presResult").innerHTML = "";
+  const fd = new FormData(); fd.append("file", f, f.name);
+  try {
+    const r = await fetch("/v1/prescriptions/parse", { method: "POST", body: fd });
+    const j = await r.json(); if (!r.ok) throw new Error(j.detail || r.status);
+    $("presStatus").textContent = `Đọc xong trong ${(j.timing_ms / 1000).toFixed(1)} giây · ${j.lines.length} dòng thuốc`;
+    renderPres(j);
+  } catch (e) { $("presStatus").innerHTML = `<span class="err">Lỗi: ${esc(e.message)}</span>`; }
+  ev.target.value = "";
+});
+
+function nameSelect(cur) {
+  const opts = ['<option value="">(không có trong danh mục – chỉ nhắc lịch)</option>']
+    .concat(catalog.map((n) => `<option value="${esc(n)}" ${n === cur ? "selected" : ""}>${esc(n)}</option>`));
+  return `<select>${opts.join("")}</select>`;
+}
+
+function renderPres(j) {
+  const rows = j.lines.map((l) => `
+    <tr class="${l.needs_review ? "rev" : ""}" data-i="${l.index}">
+      <td>${l.index}</td>
+      <td>${esc(l.raw_name)}${l.needs_review ? ' <span class="tag y">cần kiểm</span>' : ""}</td>
+      <td>${nameSelect(l.name)}</td>
+      <td><input data-k="qty" value="${l.quantity ?? ""}"></td>
+      ${Object.keys(SES).map((s) => `<td><input data-k="${s}" value="${esc(l.schedule[s] ?? "")}"></td>`).join("")}
+      <td>${esc(l.note ?? "")}<br><span class="small">${esc({ regular: "", half_pill: "nửa viên – chỉ nhắc", as_needed: "khi cần – chỉ hiển thị", missing_schedule: "đơn thiếu lịch" }[l.dose_type])}</span></td>
+    </tr>`).join("");
+  $("presResult").innerHTML = `
+    <div class="meta">Ngày kê: <b>${esc(j.issued_date ?? "?")}</b> &nbsp;·&nbsp; Bệnh: <b>${esc(j.diagnosis ?? "–")}</b></div>
+    <table><thead><tr><th>#</th><th>Đọc được</th><th>Tên trong danh mục</th><th>SL</th>
+      <th>Sáng</th><th>Trưa</th><th>Chiều</th><th>Tối</th><th>Ghi chú</th></tr></thead><tbody>${rows}</tbody></table>
+    <div class="row" style="margin-top:12px"><button id="confirm">Xác nhận đơn</button>
+      <span class="small">Dòng tô vàng: hãy kiểm lại trước khi xác nhận. Sửa tên bằng cách chọn, không cần gõ.</span></div>`;
+  $("confirm").onclick = () => confirmPres();
+}
+
+function confirmPres() {
+  const lines = [...document.querySelectorAll("#presResult tbody tr")].map((tr) => {
+    const v = (k) => tr.querySelector(`input[data-k="${k}"]`).value.trim();
+    const sched = {}; Object.keys(SES).forEach((s) => { if (v(s)) sched[s] = v(s); });
+    return { id: "L" + tr.dataset.i, raw: tr.children[1].firstChild.textContent.trim(), name: tr.querySelector("select").value || null, qty: v("qty"), sched };
+  });
+  confirmed = lines;
+  document.querySelectorAll("#sessions button").forEach((b) => (b.disabled = !lines.some((l) => l.sched[b.dataset.s])));
+  $("sesHint").textContent = "Chọn cữ cần kiểm.";
+  $("presStatus").textContent = "Đã xác nhận đơn – chuyển sang luồng 2.";
+}
+
+// ---------------- Flow 2: pills
+document.querySelectorAll("#sessions button").forEach((b) => b.addEventListener("click", () => {
+  session = b.dataset.s;
+  document.querySelectorAll("#sessions button").forEach((x) => x.classList.toggle("on", x === b));
+  const items = confirmed.filter((l) => l.sched[session]);
+  $("expect").innerHTML = `<p class="meta">Cữ <b>${SES[session]}</b> cần uống:</p><ul class="expect">` +
+    items.map((l) => `<li>${esc(l.name ?? l.raw)} × <b>${esc(l.sched[session])}</b>${l.name ? "" : ' <span class="tag y">chỉ nhắc lịch</span>'}${l.sched[session].includes("/") ? ' <span class="tag y">nửa viên – chỉ nhắc</span>' : ""}</li>`).join("") + "</ul>";
+  $("pillFile").disabled = false; $("pillBtn").style.opacity = 1; $("sesHint").textContent = "";
+}));
+
+function buildPayload() {
+  const sl = [], ol = []; let unchecked = 0;
+  for (const l of confirmed) {
+    const a = l.sched[session];
+    if (a) {
+      const n = parseFloat(a);
+      if (l.name && !a.includes("/") && Number.isInteger(n) && n > 0) sl.push({ line_id: l.id, name: l.name, count: n });
+      else unchecked += a.includes("/") ? 1 : Math.max(1, Math.round(n) || 1);
+    } else if (l.name) {
+      ol.push({ line_id: l.id, name: l.name, sessions: Object.keys(l.sched) });
+    }
+  }
+  return { session, session_lines: sl, other_lines: ol, unchecked_count: unchecked };
+}
+
+async function shrink(file) {   // what the app does: EXIF rotation, long side 2048 px, JPEG q85
+  const img = await createImageBitmap(file, { imageOrientation: "from-image" });
+  const s = Math.min(1, 2048 / Math.max(img.width, img.height));
+  const c = document.createElement("canvas"); c.width = Math.round(img.width * s); c.height = Math.round(img.height * s);
+  c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+  return { blob: await new Promise((r) => c.toBlob(r, "image/jpeg", 0.85)), canvas: c };
+}
+
+$("pillFile").addEventListener("change", async (ev) => {
+  const f = ev.target.files[0]; if (!f || !session) return;
+  const payload = buildPayload();
+  if (!payload.session_lines.length) { $("pillStatus").innerHTML = '<span class="err">Cữ này không có thuốc nào kiểm được bằng ảnh.</span>'; return; }
+  $("pillStatus").innerHTML = '<span class="busy">Đang kiểm…</span>';
+  try {
+    const { blob, canvas } = await shrink(f);
+    const fd = new FormData(); fd.append("image", blob, "dose.jpg"); fd.append("payload", JSON.stringify(payload));
+    const r = await fetch("/v1/pills/verify", { method: "POST", body: fd });
+    const j = await r.json(); if (!r.ok) throw new Error(JSON.stringify(j.detail || r.status));
+    $("pillStatus").textContent = `Kiểm xong trong ${(j.timing_ms.total / 1000).toFixed(1)} giây`;
+    renderPills(j, canvas);
+  } catch (e) { $("pillStatus").innerHTML = `<span class="err">Lỗi: ${esc(e.message)}</span>`; }
+  ev.target.value = "";
+});
+
+function renderPills(j, src) {
+  const cv = $("cv"); cv.width = src.width; cv.height = src.height;
+  const g = cv.getContext("2d"); g.drawImage(src, 0, 0);
+  const lw = Math.max(4, Math.round(src.width / 220));
+  j.pills.forEach((p, k) => {
+    const [x1, y1, x2, y2] = p.box; g.lineWidth = p.status === "red" ? lw * 1.6 : lw;
+    g.strokeStyle = COL[p.status]; g.setLineDash(p.status === "yellow" ? [lw * 3, lw * 2] : []);
+    g.strokeRect(x1 * cv.width, y1 * cv.height, (x2 - x1) * cv.width, (y2 - y1) * cv.height);
+    g.setLineDash([]); g.fillStyle = COL[p.status]; g.font = `bold ${lw * 7}px Segoe UI`;
+    g.fillText(String(k + 1) + (p.status === "green" ? " ✓" : p.status === "red" ? " ✗" : " ?"), x1 * cv.width, Math.max(lw * 7, y1 * cv.height - lw));
+  });
+  const hasRed = j.pills.some((p) => p.status === "red");
+  $("summary").className = "summary " + j.status + (hasRed ? " hasred" : "");
+  $("summary").textContent = j.summary; lastSummary = j.summary;
+  $("pills").innerHTML = j.pills.map((p, k) => `<div class="pill ${p.status}"><b>${k + 1}.</b> ${esc(p.message)}</div>`).join("") +
+    j.missing.map((m) => `<div class="pill yellow">Thiếu: ${esc(m.name)} × ${m.count}</div>`).join("");
+  $("meta").textContent = `Phát hiện ${j.n_detected}/${j.n_expected} viên · đọc ảnh ${j.timing_ms.decode} ms · tìm viên ${j.timing_ms.detect} ms · nhận dạng ${j.timing_ms.recognize} ms · mô hình ${j.model_version}`;
+  $("pillOut").style.display = "grid";
+  speak();
+}
+
+function speak() {
+  if (!("speechSynthesis" in window) || !lastSummary) return;
+  const u = new SpeechSynthesisUtterance(lastSummary); u.lang = "vi-VN";
+  const v = speechSynthesis.getVoices().find((x) => x.lang && x.lang.toLowerCase().startsWith("vi")); if (v) u.voice = v;
+  speechSynthesis.cancel(); speechSynthesis.speak(u);
+}
+$("speak").onclick = speak;
+init();
+</script>
+</body>
+</html>

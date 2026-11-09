@@ -81,7 +81,7 @@ Nhưng **không phải một bài phân loại ảnh đơn thuần.** Tên đún
 | Nhận ra viên là thuốc nào | **Fine-grained recognition** bằng **embedding + cosine** (metric learning) | DINOv3 biến crop viên thành vector 384 số, so cosine với 107 "vector mẫu" | Các lớp rất giống nhau, khác ở chữ dập, rãnh bẻ |
 | Biết lúc nào **không** được kết luận | **Open-set recognition / selective classification** | Ngưỡng điểm; viên lạ → vàng/đỏ, không "đoán bừa" | Ngoài đời luôn có viên không thuộc đơn |
 | Ghép nhiều viên với nhiều thuốc của cữ | **Assignment problem** | `scipy.optimize.linear_sum_assignment` | Tối ưu cho cả cữ, không từng viên |
-| Đọc đơn | **OCR** + **parsing** | PP-OCRv5 tìm dòng → VietOCR đọc → luật tách trường → khớp mờ 141 tên | Chữ in tiếng Việt có dấu |
+| Đọc đơn | **OCR** + **parsing** | PP-OCRv5 tìm dòng → VietOCR đọc → luật tách trường → khớp mờ 138 tên | Chữ in tiếng Việt có dấu |
 
 **Câu trả lời mẫu khi bị hỏi "bài toán của em là classification à?"**
 > "Không chỉ là classification. Lõi là nhận dạng viên thuốc, nhưng bài toán thật là **xác minh**: app đã biết đơn kê thuốc gì, chỉ cần trả lời *viên này có đúng là thuốc của cữ này không*. Em dùng detection để tìm viên, embedding + cosine để đo độ giống, rồi **từ chối khi không chắc** (open-set), và ghép tối ưu cả cữ. Bộ phân loại đóng 107 lớp luôn trả về một tên, kể cả khi viên không thuộc danh mục, nên nguy hiểm."
@@ -209,7 +209,7 @@ Không dùng bộ nào cho **bộ nhận dạng**: chúng không có tên thuố
 | 5'. Augmentation | Mô phỏng điều kiện chụp khác nhau và box detector lệch box gốc | Khi suy luận dùng lề 13% trên box chặt để khung tương đương |
 | 6'. Đệm xám thành vuông | Không méo hình viên | Kéo giãn làm viên tròn thành bầu dục |
 
-**Đơn thuốc:** OCR → parser tách trường (tên, số lượng, buổi, trước/sau ăn, ngày kê, **chẩn đoán**) → khớp mờ 141 tên → bảng tra → **tập lớp viên được phép** mỗi dòng → lịch theo buổi. Màn xác nhận **bắt buộc**, vì lỗi OCR có thể thành lỗi uống thuốc.
+**Đơn thuốc:** OCR → parser tách trường (tên, số lượng, buổi, trước/sau ăn, ngày kê, **chẩn đoán**) → khớp mờ 138 tên → bảng tra → **tập lớp viên được phép** mỗi dòng → lịch theo buổi. Màn xác nhận **bắt buộc**, vì lỗi OCR có thể thành lỗi uống thuốc.
 
 ---
 
@@ -293,12 +293,13 @@ Không dùng bộ nào cho **bộ nhận dạng**: chúng không có tên thuố
 
 ### 6.5. OCR đơn thuốc
 
-PP-OCRv5 mobile (tìm dòng chữ) → **VietOCR `vgg_transformer`** (đọc chữ có dấu) → parser luật → khớp mờ 141 tên. Không train lại.
+PP-OCRv5 mobile (tìm dòng chữ) → **VietOCR `vgg_transformer`** (đọc chữ có dấu) → parser luật → khớp mờ 138 tên. Không train lại.
 
 ![OCR đơn thuốc](docs/diagrams/06_ocr_don_thuoc.png)
 
 *Sơ đồ: `docs/diagrams/06_ocr_don_thuoc.png` (nguồn sửa được: `docs/diagrams/06_ocr_don_thuoc.mmd`).*
 
+- **Kết quả test (một lần):** 99,85% dòng thuốc đúng hoàn toàn trên ảnh gốc, 98,93% trên ảnh mô phỏng chụp giấy; khoảng 5 giây/đơn trên CPU. Chưa đo trên ảnh chụp giấy thật (`MediCheck_decisions.md` mục 15).
 - **Vì sao VietOCR:** trên 318 ô chữ, đọc đúng lịch uống 98%, so với 40% của PP-OCRv5 recognition (bản này mất dấu "Chiều").
 - **Toàn chuỗi:** PDF sạch đúng **49/49 dòng thuốc**; ảnh làm nhiễu mạnh chỉ 10/49. Vì vậy đường chính là chọn ảnh/PDF, và màn xác nhận là bắt buộc.
 
@@ -319,7 +320,7 @@ PP-OCRv5 mobile (tìm dòng chữ) → **VietOCR `vgg_transformer`** (đọc ch�
 | Không mô tả màu | Ảnh mẫu ("ảnh minh họa") + khoanh vị trí | Màu thay đổi theo đèn và máy |
 | Hiển thị chẩn đoán | App hiện "Bệnh: …"; **không** dùng cho quyết định AI; chỉ lưu trên điện thoại | Có trên mọi đơn VAIPE; giúp biết thuốc chữa bệnh gì; đọc sai bệnh không ảnh hưởng an toàn |
 | Ảnh gửi lên 2048 px | App thu ảnh về cạnh dài 2048 px, JPEG q85 (~290 KB) | Đo: 1280 px mất 3 điểm báo xanh (crop mờ); 2048 px chỉ kém ảnh gốc 0,7 điểm mà nhẹ hơn 10 lần |
-| Danh mục đóng | Chỉ 141 tên VAIPE; thuốc ngoài danh mục chỉ nhắc lịch | Không có dữ liệu thuốc khác |
+| Danh mục đóng | Chỉ 138 tên VAIPE (lập từ train); thuốc ngoài danh mục chỉ nhắc lịch | Không có dữ liệu thuốc khác |
 
 ---
 
@@ -514,7 +515,7 @@ Các dòng trên đo trên crop nhãn thật (không có detector), đối thủ
 
 ## 12. Giới hạn (nói trước khi bị hỏi)
 
-- Chỉ phủ 141 tên thuốc của một hệ thống bệnh viện; thuốc ngoài danh mục chỉ được nhắc lịch.
+- Chỉ phủ 138 tên thuốc của một hệ thống bệnh viện; thuốc ngoài danh mục chỉ được nhắc lịch.
 - Test cùng nguồn chụp với train, nên có thể lạc quan hơn thực tế.
 - Viên lạ dùng để train và để đo đều từ cùng nguồn → số an toàn có thể lạc quan với thuốc hoàn toàn mới.
 - Báo đỏ "không thuộc đơn" báo oan 1,40% viên đúng trên test (val 0,11%); đỏ chỉ là lời khuyên, luôn kèm "hãy kiểm vỏ hộp".

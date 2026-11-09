@@ -161,7 +161,7 @@ Không dùng MEDISEG, ePillID (thuốc nước ngoài). CURE, VAIPE đầy đủ
 
 ## 7. OCR
 
-**Chuỗi:** PP-OCRv5 mobile detection → **VietOCR `vgg_transformer`** → parser quy tắc → khớp mờ từ điển 141 tên. Không train lại (dùng trọng số công bố).
+**Chuỗi:** PP-OCRv5 mobile detection → **VietOCR `vgg_transformer`** → parser quy tắc → khớp mờ từ điển 138 tên (chỉ lập từ train). Không train lại (dùng trọng số công bố).
 
 **Trường tách ra:** tên thuốc, số lượng, buổi uống và số viên mỗi buổi, ghi chú trước/sau ăn, ngày kê đơn, **chẩn đoán** (người dùng chọn 2026-11-07). Chẩn đoán **chỉ để hiển thị** ("Bệnh: …" trong chi tiết đơn và lịch uống), không dùng cho quyết định nào của AI. Cả 1.173 đơn VAIPE có ô chẩn đoán (1.650 ô, nhãn `diagnose`), 75% có mã ICD-10. Parser: lấy dòng bắt đầu bằng "Chẩn đoán" (chịu lỗi dấu "Chần/Chấn"), nối dòng bị ngắt tới trường kế tiếp, tách bệnh theo ";", hiển thị tên bệnh (giữ mã ICD trong dữ liệu). Lỗi hay gặp: "I10" thành "110"; người dùng sửa được trên màn xác nhận. API `POST /v1/prescriptions/parse` trả thêm trường `diagnosis`.
 
@@ -175,9 +175,9 @@ Nhận dạng trên box chuẩn, 40 đơn, 318 ô, ảnh sạch:
 Toàn chuỗi, 20 đơn, 49 dòng thuốc: PDF sạch **49/49** dòng đúng (20/20 đơn); làm nhiễu mạnh (xoay 2°, bóng, mờ, JPEG 45) **10/49** (0/20 đơn). Parser trên 3.994 ô lịch: 99,8% khớp quy tắc.
 
 Quyết định:
-- Đường chính là **chọn ảnh/PDF đơn từ điện thoại** (đúng loại dữ liệu đã đo). Chụp giấy là đường phụ, phải có quality gate và **chỉnh nghiêng + gom hàng** (chưa làm).
+- Đường chính là **chọn ảnh/PDF đơn từ điện thoại** (đúng loại dữ liệu đã đo). Chụp giấy là đường phụ, có **chỉnh nghiêng + gom hàng** (đã làm, kết quả ở mục 15).
 - Màn xác nhận bắt buộc trên mọi đơn.
-- Báo cáo nêu rõ: **chưa đo trên ảnh chụp giấy thật**.
+- Báo cáo nêu rõ: **chưa đo trên ảnh chụp giấy thật** (mục 15 chỉ đo trên ảnh làm nhiễu mô phỏng).
 - Trên Windows phải tắt oneDNN ở Paddle (`enable_mkldnn=False`).
 
 ---
@@ -233,9 +233,9 @@ Bảo mật: **không lưu họ tên, số BHYT, ảnh đơn hay ảnh thuốc**
 | ✅ 8/11 | Module suy luận + server FastAPI (`backend/`), kiểm trên val qua module (mục 13) | |
 | ✅ 8/11 | Chạy test một lần qua module (mục 14.1); giao `backend/` + `API.md` cho nhóm mobile | |
 | 9–22/11 | **Cổng 22/11:** đo độ trễ trên laptop demo, hỗ trợ nhóm mobile ghép API | Màn chụp, kết quả xanh/vàng/đỏ, TTS, gọi API thật |
-| 23–29/11 | OCR: chỉnh nghiêng, gom hàng, parser chẩn đoán, đo độ chính xác | Màn xác nhận đơn, đơn thiếu lịch |
-| 30/11–6/12 | Thêm `POST /v1/prescriptions/parse` (OCR) vào server | Tích hợp API đọc đơn |
-| 7–20/12 | Đồng bộ báo cáo `.docx`, hình cho báo cáo | Sửa lỗi, "Tôi đã uống", chế độ demo |
+| ✅ 9/11 | OCR: chỉnh nghiêng, gom hàng, parser chẩn đoán, đo độ chính xác (mục 15) | Màn xác nhận đơn, đơn thiếu lịch |
+| ✅ 9/11 | Thêm `POST /v1/prescriptions/parse` (OCR) vào server | Tích hợp API đọc đơn |
+| ✅ 10/11 | Đồng bộ báo cáo `.docx` (bản v6) | Sửa lỗi, "Tôi đã uống", chế độ demo |
 | 21–31/12 | Báo cáo, demo | Báo cáo, demo |
 
 Kaggle: bản cuối không cần train thêm; ~17 giờ quota còn lại giữ để dự phòng (quota không reset đến 15/11).
@@ -499,3 +499,30 @@ Test gần bằng val (báo xanh −0,8 điểm, an toàn còn tốt hơn), nên
 - **Cách sửa:** khi cữ còn viên chỉ nhắc lịch, viên dư được báo vàng "chưa kiểm được bằng hình".
 - **Thời điểm:** sửa trước khi xem kết quả test.
 - **Phạm vi:** chỉ đổi đỏ → vàng, không ảnh hưởng báo xanh hay an toàn. Số báo đỏ oan ở trên đã tính bằng module đã sửa; module lúc chạy test cho 1,57%.
+
+---
+
+## 15. OCR qua server: kết quả val và test (09/11/2026)
+
+**Cách làm:** PP-OCRv5 mobile det và VietOCR `vgg_transformer` xuất sang ONNX, chạy bằng ONNX Runtime CPU, không cần Paddle hay PyTorch. Bản ONNX khớp bản gốc: 180/180 ô chữ, 611/611 box. Parser và các luật chỉ được chỉnh trên **val**; test chỉ chạy **một lần** sau khi chốt code (`out/ocr_test/ocr_eval.json`).
+
+**Cách chấm:** một dòng đúng hoàn toàn khi tên, số lượng và lịch uống đều đúng. Tên được tính đúng khi trỏ về cùng tập lớp viên với tên thật. "Mô phỏng chụp giấy" là ảnh gốc làm nhiễu (xoay 3°, ánh sáng không đều, nhiễu, mờ, JPEG 45).
+
+| Chỉ số | Test, ảnh gốc | Test, mô phỏng chụp giấy | Val, ảnh gốc | Val, mô phỏng |
+|---|---|---|---|---|
+| Tên thuốc | 100% | 100% | 100% | 99,55% |
+| Số lượng | 100% | 100% | 100% | 99,70% |
+| Lịch uống | 99,85% | 98,93% | 99,70% | 99,55% |
+| **Dòng thuốc đúng hoàn toàn** | **99,85%** | **98,93%** | 99,70% | 99,25% |
+| **Đơn đúng hoàn toàn** | **99,66%** | **97,96%** | 99,32% | 98,98% |
+| Ngày kê | 100% | 98,98% | 100% | 99,66% |
+| Chẩn đoán (đúng theo ký tự) | 98,50% | 94,85% | 98,88% | 95,20% |
+| Giây/đơn (CPU) | 5,3 | 5,8 | 4,7 | 4,8 |
+
+Test: 294 đơn, 655 dòng thuốc. Val: 294 đơn, 667 dòng.
+
+**Lỗi còn lại trên test:**
+- Ảnh gốc: 1 dòng (đơn 355, Kagasdine). OCR đọc thêm "Sáng" mà nhãn VAIPE không có; cùng kiểu với đơn 820, 821 trên val.
+- Mô phỏng: 7 dòng, đều sai lịch uống: có dòng mất một buổi, có dòng mất cả lịch.
+
+**Giới hạn:** chưa đo trên ảnh chụp giấy thật; ảnh mô phỏng không thay được ảnh thật. Vì vậy màn xác nhận vẫn bắt buộc trên mọi đơn.

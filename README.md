@@ -17,7 +17,7 @@ Repo này chứa **tài liệu dự án** và **mô hình AI cuối cùng** (ch�
 | Xuất file ONNX để máy chủ chạy | ✅ Xong (`out/onnx_final/`) |
 | Module suy luận + máy chủ API (`backend/`) | ✅ Xong, kiểm trên val: 90,9% báo xanh, an toàn ≤ 2% |
 | Chạy tập test (một lần duy nhất) | ✅ **90,2% báo xanh, an toàn ≤ 2%** |
-| OCR đơn thuốc: chỉnh nghiêng, gom hàng, tách chẩn đoán | ⏳ 23–29/11 |
+| OCR đơn thuốc (`POST /v1/prescriptions/parse`) | ✅ Xong, test một lần: **99,85% dòng thuốc đúng hoàn toàn** trên ảnh gốc, 98,93% trên ảnh mô phỏng chụp giấy |
 
 ---
 
@@ -133,7 +133,7 @@ Lưu ý:
 ## Giới hạn và giấy phép
 
 - **Phạm vi:**
-  - Prototype cho danh mục đóng: 141 tên thuốc của một hệ thống bệnh viện. Thuốc ngoài danh mục chỉ được nhắc lịch.
+  - Prototype cho danh mục đóng: 138 tên thuốc của một hệ thống bệnh viện. Thuốc ngoài danh mục chỉ được nhắc lịch.
   - Không kiểm hàm lượng.
   - Chưa thử với ảnh chụp đơn giấy thật và người cao tuổi thật.
 - **Số đo:** số an toàn đo bằng viên lạ cùng nguồn dữ liệu, nên có thể lạc quan với thuốc hoàn toàn mới.

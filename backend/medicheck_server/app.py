@@ -14,9 +14,12 @@ from contextlib import asynccontextmanager
 from typing import List, Literal, Optional
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, ValidationError
 
 from .infer import Line, PillVerifier
+from .ocr import PrescriptionReader
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 MODEL_DIR = os.environ.get("MEDICHECK_MODEL_DIR", os.path.join(ROOT, "out", "onnx_final"))
@@ -81,15 +84,57 @@ class VerifyResponse(BaseModel):
     model_version: str
 
 
+class DrugLineOut(BaseModel):
+    index: int = Field(..., description="Order on the prescription")
+    raw_name: str = Field(..., description="Drug name as read by OCR")
+    name: Optional[str] = Field(None, description="Matched dictionary name: send it as `name` to /v1/pills/verify. null = not in the catalog (reminder only)")
+    name_score: float = Field(..., description="Similarity of the OCR name to the matched name (0-1)")
+    quantity: Optional[int] = Field(None, description="SL (number of pills prescribed)")
+    schedule: dict = Field(..., description="Pills per session, e.g. {\"sang\": \"1\", \"toi\": \"2\"}; \"1/2\" = half pill")
+    dose_type: Literal["regular", "half_pill", "as_needed", "missing_schedule"]
+    note: Optional[str] = Field(None, description="trước khi ăn / sau khi ăn / trong khi ăn")
+    usage_text: Optional[str] = Field(None, description="Schedule text as read (for the confirmation screen)")
+    ocr_confidence: float
+    needs_review: bool = Field(..., description="Highlight this line on the confirmation screen")
+
+
+class ParseResponse(BaseModel):
+    lines: List[DrugLineOut]
+    diagnosis: Optional[str] = Field(None, description="Display only ('Bệnh: ...'), never used by the AI")
+    issued_date: Optional[str] = Field(None, description="YYYY-MM-DD")
+    needs_review: bool
+    n_text_boxes: int
+    deskew_angle: float
+    timing_ms: int
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    STATE["verifier"] = PillVerifier(MODEL_DIR, LOOKUP, threads=int(os.environ.get("MEDICHECK_THREADS", "4")))
+    th = int(os.environ.get("MEDICHECK_THREADS", "4"))
+    STATE["verifier"] = PillVerifier(MODEL_DIR, LOOKUP, threads=th)
+    STATE["reader"] = PrescriptionReader(MODEL_DIR, list(STATE["verifier"].lookup), threads=th)
     yield
     STATE.clear()
 
 
 app = FastAPI(title="MediCheck AI", version="1.0.0", lifespan=lifespan,
-              description="Pill verification for one dose of a prescription. See backend/API.md.")
+              description="Prescription reading and pill verification. See backend/API.md.")
+
+
+STATIC = os.path.join(os.path.dirname(__file__), "static")
+app.mount("/static", StaticFiles(directory=STATIC), name="static")
+
+
+@app.get("/", include_in_schema=False)
+def demo_page():
+    """Demonstration web page (both flows), for presentations only; the mobile app calls the API directly."""
+    return FileResponse(os.path.join(STATIC, "index.html"))
+
+
+@app.get("/v1/catalog")
+def catalog():
+    """Drug names the pill models can check (for the 'choose, do not type' correction on the confirmation screen)."""
+    return {"names": sorted(STATE["verifier"].lookup), "model_version": STATE["verifier"].version}
 
 
 @app.get("/health")
@@ -118,7 +163,14 @@ def verify(image: UploadFile = File(..., description="Photo of the dose, JPEG, l
         raise HTTPException(400, f"cannot process image: {type(e).__name__}")
 
 
-@app.post("/v1/prescriptions/parse", status_code=501)
-def parse_prescription():
-    """OCR of the prescription: planned for 23-29/11 (MediCheck_decisions.md sec. 7, 9)."""
-    raise HTTPException(501, "not implemented yet")
+@app.post("/v1/prescriptions/parse", response_model=ParseResponse)
+def parse_prescription(file: UploadFile = File(..., description="Prescription image (PNG/JPEG) or PDF")):
+    """Read a prescription: drug lines (name matched to the catalog, quantity, schedule, note), issue date, diagnosis.
+    The app must show every result on the confirmation screen (MediCheck_decisions.md sec. 7)."""
+    data = file.file.read()
+    if not data:
+        raise HTTPException(400, "empty file")
+    try:
+        return STATE["reader"].read(data, file.filename or "")
+    except Exception as e:
+        raise HTTPException(400, f"cannot read prescription: {type(e).__name__}")

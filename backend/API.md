@@ -1,6 +1,6 @@
 # MediCheck AI – API kiểm thuốc (dành cho nhóm app)
 
-Máy chủ FastAPI chạy 2 mô hình ONNX trên CPU. **App không chạy mô hình**: app chỉ chụp ảnh, gửi lên và hiển thị kết quả.
+Máy chủ FastAPI chạy các mô hình ONNX trên CPU (2 mô hình kiểm thuốc + 2 mô hình đọc đơn). **App không chạy mô hình**: app chỉ chụp ảnh, gửi lên và hiển thị kết quả.
 
 ![Kiểm thuốc khi app chạy](../docs/diagrams/02_suy_luan_kiem_thuoc.png)
 
@@ -13,8 +13,9 @@ uvicorn backend.medicheck_server.app:app --host 0.0.0.0 --port 8000
 ```
 
 - Tài liệu tương tác (thử API ngay trên trình duyệt): `http://<ip-máy-chủ>:8000/docs`.
+- Trang web demo cả 2 luồng (chỉ để trình bày, app không dùng): `http://<ip-máy-chủ>:8000/`.
 - Kiểm tra máy chủ sống: `GET /health` → `{"ok": true, "model_version": "final-2026-11-08"}`.
-- Khởi động khoảng 3 giây (nạp 2 mô hình). Mỗi lần kiểm khoảng 1–2 giây cho 3–5 viên trên CPU laptop.
+- Khởi động khoảng 5 giây (nạp 4 mô hình). Mỗi lần kiểm khoảng 1–2 giây cho 3–5 viên trên CPU laptop.
 - Demo: điện thoại và laptop cùng mạng Wi-Fi, app gọi `http://<ip-laptop>:8000`.
 - Biến môi trường (không bắt buộc):
   - `MEDICHECK_MODEL_DIR`: mặc định `out/onnx_final`;
@@ -162,7 +163,56 @@ Future<Map<String, dynamic>> verifyDose(String baseUrl, File photo, Map<String, 
 
 ## `POST /v1/prescriptions/parse`
 
-Đọc đơn thuốc (OCR). **Chưa có**, trả về 501. Lịch làm: 23–29/11. Định dạng sẽ bổ sung vào file này.
+Đọc đơn thuốc (OCR: PP-OCRv5 tìm dòng chữ + VietOCR đọc chữ + bộ luật tách trường). Body `multipart/form-data` có 1 phần:
+
+| Phần | Kiểu | Nội dung |
+|---|---|---|
+| `file` | PNG / JPEG / PDF | Ảnh đơn hoặc file PDF (đọc trang đầu). Nhập file là luồng chính; chụp giấy là luồng phụ |
+
+Kết quả (rút gọn, đơn mẫu `demo/don_thuoc_582.png`):
+
+```json
+{
+  "lines": [
+    {
+      "index": 2,
+      "raw_name": "PANACTOL 500mg",
+      "name": "panactol 500mg",
+      "name_score": 1.0,
+      "quantity": 10,
+      "schedule": {"sang": "1", "toi": "1"},
+      "dose_type": "regular",
+      "note": null,
+      "usage_text": "Uống Sáng 1 Viên Tối 1 Viên",
+      "ocr_confidence": 0.9,
+      "needs_review": false
+    }
+  ],
+  "diagnosis": "H81 - Rối loạn chức năng tiền đình; (R51) Đau đầu",
+  "issued_date": "2020-07-07",
+  "needs_review": true,
+  "n_text_boxes": 42,
+  "deskew_angle": 0.0,
+  "timing_ms": 4800
+}
+```
+
+| Trường | Ý nghĩa với app |
+|---|---|
+| `name` | Tên trong danh mục, lưu vào `drug_line.matched_name` và gửi đúng chuỗi này làm `name` cho `/v1/pills/verify`. `null` = thuốc ngoài danh mục → **chỉ nhắc lịch** |
+| `raw_name` | Tên đọc được, hiển thị cho người dùng |
+| `schedule` | Số viên mỗi cữ (`sang`/`trua`/`chieu`/`toi`); `"1/2"` = nửa viên |
+| `dose_type` | `regular`; `half_pill` (chỉ nhắc, không chấm ảnh); `as_needed` (khi cần, không nhắc giờ); `missing_schedule` (khoá dòng, người dùng phải chọn lịch) |
+| `needs_review` | `true` → tô nổi dòng đó trên màn xác nhận |
+| `diagnosis` | Chỉ hiển thị, AI không dùng |
+
+- App **luôn** hiện màn xác nhận cho mọi đơn; sửa bằng cách chọn, không gõ tự do.
+- Mỗi đơn đọc mất khoảng 5 giây trên CPU laptop; đặt thời gian chờ tối thiểu 30 giây.
+- Lỗi: `400` file rỗng hoặc không đọc được.
+
+## `GET /v1/catalog`
+
+Trả về `{"names": [...138 tên...], "model_version": "..."}`: danh sách tên thuốc mô hình kiểm được, dùng cho ô **chọn tên** khi người dùng sửa một dòng trên màn xác nhận.
 
 ## An toàn: vì sao tin được màu xanh
 

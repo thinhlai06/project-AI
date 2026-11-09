@@ -36,9 +36,9 @@ Ký hiệu: ✅ xong · 🔄 đang làm · ⏳ chưa làm
 | 1 | ✅ Module suy luận + server (`backend/`), kiểm trên val (`MediCheck_decisions.md` mục 13) | |
 | 2 | ✅ Test một lần (`MediCheck_decisions.md` mục 14.1) và giao `backend/` cho nhóm app | |
 | 3 | Cổng 22/11: kiểm `deploy_config.json`, đo độ trễ trên laptop demo | Không cần train |
-| 4 | OCR (23–29/11): chỉnh nghiêng, gom hàng, parser chẩn đoán, đo độ chính xác | |
-| 5 | Hỗ trợ nhóm mobile ghép `POST /v1/pills/verify`; thêm OCR `POST /v1/prescriptions/parse` vào server | |
-| 6 | Đồng bộ báo cáo `.docx` theo hàng đợi mục 6; thêm hình (ma trận nhầm, ví dụ ca vàng) | |
+| 4 | ✅ OCR: chỉnh nghiêng, gom hàng, parser chẩn đoán, đo trên val và test một lần (`MediCheck_decisions.md` mục 15) | Xong 09/11 |
+| 5 | ✅ Thêm `POST /v1/prescriptions/parse`, `GET /v1/catalog` vào server. Còn lại: hỗ trợ nhóm mobile ghép API | |
+| 6 | ✅ Đồng bộ báo cáo `.docx` (bản v6, 60 trang, có ma trận nhầm lẫn) | Xong 10/11 |
 | 7 | Sau dự án: người dùng tạo lại token Kaggle | |
 
 ---

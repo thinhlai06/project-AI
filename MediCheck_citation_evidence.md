@@ -171,7 +171,21 @@ Mỗi dòng ghi một trích dẫn trong báo cáo, vị trí trong tài liệu 
 | For the ViT-S/14 model used here, the smallest in their comparison, they report 81.1% accuracy on ImageNet-1k with a linear classifier . | PDF p. 12 (Table 4) | kNN linear Method Arch. Data Text sup. val val ReaL V2 |
 | For the ViT-S/14 model used here, the smallest in their comparison, they report 81.1% accuracy on ImageNet-1k with a linear classifier . | PDF p. 12 (Table 4) | ViT-S/14 LVD-142M ✕ 79.0 81.1 86.6 70.9 ViT-B/14 LVD-142M ✕ 82.1 84.5 88.3 75.1 ViT-L/14 LVD-142M |
 
-## [10] F. Wang, X. Xiang, J. Cheng, and A. L. Yuille, “NormFace: L2 hypersphere embedding for face verification,” in Proc. ACM Int. Conf. Multimedia, 2017, pp. 1041–1049.
+## [10] O. Siméoni et al., “DINOv3,” 2025, arXiv:2508.10104.
+
+| Nội dung trong báo cáo | Vị trí | Câu gốc |
+|---|---|---|
+| DINOv3, by Siméoni et al., trains a teacher of 7 billion parameters on a curated image set named LVD-1689M. | HTML Sec. 1 (The DINOv3 Family of Models) | In this work, we successfully train a DINO model with 7B parameters. |
+| DINOv3, by Siméoni et al., trains a teacher of 7 billion parameters on a curated image set named LVD-1689M. | HTML Sec. 3.1 (Data Collection and Curation) | This results in a curated subset of 1,689 million images (named LVD-1689M) |
+| DINOv3, by Siméoni et al., trains a teacher of 7 billion parameters on a curated image set named LVD-1689M. | HTML Sec. 7 (satellite results) | the model trained on LVD-1689M (see Sec. 3.1 ) |
+| To prevent the patch-level features from degrading during long training, it adds Gram anchoring, a loss that keeps the similarities between patch features close to those of an earlier checkpoint. | Abstract | Second, we introduce a new method called Gram anchoring, which effectively addresses the known yet unsolved issue of dense feature maps degrading during long training schedules. |
+| To prevent the patch-level features from degrading during long training, it adds Gram anchoring, a loss that keeps the similarities between patch features close to those of an earlier checkpoint. | HTML Sec. 4.2 (Gram Objective) | We want to push the Gram matrix of the student towards that of an earlier model, referred to as the Gram teacher . |
+| The teacher is then distilled into smaller ViT students with a patch size of 16 pixels and rotary position embeddings; this project uses the smallest, ViT-S/16, with about 21 million parameters. | HTML Sec. 1 (The DINOv3 Family of Models) | The distillation process produces model variants at multiple scales, including Vision Transformer (ViT) Small, Base, and Large, as well as ConvNeXt-based architectures. |
+| The teacher is then distilled into smaller ViT students with a patch size of 16 pixels and rotary position embeddings; this project uses the smallest, ViT-S/16, with about 21 million parameters. | HTML Table 2 caption | Importantly, we use a patch size of 16 pixels, changing the effective sequence length for a given resolution. |
+| The teacher is then distilled into smaller ViT students with a patch size of 16 pixels and rotary position embeddings; this project uses the smallest, ViT-S/16, with about 21 million parameters. | HTML Sec. 1 (Overview of Contributions) | We include modern position embeddings (axial RoPE) and develop a regularization technique to avoid positional artifacts. |
+| The teacher is then distilled into smaller ViT students with a patch size of 16 pixels and rotary position embeddings; this project uses the smallest, ViT-S/16, with about 21 million parameters. | HTML Sec. 5.2 (Model Distillation) | They include the standard ViT-S (21M params), B (86M), L (0.3B) |
+
+## [11] F. Wang, X. Xiang, J. Cheng, and A. L. Yuille, “NormFace: L2 hypersphere embedding for face verification,” in Proc. ACM Int. Conf. Multimedia, 2017, pp. 1041–1049.
 
 | Nội dung trong báo cáo | Vị trí | Câu gốc |
 |---|---|---|
@@ -180,14 +194,20 @@ Mỗi dòng ghi một trích dẫn trong báo cáo, vị trí trong tài liệu 
 | found that training on this similarity with a plain softmax loss may not converge, so they multiply it by a scale parameter, for which they suggest about 20 or 30 or learning the value during training : | PDF p. 4 (Sec. 3.3) | say 20 or 30 for |
 | found that training on this similarity with a plain softmax loss may not converge, so they multiply it by a scale parameter, for which they suggest about 20 or 30 or learning the value during training : | PDF p. 4 (Sec. 3.3) | we prefer to make the parameter automatically learned by back-propagation |
 
-## [11] S. Vaze, K. Han, A. Vedaldi, and A. Zisserman, “Open-set recognition: A good closed-set classifier is all you need?,” in Proc. Int. Conf. Learn. Represent. (ICLR), 2022.
+## [12] S. Vaze, K. Han, A. Vedaldi, and A. Zisserman, “Open-set recognition: A good closed-set classifier is all you need?,” in Proc. Int. Conf. Learn. Represent. (ICLR), 2022.
 
 | Nội dung trong báo cáo | Vị trí | Câu gốc |
 |---|---|---|
 | show that this ability improves together with accuracy on the known classes, and that the largest raw logit, rather than a softmax probability, is a strong score for the decision : | PDF p. 1 (Abstract) | the ability of a classifier to make the ‘none-of-above’ decision is highly correlated with its accuracy on the closed-set classes. |
 | show that this ability improves together with accuracy on the known classes, and that the largest raw logit, rather than a softmax probability, is a strong score for the decision : | PDF p. 2 (Sec. 1) | We also propose the use of the maximum logit score (MLS), rather than normalized softmax probabilities, as an open-set indicator. |
 
-## [12] Elfsong, “VAIPE_PILL,” Hugging Face dataset. Accessed: Nov. 5, 2026. [Online]. Available: https://huggingface.co/datasets/Elfsong/VAIPE_PILL
+## [13] PaddlePaddle, “PP-OCRv5,” PaddleOCR Documentation. Accessed: Nov. 5, 2026. [Online]. Available: https://www.paddleocr.ai/latest/en/version3.x/algorithm/PP-OCRv5/PP-OCRv5.html
+
+| Nội dung trong báo cáo | Vị trí | Câu gốc |
+|---|---|---|
+| *PP-OCRv5 mobile detection  with VietOCR recognition is selected for reading prescriptions. | Documentation, detection table | PP-OCRv5_mobile_det |
+
+## [14] Elfsong, “VAIPE_PILL,” Hugging Face dataset. Accessed: Nov. 5, 2026. [Online]. Available: https://huggingface.co/datasets/Elfsong/VAIPE_PILL
 
 | Nội dung trong báo cáo | Vị trí | Câu gốc |
 |---|---|---|
@@ -195,24 +215,10 @@ Mỗi dòng ghi một trích dẫn trong báo cáo, vị trí trong tài liệu 
 | The main source is the VAIPE_PILL dataset published on Hugging Face, which contains pill images, prescription images and a table that maps one to the other . | Dataset card | config_name: prescription |
 | The main source is the VAIPE_PILL dataset published on Hugging Face, which contains pill images, prescription images and a table that maps one to the other . | Dataset card | config_name: pill_pres_map |
 
-## [13] cubist38, “AI4VN_VAIPE,” GitHub repository. Accessed: Nov. 5, 2026. [Online]. Available: https://github.com/cubist38/AI4VN_VAIPE
-
-| Nội dung trong báo cáo | Vị trí | Câu gốc |
-|---|---|---|
-| Its class definitions match the AI4VN VAIPE challenge, as described by a participating team . | README title | AI4VN_VAIPE - Team Real Cotton Candy |
-| Its class definitions match the AI4VN VAIPE challenge, as described by a participating team . | README, training data | cutting out the pill of class id 107 (out of prescription) |
-| Class 107 marks a pill that does not belong to the prescription of that image . | README, training data | cutting out the pill of class id 107 (out of prescription) from the images (so we will have 107 class id, from 0 to 106) |
-
-## [14] A. Y., “Pills detection dataset,” Kaggle dataset. Accessed: Nov. 5, 2026. [Online]. Available: https://www.kaggle.com/datasets/alexanderyyy/pills-detection-dataset
+## [15] A. Y., “Pills detection dataset,” Kaggle dataset. Accessed: Nov. 5, 2026. [Online]. Available: https://www.kaggle.com/datasets/alexanderyyy/pills-detection-dataset
 
 | Nội dung trong báo cáo | Vị trí | Câu gốc |
 |---|---|---|
 | The supplementary source is a public Kaggle dataset for single-class pill detection , licensed under CC BY-NC-SA 4.0. | Dataset metadata | Multiple pills detection datasets combined and re-annotated in YOLO format |
 | The supplementary source is a public Kaggle dataset for single-class pill detection , licensed under CC BY-NC-SA 4.0. | Dataset metadata | CC BY-NC-SA 4.0 |
 | Pill detection is additionally tested on the 1,500 VAIPE-test images, with boxes from the supplementary dataset . | Dataset description | VAIPE-test |
-
-## [15] PaddlePaddle, “PP-OCRv5,” PaddleOCR Documentation. Accessed: Nov. 5, 2026. [Online]. Available: https://www.paddleocr.ai/latest/en/version3.x/algorithm/PP-OCRv5/PP-OCRv5.html
-
-| Nội dung trong báo cáo | Vị trí | Câu gốc |
-|---|---|---|
-| *PP-OCRv5 mobile detection  with VietOCR recognition is selected for reading prescriptions. | Documentation, detection table | PP-OCRv5_mobile_det |

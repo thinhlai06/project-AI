@@ -4,6 +4,24 @@ Mỗi phần việc có một báo cáo ngắn khoảng 100 từ. Phân tích ch
 
 ---
 
+## Task 7 – Đồng bộ báo cáo Word (10/11/2026) ✅
+
+**Việc đã làm:** tạo bản v6 từ v5 (giữ nguyên v5), bản v6 chỉ dùng số của mô hình cuối. Thêm DINOv3, phần lý thuyết OCR, kết quả test và hai ma trận nhầm lẫn; gộp 3.1 với 3.2 cũ; bỏ phần thử nghiệm sơ bộ. Bảng, chú thích, hình và công thức đều là đối tượng gốc của Word.
+
+**Kiểm tra:** 60 trang, mục lục và danh sách bảng/hình cập nhật bằng Word; trích dẫn [1]–[15] theo đúng thứ tự xuất hiện; câu gốc của DINOv3 đã đối chiếu với bài báo.
+
+---
+
+## Task 6 – Hoàn thiện OCR và đưa vào máy chủ (09/11/2026) ✅
+
+**Việc đã làm:** xuất PP-OCRv5 và VietOCR sang ONNX, viết `ocr.py` (chỉnh nghiêng, gom hàng, tách trường, khớp tên), thêm `POST /v1/prescriptions/parse`, `GET /v1/catalog` và trang web demo.
+
+**Kết quả test một lần:** ảnh gốc đúng hoàn toàn 99,85% dòng thuốc, 99,66% đơn; ảnh mô phỏng chụp giấy 98,93% và 97,96%. Khoảng 5 giây/đơn trên CPU.
+
+**Giới hạn:** chưa đo trên ảnh chụp giấy thật, nên màn xác nhận vẫn bắt buộc. Chi tiết: `MediCheck_decisions.md` mục 15.
+
+---
+
 ## Task 5 – Giao module và file ONNX cho nhóm app (08/11/2026) ✅
 
 **Đã làm:**
