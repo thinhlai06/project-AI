@@ -14,8 +14,6 @@ from contextlib import asynccontextmanager
 from typing import List, Literal, Optional
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
-from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, ValidationError
 
 from .infer import Line, PillVerifier
@@ -108,6 +106,16 @@ class ParseResponse(BaseModel):
     timing_ms: int
 
 
+class CatalogOut(BaseModel):
+    names: List[str] = Field(..., description="Matched dictionary names (138), sorted")
+    model_version: str
+
+
+class HealthOut(BaseModel):
+    ok: bool
+    model_version: Optional[str] = None
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     th = int(os.environ.get("MEDICHECK_THREADS", "4"))
@@ -121,23 +129,13 @@ app = FastAPI(title="MediCheck AI", version="1.0.0", lifespan=lifespan,
               description="Prescription reading and pill verification. See backend/API.md.")
 
 
-STATIC = os.path.join(os.path.dirname(__file__), "static")
-app.mount("/static", StaticFiles(directory=STATIC), name="static")
-
-
-@app.get("/", include_in_schema=False)
-def demo_page():
-    """Demonstration web page (both flows), for presentations only; the mobile app calls the API directly."""
-    return FileResponse(os.path.join(STATIC, "index.html"))
-
-
-@app.get("/v1/catalog")
+@app.get("/v1/catalog", response_model=CatalogOut)
 def catalog():
     """Drug names the pill models can check (for the 'choose, do not type' correction on the confirmation screen)."""
     return {"names": sorted(STATE["verifier"].lookup), "model_version": STATE["verifier"].version}
 
 
-@app.get("/health")
+@app.get("/health", response_model=HealthOut)
 def health():
     v = STATE.get("verifier")
     return {"ok": v is not None, "model_version": v.version if v else None}
@@ -166,7 +164,7 @@ def verify(image: UploadFile = File(..., description="Photo of the dose, JPEG, l
 @app.post("/v1/prescriptions/parse", response_model=ParseResponse)
 def parse_prescription(file: UploadFile = File(..., description="Prescription image (PNG/JPEG) or PDF")):
     """Read a prescription: drug lines (name matched to the catalog, quantity, schedule, note), issue date, diagnosis.
-    The app must show every result on the confirmation screen (MediCheck_decisions.md sec. 7)."""
+    The app must show every result on the confirmation screen (docs/archive/MediCheck_decisions.md sec. 7)."""
     data = file.file.read()
     if not data:
         raise HTTPException(400, "empty file")

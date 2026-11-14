@@ -1,7 +1,7 @@
 """MediCheck pill verification: the inference module used by the server (POST /v1/pills/verify).
 
 Runs the two ONNX models of the final release on CPU and applies the decision rule that was measured on the
-validation fold (MediCheck_decisions.md sec. 0, 4, 12.5):
+validation fold (docs/archive/MediCheck_decisions.md sec. 0, 4, 12.5):
 
   1. detector (YOLO26s, NMS inside the ONNX file): Ultralytics letterbox to 640, keep boxes with confidence >= 0.5,
      optionally only boxes whose centre lies inside the capture frame sent by the app;

@@ -13,7 +13,6 @@ uvicorn backend.medicheck_server.app:app --host 0.0.0.0 --port 8000
 ```
 
 - Tài liệu tương tác (thử API ngay trên trình duyệt): `http://<ip-máy-chủ>:8000/docs`.
-- Trang web demo cả 2 luồng (chỉ để trình bày, app không dùng): `http://<ip-máy-chủ>:8000/`.
 - Kiểm tra máy chủ sống: `GET /health` → `{"ok": true, "model_version": "final-2026-11-08"}`.
 - Khởi động khoảng 5 giây (nạp 4 mô hình). Mỗi lần kiểm khoảng 1–2 giây cho 3–5 viên trên CPU laptop.
 - Demo: điện thoại và laptop cùng mạng Wi-Fi, app gọi `http://<ip-laptop>:8000`.
@@ -169,7 +168,7 @@ Future<Map<String, dynamic>> verifyDose(String baseUrl, File photo, Map<String, 
 |---|---|---|
 | `file` | PNG / JPEG / PDF | Ảnh đơn hoặc file PDF (đọc trang đầu). Nhập file là luồng chính; chụp giấy là luồng phụ |
 
-Kết quả (rút gọn, đơn mẫu `demo/don_thuoc_582.png`):
+Kết quả (rút gọn, đơn mẫu trong tập test VAIPE):
 
 ```json
 {
@@ -218,4 +217,4 @@ Trả về `{"names": [...138 tên...], "model_version": "..."}`: danh sách tê
 
 - Ngưỡng báo xanh được chọn sao cho khi có viên ngoài đơn hoặc viên lạ, khả năng vẫn báo xanh có **cận trên 95% ≤ 2%** (đo trên dữ liệu chưa dùng để chọn).
 - Màu đỏ và lời khuyên về ảnh chỉ là hướng dẫn: chúng **không bao giờ** biến một cữ thành xanh.
-- Số đo chi tiết: `MediCheck_decisions.md` mục 0 và 13.
+- Số đo chi tiết: `docs/archive/MediCheck_decisions.md` mục 0 và 13.
