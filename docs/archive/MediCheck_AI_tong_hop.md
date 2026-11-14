@@ -36,7 +36,7 @@ Nguyên tắc số 1: **báo xanh nhầm là lỗi nguy hiểm nhất.** Ngưỡ
 | D. Viết "bản hướng dẫn công việc" | Module suy luận + máy chủ API (`backend/`): cắt ảnh, gọi mô hình, ghép với đơn, trả xanh/đỏ/vàng | ✅ Xong; kiểm trên val: 90,9% báo xanh, an toàn ≤ 2% |
 | E. Thi cuối kỳ | Chạy test **một lần** để có điểm chính thức | ✅ **90,2% báo xanh, an toàn 1,09% / 1,31%** |
 
-![Tổng quan hệ thống](docs/diagrams/01_tong_quan_he_thong.png)
+![Tổng quan hệ thống](../diagrams/01_tong_quan_he_thong.png)
 
 *Sơ đồ: `docs/diagrams/01_tong_quan_he_thong.png` (nguồn sửa được: `docs/diagrams/01_tong_quan_he_thong.mmd`).*
 
@@ -194,7 +194,7 @@ Không dùng bộ nào cho **bộ nhận dạng**: chúng không có tên thuố
          6'. đệm xám thành ảnh vuông 384×384, chuẩn hóa ImageNet
 ```
 
-![Tiền xử lý dữ liệu](docs/diagrams/03_tien_xu_ly_du_lieu.png)
+![Tiền xử lý dữ liệu](../diagrams/03_tien_xu_ly_du_lieu.png)
 
 *Sơ đồ: `docs/diagrams/03_tien_xu_ly_du_lieu.png` (nguồn sửa được: `docs/diagrams/03_tien_xu_ly_du_lieu.mmd`).*
 
@@ -295,7 +295,7 @@ Không dùng bộ nào cho **bộ nhận dạng**: chúng không có tên thuố
 
 PP-OCRv5 mobile (tìm dòng chữ) → **VietOCR `vgg_transformer`** (đọc chữ có dấu) → parser luật → khớp mờ 138 tên. Không train lại.
 
-![OCR đơn thuốc](docs/diagrams/06_ocr_don_thuoc.png)
+![OCR đơn thuốc](../diagrams/06_ocr_don_thuoc.png)
 
 *Sơ đồ: `docs/diagrams/06_ocr_don_thuoc.png` (nguồn sửa được: `docs/diagrams/06_ocr_don_thuoc.mmd`).*
 
@@ -334,7 +334,7 @@ PP-OCRv5 mobile (tìm dòng chữ) → **VietOCR `vgg_transformer`** (đọc ch�
 - Bản cuối là mô hình của cấu hình tốt nhất. Train lại cùng cấu hình chỉ ra một mô hình gần như y hệt, nên không cần một lần "train final" riêng.
 - **Không train lại trên train + val**, vì val còn dùng để đặt ngưỡng an toàn.
 
-![Train và chọn mô hình](docs/diagrams/04_train_va_chon_mo_hinh.png)
+![Train và chọn mô hình](../diagrams/04_train_va_chon_mo_hinh.png)
 
 *Sơ đồ: `docs/diagrams/04_train_va_chon_mo_hinh.png` (nguồn sửa được: `docs/diagrams/04_train_va_chon_mo_hinh.mmd`).*
 
@@ -412,7 +412,7 @@ Mục đích: quota GPU có hạn, phải bắt lỗi đường ống trước, 
    - Ở mục tiêu 2%, viên lạ chạm đúng 2,00% khi chạy cả chuỗi, vì crop của detector làm viên lạ lọt nhiều hơn crop nhãn thật ~0,1 điểm.
    - Dư 0,2 điểm để chắc chắn ≤ 2%. Đổi lại mất 1,4 điểm báo xanh.
 
-![Đánh giá cả chuỗi](docs/diagrams/05_danh_gia_ca_chuoi.png)
+![Đánh giá cả chuỗi](../diagrams/05_danh_gia_ca_chuoi.png)
 
 *Sơ đồ: `docs/diagrams/05_danh_gia_ca_chuoi.png` (nguồn sửa được: `docs/diagrams/05_danh_gia_ca_chuoi.mmd`).*
 
@@ -430,7 +430,7 @@ máy chủ (CPU): kiểm chất lượng ảnh → YOLO26s ONNX → chỉ giữ 
  → ghép tối ưu → so ngưỡng 0,0529 → xanh / đỏ / vàng từng viên
 app: câu nói tổng + giọng nói + khoanh trên ảnh
 ```
-![Kiểm thuốc khi app chạy](docs/diagrams/02_suy_luan_kiem_thuoc.png)
+![Kiểm thuốc khi app chạy](../diagrams/02_suy_luan_kiem_thuoc.png)
 
 *Sơ đồ: `docs/diagrams/02_suy_luan_kiem_thuoc.png` (nguồn sửa được: `docs/diagrams/02_suy_luan_kiem_thuoc.mmd`).*
 

@@ -56,7 +56,7 @@ Ký hiệu: ✅ xong · 🔄 đang làm · ⏳ chưa làm
   - Chạy module: `.venv/Scripts/python.exe -m medicheck_ai.<tên>`. **Không dùng `-I`**, vì `-I` làm hỏng import `medicheck_ai`. Chỉ dùng `-I -X utf8` cho script nháp.
   - Dùng `--workers 0` (Windows lỗi 1455).
   - Không kill toàn bộ python; chỉ dừng đúng PID.
-- `.ocrenv`: môi trường CPU riêng cho Paddle + VietOCR.
+- `.ocrenv` (môi trường riêng cho Paddle + VietOCR) đã bỏ ngày 14/11 vì OCR đã xuất xong sang ONNX. Muốn xuất lại: tạo môi trường mới có torch 2.6 (CPU), vietocr, onnx rồi chạy `scripts/export_ocr_onnx.py`.
 - **Test đã dùng một lần** (08/11, mục 14.1): không chạy lại, không chỉnh mô hình hay ngưỡng theo test. Code vẫn khóa (`unseal_test=True`).
 - **Repo nhóm** (công khai): https://github.com/thinhlai06/project-AI. Thư mục `D:\project AI` là bản git của repo. `.gitignore` chỉ cho phép đẩy các file `.md` ở thư mục gốc và mô hình cuối (`out/onnx_final/`, `best.pt` + `model.pt` cuối, bảng tra). Đẩy lại sau mỗi lần cập nhật tài liệu. README là trang giới thiệu cho cả nhóm.
 
@@ -90,17 +90,16 @@ Ký hiệu: ✅ xong · 🔄 đang làm · ⏳ chưa làm
 | `out/onnx_final/` | **Bản cuối triển khai**: `detector.onnx`, `recognizer.onnx`, `deploy_config.json`, `export.json` |
 | `out/s2/det/d2b/weights/best.pt` | Detector cuối (PyTorch) + `eval_val.json`, dự đoán val/VAIPE-test |
 | `out/s3/r3b_seed1/model.pt` | Bộ nhận dạng cuối (PyTorch) + `final.json`, `log.jsonl` |
-| `out/s1/`, `out/s2/`, `out/s3/` | Output các phiên Kaggle (mọi nhánh, log, `summary.json`, `gpu_monitor.csv`) |
-| `out/e2e_s1/`, `out/e2e_s2/`, `out/e2e_s3_seed1/`, `out/e2e_s3_448/` | Kết quả cả pipeline (`e2e_orig2048*.json`), crop từ detector |
+| `out/s2/`, `out/s3/` | Chỉ giữ bản cuối: `summary.json`, log và `args.yaml`/`results.csv` của detector, `best.pt`, `model.pt`, `final.json`. Các nhánh thử nghiệm S1, R2, R5, R7 và dữ liệu YOLO đã dọn (14/11) |
+| `out/v3det/` | Nhãn detector v3: `det_labels.parquet`, `det_stats.csv`, `tight_boxes.parquet`, `mapping_final.csv` |
 | `out/v2/` | Nhãn v2, bộ chia v2, `lookup_name_classes.csv` (141 tên, lập từ **mọi fold**: chỉ để tham khảo, không dùng để triển khai hay đo) |
-| `out/v3det/` | Nhãn detector v3 |
+| `out/groups.csv`, `out/pres_*.csv` | Nhóm đơn gần trùng và các bảng dòng thuốc, ngày kê, mẫu đơn trích từ đơn thuốc (đầu vào của `fix_labels.py`) |
 | `backend/` | **Máy chủ AI** (lên repo): `medicheck_server/infer.py` (module), `app.py` (FastAPI), `API.md`, `requirements.txt`, `tests/` |
 | `out/infer_val/`, `out/infer_test/` | Kiểm module trên val và **kết quả test chính thức** (`validate.json`, `red_raw.npz`, cache) |
 | `medicheck_ai/` | `eval.py`, `recognizer.py`, `detector.py`, `e2e.py`, `export_onnx.py`, `validate_infer.py` (chỉ ở máy local) |
-| `tests/test_eval.py` | 7 kiểm thử (chạy: `.venv/Scripts/python.exe tests/test_eval.py`) |
-| `kaggle/` | Script kernel các phiên (`medicheck-s1..s3`, smoke, embed, backbones) và thư mục nguồn dataset |
-| `scripts/` | Tiền xử lý dữ liệu và thử nghiệm C1–C2b |
-| `demo/` | **Chỉ ở máy local, không lên repo** (ảnh VAIPE): 4 ảnh thuốc + 4 đơn từ tập test, payload, kết quả module, ảnh mẫu thuốc để mua, `HUONG_DAN_DEMO.md` |
+| `tests/test_eval.py` | 7 kiểm thử (chạy: `.venv/Scripts/python.exe tests/test_eval.py`); 2 bài hồi quy đọc `out/exp_20261106/emb_c512_336.npy` và `emb_v3s16cls_384.npy` nên hai file này được giữ lại |
+| `kaggle/` | Script kernel 3 phiên train cuối (`medicheck-s1`, `-s2`, `-s3`) và `dataset-metadata.json` của 3 dataset nguồn (`medicheck-code`, `-crops`, `-det`). Phần dữ liệu của dataset đã dọn, tạo lại bằng `scripts/extract_crops_hr.py`, `scripts/export_detector.py` |
+| `scripts/` | Chuỗi tạo dữ liệu và xuất mô hình, chạy theo thứ tự: `download` → `extract_assets` → `analyze_pres` → `embed` → `neardup` → `make_splits` → `fix_labels` → `make_splits_v2` → `map_reannot` → `map_reannot_pass2` → `build_v3det` → `export_detector` → `extract_crops_hr`; xuất mô hình: `export_ocr_onnx`, `split_onnx_weights`; `exp_scoring_20261106` là thử nghiệm C1 mà decisions.md mục 12 dẫn. Các script thử nghiệm khác đã dọn (14/11) |
 | `docs/diagrams/` | 7 sơ đồ pipeline: `.mmd` (nguồn Mermaid, sửa được) + `.png` (nhúng vào các file `.md`, dán được vào báo cáo). Sửa pipeline thì sửa `.mmd` rồi render lại: `npx -p @mermaid-js/mermaid-cli@11.4.2 mmdc -i x.mmd -o x.png -s 2 -b white` |
 | `BAO_CAO_CONG_VIEC.md` | Báo cáo ngắn (~100 từ) sau mỗi task cho người dùng |
 

@@ -1,6 +1,36 @@
 # Báo cáo công việc (mới nhất ở trên)
 
-Mỗi phần việc có một báo cáo ngắn khoảng 100 từ. Phân tích chi tiết từng quyết định nằm ở `MediCheck_decisions.md`.
+Mỗi phần việc có một báo cáo ngắn khoảng 100 từ. Phân tích chi tiết từng quyết định nằm ở [../archive/MediCheck_decisions.md](../archive/MediCheck_decisions.md).
+
+---
+
+## Task 9 – Bộ tài liệu cho app và dọn thư mục gốc (15/11/2026) ✅
+
+**Đã làm:** viết bộ tài liệu trong `docs/` để nhóm và AI agent làm app không lệch hướng:
+- sản phẩm: BA, PRD, use case, UI/UX, roadmap;
+- kiến trúc: system architecture, ERD, deployment, `openapi.yaml` sinh từ code, 16 ADR;
+- AI, kiểm thử, quy trình Claude + Qoder;
+- `AGENTS.md` ở gốc.
+
+Các file `.md` cũ chuyển vào `docs/archive/`; README viết lại.
+
+**Quyết định đã chốt với chủ dự án:**
+- một đơn đang dùng (BR-12);
+- gửi người thân kèm ảnh đơn gốc và phiếu bảng chữ to (ADR-016 thay ADR-012);
+- demo trên máy giả lập Android, không Docker;
+- mỗi story một nhánh và một PR.
+
+**Phản biện:** schema `payload` thiếu trong OpenAPI nên phải tự thêm. Sổ quyết định mục 8 lỗi thời. Ảnh demo còn nằm trong thư mục chờ xóa (ST-00).
+
+---
+
+## Task 8 – Dọn dự án (14/11/2026) ✅
+
+**Việc đã làm:** gỡ web demo (route `/`, thư mục `static/`), chuyển 129 mục không cần vào `D:\project AI_cho_xoa` (chưa xoá hẳn, bản đồ nằm ở `MANIFEST.txt`): dữ liệu thô VAIPE và dataset bổ sung, bộ nhớ đệm, script thử nghiệm, nhánh train S1, file zip và thư mục demo, báo cáo v5, môi trường `.ocrenv`.
+
+**Giữ lại:** tài liệu, báo cáo v6, `backend/`, mô hình ONNX và PyTorch cuối, chuỗi script tạo dữ liệu và xuất mô hình, 3 kernel train cuối, nhãn v2/v3, file chia fold và kết quả đo chính thức.
+
+**Kiểm tra:** máy chủ vẫn chạy đúng (đọc đơn 582, kiểm ảnh A1 báo xanh), 7/7 kiểm thử `test_eval` và các kiểm thử `backend` đạt. Chưa commit.
 
 ---
 
@@ -14,18 +44,18 @@ Mỗi phần việc có một báo cáo ngắn khoảng 100 từ. Phân tích ch
 
 ## Task 6 – Hoàn thiện OCR và đưa vào máy chủ (09/11/2026) ✅
 
-**Việc đã làm:** xuất PP-OCRv5 và VietOCR sang ONNX, viết `ocr.py` (chỉnh nghiêng, gom hàng, tách trường, khớp tên), thêm `POST /v1/prescriptions/parse`, `GET /v1/catalog` và trang web demo.
+**Việc đã làm:** xuất PP-OCRv5 và VietOCR sang ONNX, viết `ocr.py` (chỉnh nghiêng, gom hàng, tách trường, khớp tên), thêm `POST /v1/prescriptions/parse`, `GET /v1/catalog`.
 
 **Kết quả test một lần:** ảnh gốc đúng hoàn toàn 99,85% dòng thuốc, 99,66% đơn; ảnh mô phỏng chụp giấy 98,93% và 97,96%. Khoảng 5 giây/đơn trên CPU.
 
-**Giới hạn:** chưa đo trên ảnh chụp giấy thật, nên màn xác nhận vẫn bắt buộc. Chi tiết: `MediCheck_decisions.md` mục 15.
+**Giới hạn:** chưa đo trên ảnh chụp giấy thật, nên màn xác nhận vẫn bắt buộc. Chi tiết: `../archive/MediCheck_decisions.md` mục 15.
 
 ---
 
 ## Task 5 – Giao module và file ONNX cho nhóm app (08/11/2026) ✅
 
 **Đã làm:**
-- Trên repo có `backend/` (module + server), mô hình `out/onnx_final/`, [backend/API.md](backend/API.md) và README.
+- Trên repo có `backend/` (module + server), mô hình `out/onnx_final/`, [backend/API.md](../../backend/API.md) và README.
 - `API.md` gồm: cách chạy máy chủ, định dạng JSON gửi/nhận, ví dụ curl, **code Dart gọi API**, hướng dẫn demo qua Wi-Fi (firewall, Android cleartext).
 - Đã chạy máy chủ thật bằng uvicorn và gọi bằng curl: "Đúng hết. 5 viên khớp cữ sáng.", 1,6 giây.
 
@@ -84,7 +114,7 @@ Cả hai chỉ số an toàn đạt chuẩn ≤ 2%; báo xanh vượt mục tiê
 ## Task 2 – Viết module suy luận + máy chủ API (08/11/2026) ✅
 
 **Đã làm:**
-- `backend/` gồm: module `PillVerifier` (ONNX, không cần PyTorch), server FastAPI `POST /v1/pills/verify`, tài liệu [backend/API.md](backend/API.md) cho nhóm mobile, 7 kiểm thử tự động (đều đạt).
+- `backend/` gồm: module `PillVerifier` (ONNX, không cần PyTorch), server FastAPI `POST /v1/pills/verify`, tài liệu [backend/API.md](../../backend/API.md) cho nhóm mobile, 7 kiểm thử tự động (đều đạt).
 - Server trả về: trạng thái từng viên, box để khoanh, câu nói, thuốc còn thiếu.
 
 **Phát hiện quan trọng:**

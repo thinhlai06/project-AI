@@ -58,11 +58,11 @@ Trợ lý AI kiểm tra an toàn dùng thuốc qua camera điện thoại. Đố
 
 ## 4. Thiết kế các luồng
 
-![Luồng người dùng](docs/diagrams/07_luong_nguoi_dung.png)
+![Luồng người dùng](../diagrams/07_luong_nguoi_dung.png)
 
 *Sơ đồ: `docs/diagrams/07_luong_nguoi_dung.png` (nguồn sửa được: `docs/diagrams/07_luong_nguoi_dung.mmd`).*
 
-![Tổng quan hệ thống](docs/diagrams/01_tong_quan_he_thong.png)
+![Tổng quan hệ thống](../diagrams/01_tong_quan_he_thong.png)
 
 *Sơ đồ: `docs/diagrams/01_tong_quan_he_thong.png` (nguồn sửa được: `docs/diagrams/01_tong_quan_he_thong.mmd`).*
 

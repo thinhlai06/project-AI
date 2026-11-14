@@ -54,7 +54,7 @@
  → điểm có trừ đối thủ → ghép tối ưu (linear_sum_assignment) → so ngưỡng → xanh / đỏ / vàng
 ```
 
-![Kiểm thuốc khi app chạy](docs/diagrams/02_suy_luan_kiem_thuoc.png)
+![Kiểm thuốc khi app chạy](../diagrams/02_suy_luan_kiem_thuoc.png)
 
 *Sơ đồ: `docs/diagrams/02_suy_luan_kiem_thuoc.png` (nguồn sửa được: `docs/diagrams/02_suy_luan_kiem_thuoc.mmd`).*
 
@@ -194,7 +194,7 @@ Quyết định:
 | Train | Kaggle Notebook (2 × T4), PyTorch, `timm`, `ultralytics` (AGPL-3.0) |
 | Triển khai demo | Laptop chạy FastAPI, điện thoại nối qua Wi-Fi LAN hoặc tunnel HTTPS. Không dùng Hugging Face Spaces |
 
-![Tổng quan hệ thống](docs/diagrams/01_tong_quan_he_thong.png)
+![Tổng quan hệ thống](../diagrams/01_tong_quan_he_thong.png)
 
 *Sơ đồ: `docs/diagrams/01_tong_quan_he_thong.png` (nguồn sửa được: `docs/diagrams/01_tong_quan_he_thong.mmd`).*
 
@@ -319,7 +319,7 @@ Mọi số đo trong mục này trên **val**; test chỉ được đọc một 
 
 ### 12.4. Kết quả train trên Kaggle (S1–S3; 08/11)
 
-![Train và chọn mô hình](docs/diagrams/04_train_va_chon_mo_hinh.png)
+![Train và chọn mô hình](../diagrams/04_train_va_chon_mo_hinh.png)
 
 *Sơ đồ: `docs/diagrams/04_train_va_chon_mo_hinh.png` (nguồn sửa được: `docs/diagrams/04_train_va_chon_mo_hinh.mmd`).*
 
@@ -348,7 +348,7 @@ Phát hiện phụ: sau fine-tune, đối thủ 0,5 tốt hơn 0,25 (+2,7 điể
 
 ### 12.5. Đánh giá cả pipeline (`medicheck_ai/e2e.py`, local; 08/11)
 
-![Đánh giá cả chuỗi](docs/diagrams/05_danh_gia_ca_chuoi.png)
+![Đánh giá cả chuỗi](../diagrams/05_danh_gia_ca_chuoi.png)
 
 *Sơ đồ: `docs/diagrams/05_danh_gia_ca_chuoi.png` (nguồn sửa được: `docs/diagrams/05_danh_gia_ca_chuoi.mmd`).*
 
