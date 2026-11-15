@@ -1,6 +1,20 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- INTERNET: bản release cần để gọi server AI (template chỉ khai ở debug/profile). -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- CAMERA: chụp ảnh đơn thuốc và viên thuốc. -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <!-- POST_NOTIFICATIONS: hiện thông báo nhắc uống thuốc (Android 13+). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- RECEIVE_BOOT_COMPLETED: khôi phục lịch nhắc sau khi khởi động lại máy. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <!-- USE_EXACT_ALARM: báo thức chính xác cho cữ thuốc; tự cấp, rủi ro chính sách Google Play ghi ở README. -->
+    <uses-permission android:name="android.permission.USE_EXACT_ALARM"/>
+    <!-- Gỡ quyền plugin camera gộp vào nhưng app không dùng. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" tools:node="remove"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:node="remove"/>
     <application
-        android:label="mobile"
+        android:label="MediCheck"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
@@ -30,6 +44,21 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <!-- flutter_local_notifications: hiện thông báo đã lên lịch. -->
+        <receiver
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver"
+            android:exported="false"/>
+        <!-- Khôi phục lịch nhắc sau khi khởi động lại máy hoặc cập nhật app. -->
+        <receiver
+            android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+                <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
+                <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+            </intent-filter>
+        </receiver>
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and
@@ -40,6 +69,10 @@
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
+        </intent>
+        <!-- flutter_tts trên Android 11+: truy vấn dịch vụ TTS. -->
+        <intent>
+            <action android:name="android.intent.action.TTS_SERVICE"/>
         </intent>
     </queries>
 </manifest>

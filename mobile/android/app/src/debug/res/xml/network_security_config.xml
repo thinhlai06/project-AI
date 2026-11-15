@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Chỉ dùng cho bản debug: demo gọi server AI qua HTTP tại 10.0.2.2 (máy giả lập)
+     hoặc IP laptop trong mạng nội bộ. Bản release không có file này và chặn
+     cleartext (HTTP) theo mặc định. Mạng nội bộ không biểu diễn được bằng CIDR
+     nên bản debug cho phép cleartext rộng. -->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>

@@ -62,6 +62,18 @@ File sinh ra bởi drift/build_runner (`*.g.dart`) được commit, vì máy dem
 
 `flutter_tts` áp dụng Kotlin Gradle Plugin; bản Flutter sau có thể không build được: theo dõi khi nâng cấp.
 
-## Cấu hình Android
+## Cấu hình Android (ST-01.2)
 
-Cấu hình Android (minSdk 29, quyền, cleartext ở bản debug, desugaring) được mô tả trong ST-01.2 và sẽ được thêm vào README này khi đó.
+- `minSdk 29` (quyết định dự án NFR-08) và `compileSdk 37` (vì `flutter_local_notifications` 23 đòi).
+- Core library desugaring: `desugar_jdk_libs 2.1.4`, bắt buộc với `flutter_local_notifications`; bật `isCoreLibraryDesugaringEnabled = true` trong `compileOptions`.
+- Quyền khai báo và lý do:
+  - `INTERNET`: bản release cần để gọi server AI (template chỉ khai ở debug/profile).
+  - `CAMERA`: chụp ảnh đơn thuốc và viên thuốc.
+  - `POST_NOTIFICATIONS`: hiện thông báo nhắc uống thuốc (Android 13+).
+  - `RECEIVE_BOOT_COMPLETED`: khôi phục lịch nhắc sau khi khởi động lại máy.
+  - `USE_EXACT_ALARM`: báo thức chính xác cho cữ thuốc, tự cấp; nhưng chính sách Google Play dành cho app báo thức/lịch nên có rủi ro nếu phát hành.
+- Quyền đã gỡ (do plugin camera gộp vào, app không dùng): `RECORD_AUDIO`, `READ_EXTERNAL_STORAGE` (dùng `tools:node="remove"`).
+- Cleartext (HTTP) chỉ ở bản debug: file `android/app/src/debug/res/xml/network_security_config.xml`; bản release không có file này và chặn HTTP theo mặc định.
+- Nhãn app: `MediCheck`.
+- Lần build đầu mất 5-8 phút và Gradle tự tải thêm thành phần Android SDK.
+- Nếu gặp lỗi Kotlin "Could not close incremental caches", thêm `kotlin.incremental=false` vào `android/gradle.properties`.
