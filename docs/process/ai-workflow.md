@@ -49,7 +49,7 @@ flowchart LR
 
 ## 3. Gọi Qoder
 
-Giao một phase:
+Giao một phase (task có màn hình thì thêm vào lời giao: `UI reference: docs/design/png/<màn>.png and docs/design/screens/<màn>.html; tokens in docs/design/design-spec.md. Match them; do not invent colors, sizes or text.`):
 
 ```powershell
 qodercli -p -w "d:\project AI" -n "ST-xx-p<N>" --permission-mode accept_edits `
@@ -90,6 +90,7 @@ cd mobile && flutter analyze && flutter test
 - [ ] **BR-01:** không có đường nào hiện xanh hay "Tôi đã uống" khi `status != "green"`, kể cả lỗi/timeout.
 - [ ] **BR-10 / ADR-016:** không lưu ảnh thuốc; ảnh đơn chỉ ở thư mục app; không log nội dung đơn.
 - [ ] **BR-12:** không tạo được 2 đơn `active`.
+- [ ] Giao diện khớp ảnh chuẩn `docs/design/png/` (so ảnh chụp emulator 390 × 844); dùng token, không số rời.
 - [ ] Chữ hiển thị chỉ ở `strings_vi.dart`, không có từ cấm; chữ ≥ 20 sp, vùng chạm ≥ 48 dp, có `Semantics`.
 - [ ] DTO khớp `openapi.yaml`; `utf8.decode(res.bodyBytes)`.
 - [ ] Không thêm thư viện ngoài ADR-015; không sửa `out/onnx_final/`.

@@ -15,9 +15,10 @@ MediCheck VN: app Flutter giúp người cao tuổi kiểm thuốc theo đơn qu
 Luồng plan → code → review → PR và vai trò của từng công cụ AI: [docs/process/ai-workflow.md](docs/process/ai-workflow.md). Không push thẳng `main`; mỗi story một nhánh `story/ST-xx-…` và một PR.
 
 1. Tìm task trong [docs/product/backlog.md](docs/product/backlog.md) và trạng thái ở [docs/product/tasks.csv](docs/product/tasks.csv) (task `Todo` đầu tiên có mọi phụ thuộc `Done`); chỉ làm **một** story mỗi lần.
-2. Đọc các mã FR/UC/SCR mà story trỏ tới, cùng [docs/architecture/erd.md](docs/architecture/erd.md) và [docs/architecture/openapi.yaml](docs/architecture/openapi.yaml) nếu chạm dữ liệu hoặc API.
-3. Gặp chỗ tài liệu không nói, hoặc mục `OQ-xx` chưa "Đã chốt": **hỏi người phụ trách**, không tự quyết.
-4. Xong thì đổi trạng thái task trong `tasks.csv` và cập nhật tài liệu bị ảnh hưởng trong cùng commit.
+2. Làm màn hình nào thì mở thiết kế của màn đó: `docs/design/png/<màn>.png` và `docs/design/screens/<màn>.html` (tên file ghi ở mục "Thiết kế" của story trong backlog); token và linh kiện ở [docs/design/design-spec.md](docs/design/design-spec.md). Dựng xong phải so được với ảnh chuẩn.
+3. Đọc các mã FR/UC/SCR mà story trỏ tới, cùng [docs/architecture/erd.md](docs/architecture/erd.md) và [docs/architecture/openapi.yaml](docs/architecture/openapi.yaml) nếu chạm dữ liệu hoặc API.
+4. Gặp chỗ tài liệu không nói, hoặc mục `OQ-xx` chưa "Đã chốt": **hỏi người phụ trách**, không tự quyết.
+5. Xong thì đổi trạng thái task trong `tasks.csv` và cập nhật tài liệu bị ảnh hưởng trong cùng commit.
 
 ## Quy tắc không được phá
 
@@ -54,7 +55,7 @@ dart run build_runner build --delete-conflicting-outputs                        
 - App: cấu trúc feature-first như [system-architecture.md](docs/architecture/system-architecture.md) mục 4.2; logic nghiệp vụ ở `lib/core/domain` bằng Dart thuần, kèm unit test.
 - Tên trong code theo [docs/glossary.md](docs/glossary.md) (`session`, `drug_line`, `dose_event`…).
 - Mọi chuỗi JSON là UTF-8 (`utf8.decode(res.bodyBytes)`).
-- Mỗi màn hình theo đặc tả `SCR-xx` ở [ui-ux-spec.md](docs/product/ui-ux-spec.md): một nút chính, chữ ≥ 20 sp, vùng chạm ≥ 48 dp, có `Semantics` tiếng Việt.
+- Mỗi màn hình theo đặc tả `SCR-xx` ở [ui-ux-spec.md](docs/product/ui-ux-spec.md) và **giống bản thiết kế** ở [docs/design/](docs/design/README.md): một nút chính, chữ ≥ 20 sp, vùng chạm ≥ 48 dp, có `Semantics` tiếng Việt. Màu, cỡ chữ, khoảng cách chỉ lấy từ token (`mobile/lib/app/tokens.dart`), không viết số rời. Khác thiết kế thì hỏi trước.
 
 ## Định nghĩa "xong"
 

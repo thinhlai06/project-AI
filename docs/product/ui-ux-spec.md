@@ -2,7 +2,7 @@
 
 > **Trả lời câu hỏi:** mỗi màn hình có gì, nói câu gì, trông thế nào, xử lý trạng thái nào.
 > Yêu cầu gốc: [prd.md](prd.md). Luồng: [use-cases.md](use-cases.md). Sơ đồ luồng người dùng: [../diagrams/07_luong_nguoi_dung.png](../diagrams/07_luong_nguoi_dung.png).
-> Cập nhật: 2026-11-15 · Trạng thái: **đã chốt** (chưa có bản vẽ Figma; wireframe dạng chữ ở mục 4)
+> Cập nhật: 2026-11-15 · Trạng thái: **đã chốt**. Hình dáng từng màn (số đo, màu, bố cục) nằm ở [../design/](../design/README.md); file này giữ nội dung và hành vi
 
 ## 1. Persona và nguyên tắc
 
@@ -31,10 +31,11 @@
 | `button.secondary` | cao 56 dp, viền | |
 | `color.bg` / `color.text` | `#FFFFFF` / `#111111` | Tương phản ~18 : 1 |
 | `color.primary` | `#0B57D0` | Chữ trắng trên nền này ≥ 4,5 : 1 |
-| `status.green` | `#1B7F3B` + ✓ + nét liền 4 dp | |
-| `status.yellow` | `#B26A00` + ? + nét đứt 4 dp | Chữ đậm trên nền vàng nhạt `#FFF4D6` |
+| `status.green` | `#187038` + ✓ + nét liền 4 dp | Đổi từ #1B7F3B: 4,5 : 1 trên nền xanh nhạt là sát ngưỡng |
+| `status.yellow` | `#8F5600` + ? + nét đứt 4 dp | Chữ đậm trên nền vàng nhạt `#FFF4D6`. Đổi từ #B26A00 (chỉ 3,9 : 1, không đạt 4,5 : 1). Nét đứt vẽ **trên ảnh** dùng `#FFD479` |
 | `status.red` | `#B3261E` + ✗ + nét dày 6 dp | |
 | `spacing` | 8 / 16 / 24 dp | Lề màn hình 16 dp |
+| Màu phụ | `surface #F4F6F9`, `muted #5F6672`, `outline #767C86`, `divider #DDE1E7`, các tint `#E8F0FE` `#E6F4EA` `#FFF4D6` `#FCE8E6` | Đầy đủ và cách dùng ở [../design/design-spec.md](../design/design-spec.md) mục 3 |
 
 - Theme sáng là mặc định. Chế độ tối để giai đoạn 2.
 - Tôn trọng cỡ chữ hệ thống (`textScaler`) đến 1,5 lần mà không vỡ bố cục.
@@ -172,6 +173,12 @@ flowchart TD
   - Tên thuốc: `matched_name` nếu có, nếu không dùng `raw_name`; dòng `edited_by_user` thêm "(bác đã sửa)".
   - Không in họ tên, số BHYT (app không có các trường này).
 - **Bản chữ** (cùng nội dung, mỗi thuốc một dòng): "1. Panactol 500mg – SL 10 – Sáng 1, Tối 1 – Sau ăn".
+
+### Màn chờ kiểm thuốc, trạng thái rỗng, bị từ chối quyền camera, đổi cữ
+- **Đang kiểm thuốc** (sau khi chụp, tối đa 20 giây): vòng chờ + "Đang kiểm thuốc." + "Bác chờ vài giây, giữ nguyên máy nhé." + "Hủy".
+- **SCR-HOME chưa có đơn:** "Chưa có đơn nào" + "Bác chọn ảnh đơn thuốc để app tạo lịch uống và nhắc giờ." + nút chính "Chọn đơn thuốc", nút phụ "Cài đặt".
+- **Quyền camera bị từ chối** (ở SCR-CAPTURE): "App cần dùng máy ảnh để chụp thuốc." + "Bác bấm Mở cài đặt, chọn Quyền, rồi bật Máy ảnh. Hoặc bác chọn một ảnh thuốc có sẵn trong máy." Nút chính "Mở cài đặt", nút phụ "Chọn ảnh có sẵn".
+- **Đổi cữ** (bảng chọn từ đáy SCR-DOSE): "Chọn cữ", lưới 2 × 2 các nút Sáng/Trưa/Chiều/Tối kèm "3 viên" hoặc "Không có thuốc" (nút này không bấm được), nút "Đóng".
 
 ### SCR-PRES-DETAIL, SCR-HISTORY, SCR-SETTINGS
 - **Chi tiết đơn:** nhãn "Đang dùng" hoặc "Đã kết thúc", ngày kê, "Bệnh: …", danh sách dòng như SCR-CONFIRM (đơn đang dùng sửa được, đơn đã kết thúc chỉ xem). Nút "Gửi người thân" → SCR-SHARE; "Kết thúc đơn" (FR-PRES-12) và "Xóa đơn", cả hai xác nhận 2 bước. Danh sách "Đơn thuốc" từ SCR-HOME: đơn đang dùng trên cùng, đơn đã kết thúc bên dưới.

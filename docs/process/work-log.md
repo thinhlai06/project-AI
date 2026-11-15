@@ -4,6 +4,14 @@ Mỗi phần việc có một báo cáo ngắn khoảng 100 từ. Phân tích ch
 
 ---
 
+## Task 12 – Thiết kế giao diện app (15/11/2026) ✅
+
+**Đã làm:** thiết kế 29 bảng (26 màn hình và trạng thái, 1 bảng hệ thống thiết kế, 1 bảng tham chiếu thẻ thuốc, 1 ảnh phiếu đơn) bằng công cụ Design; dùng dữ liệu thật của server (ảnh demo, toạ độ khoanh viên D1, đỏ, D4). Xuất ra [docs/design/](../design/README.md): HTML tĩnh từng màn, ảnh chuẩn PNG, trang xem tổng hợp, đặc tả dựng lại (token, linh kiện, quy tắc khoanh viên), bảng chữ theo màn. Backlog trỏ tới màn của từng story.
+
+**Review UI/UX hai vòng (xem ảnh chụp từng màn, đo tương phản):** sửa 10 điểm, trong đó có lỗi ở chính đặc tả: màu vàng `#B26A00` chỉ 3,9:1 (không đạt 4,5:1) nên đổi `#8F5600`; thiếu 3 màn (đang kiểm thuốc, chưa có đơn, bị từ chối quyền camera). Còn mở: chưa có bản vẽ riêng cho kết quả `partial`.
+
+---
+
 ## Task 11 – Product backlog và bảng task (15/11/2026) ✅
 
 **Đã làm:** [backlog.md](../product/backlog.md) (29 story, 82 task, 314,5 giờ, mô tả chi tiết, tiêu chí chấp nhận, phụ thuộc) và [tasks.csv](../product/tasks.csv) (bảng theo dõi để nhập vào Google Sheets). Đưa `anh_demo/` vào repo và chạy thử D1–D4 trên server Docker (đúng kỳ vọng). Roadmap, AGENTS.md và quy trình AI trỏ sang backlog; trạng thái task chỉ ghi ở `tasks.csv`.

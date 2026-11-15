@@ -133,6 +133,8 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 **Mục tiêu.** Một bộ nền thống nhất (màu, chữ, nút, câu chữ, route) để mọi màn hình sau chỉ lắp ráp.
 
+**Thiết kế:** [design-system](../design/png/design-system.png) (HTML: `docs/design/screens/<tên>.html`; token: [design-spec.md](../design/design-spec.md))
+
 **Tasks**
 
 | Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
@@ -184,6 +186,8 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 **Mục tiêu.** App nói chuyện đúng với server, lỗi nào cũng thành kết quả có kiểu, không bao giờ làm sập app hay báo xanh.
 
+**Thiết kế:** [settings](../design/png/settings.png) (HTML: `docs/design/screens/<tên>.html`; token: [design-spec.md](../design/design-spec.md))
+
 **Tasks**
 
 | Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
@@ -233,6 +237,8 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 **Mục tiêu.** Người dùng chọn ảnh/PDF đơn, chờ có thông báo rõ, và nhận bản nháp để xác nhận.
 
+**Thiết kế:** [welcome](../design/png/welcome.png), [import](../design/png/import.png), [reading](../design/png/reading.png) (HTML: `docs/design/screens/<tên>.html`; token: [design-spec.md](../design/design-spec.md))
+
 **Tasks**
 
 | Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
@@ -256,6 +262,8 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 **Mốc:** M2 · **Người gợi ý:** Mobile 1 · **Ước lượng:** 22 giờ · **Yêu cầu:** FR-PRES-04…06, FR-PRES-11, FR-SCH-01, UC-03, SCR-CONFIRM, SCR-EDIT-LINE, BR-02…06, BR-12
 
 **Mục tiêu.** Không có đường nào tạo lịch mà bỏ qua xác nhận; sửa bằng chọn; lưu đơn mới thay đơn cũ an toàn.
+
+**Thiết kế:** [confirm](../design/png/confirm.png), [confirm-cards](../design/png/confirm-cards.png), [edit-line](../design/png/edit-line.png) (HTML: `docs/design/screens/<tên>.html`; token: [design-spec.md](../design/design-spec.md))
 
 **Tasks**
 
@@ -307,6 +315,8 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 **Mục tiêu.** Người dùng thấy ngay cữ tiếp theo, xem lại đơn, kết thúc hoặc xóa đơn mà không để lại nhắc hay file thừa.
 
+**Thiết kế:** [home](../design/png/home.png), [home-empty](../design/png/home-empty.png), [pres-list](../design/png/pres-list.png), [pres-detail](../design/png/pres-detail.png) (HTML: `docs/design/screens/<tên>.html`; token: [design-spec.md](../design/design-spec.md))
+
 **Tasks**
 
 | Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
@@ -357,6 +367,8 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 **Mục tiêu.** Trước khi chụp, người dùng thấy rõ phải uống thuốc gì, mấy viên, và nghe được bằng tiếng Việt.
 
+**Thiết kế:** [dose](../design/png/dose.png), [dose-switch](../design/png/dose-switch.png), [dose-taken](../design/png/dose-taken.png) (HTML: `docs/design/screens/<tên>.html`; token: [design-spec.md](../design/design-spec.md))
+
 **Tasks**
 
 | Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
@@ -380,6 +392,8 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 **Mốc:** M3 · **Người gợi ý:** Mobile 2 · **Ước lượng:** 14 giờ · **Yêu cầu:** FR-VER-01, FR-VER-02, FR-VER-10, ADR-014, SCR-CAPTURE
 
 **Mục tiêu.** Chụp (hoặc chọn) ảnh thuốc, chuẩn bị đúng 2048 px JPEG q85 và khung chụp đúng tỉ lệ để gửi.
+
+**Thiết kế:** [capture](../design/png/capture.png), [camera-denied](../design/png/camera-denied.png) (HTML: `docs/design/screens/<tên>.html`; token: [design-spec.md](../design/design-spec.md))
 
 **Tasks**
 
@@ -406,6 +420,8 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 **Mục tiêu.** Hiện đúng kết quả server trả, tuân thủ BR-01 ở đúng một chỗ trong mã.
 
+**Thiết kế:** [checking](../design/png/checking.png), [result-green](../design/png/result-green.png), [result-retake](../design/png/result-retake.png), [result-final](../design/png/result-final.png), [result-error](../design/png/result-error.png) (HTML: `docs/design/screens/<tên>.html`; token: [design-spec.md](../design/design-spec.md))
+
 **Tasks**
 
 | Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
@@ -431,6 +447,8 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 **Mục tiêu.** Khi chưa xanh, cho thêm đúng một lần chụp với hướng dẫn rõ, giữ viên đã xanh.
 
+**Thiết kế:** [result-retake](../design/png/result-retake.png), [capture-retake](../design/png/capture-retake.png) (HTML: `docs/design/screens/<tên>.html`; token: [design-spec.md](../design/design-spec.md))
+
 **Tasks**
 
 | Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
@@ -451,6 +469,8 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 **Mốc:** M4 · **Người gợi ý:** Mobile 2 · **Ước lượng:** 11 giờ · **Yêu cầu:** FR-LOG-01…03, UC-07, UC-08, SCR-DONE
 
 **Mục tiêu.** Mỗi cữ kết thúc có ghi nhận rõ ràng (app xác nhận hay tự kiểm) và không uống lặp.
+
+**Thiết kế:** [self-check](../design/png/self-check.png), [done](../design/png/done.png), [dose-taken](../design/png/dose-taken.png) (HTML: `docs/design/screens/<tên>.html`; token: [design-spec.md](../design/design-spec.md))
 
 **Tasks**
 
@@ -476,6 +496,8 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 **Mục tiêu.** Chạy trọn kịch bản demo trên máy giả lập mà không cần camera hay đơn thật.
 
+**Thiết kế:** [welcome](../design/png/welcome.png), [capture](../design/png/capture.png) (HTML: `docs/design/screens/<tên>.html`; token: [design-spec.md](../design/design-spec.md))
+
 **Tasks**
 
 | Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
@@ -500,6 +522,8 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 **Mục tiêu.** Người mới được hướng dẫn bằng giọng nói ở lần đầu chụp đơn và chụp thuốc; cảnh báo không thay dược sĩ luôn hiện.
 
+**Thiết kế:** [guide-first-time](../design/png/guide-first-time.png), [settings](../design/png/settings.png) (HTML: `docs/design/screens/<tên>.html`; token: [design-spec.md](../design/design-spec.md))
+
 **Tasks**
 
 | Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
@@ -522,6 +546,8 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 **Mục tiêu.** Xem lại 7 ngày gần nhất và chỉnh giờ nhắc, giọng nói.
 
+**Thiết kế:** [history](../design/png/history.png), [settings](../design/png/settings.png) (HTML: `docs/design/screens/<tên>.html`; token: [design-spec.md](../design/design-spec.md))
+
 **Tasks**
 
 | Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
@@ -541,6 +567,8 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 **Mốc:** M4 · **Người gợi ý:** Mobile 1 · **Ước lượng:** 5 giờ · **Yêu cầu:** FR-PRES-02, UC-02, SCR-PRES-CAMERA
 
 **Mục tiêu.** Chụp đơn giấy bằng camera làm đường phụ của việc nhập đơn.
+
+**Thiết kế:** [pres-camera](../design/png/pres-camera.png) (HTML: `docs/design/screens/<tên>.html`; token: [design-spec.md](../design/design-spec.md))
 
 **Tasks**
 
@@ -584,6 +612,8 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 **Mốc:** M5 · **Người gợi ý:** Mobile 2 · **Ước lượng:** 14 giờ · **Yêu cầu:** FR-PRES-09, UC-10, SCR-SHARE, ADR-016, TC-18
 
 **Mục tiêu.** Chia sẻ ảnh đơn gốc, ảnh phiếu bảng chữ to và bản chữ để người thân đối chiếu.
+
+**Thiết kế:** [share-warn](../design/png/share-warn.png), [share-phieu](../design/png/share-phieu.png) (HTML: `docs/design/screens/<tên>.html`; token: [design-spec.md](../design/design-spec.md))
 
 **Tasks**
 

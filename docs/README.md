@@ -24,6 +24,7 @@ Mục lục bộ tài liệu. Mỗi file trả lời **một** câu hỏi; khi h
 | Kiểm cái gì, khi nào là đạt (TC-xx) | [quality/test-plan.md](quality/test-plan.md) |
 | Làm việc với AI (Claude plan/review, Qoder code), nhánh, PR | [process/ai-workflow.md](process/ai-workflow.md) |
 | Nghĩa của từng từ | [glossary.md](glossary.md) |
+| Giao diện: màu, chữ, linh kiện, từng màn (nguồn dựng lại cho app) | [design/README.md](design/README.md) |
 | Sơ đồ pipeline (PNG + nguồn Mermaid) | [diagrams/](diagrams/) |
 | Tài liệu cũ (tham khảo, không cập nhật nữa) | [archive/](archive/) |
 
@@ -40,8 +41,8 @@ Mục lục bộ tài liệu. Mỗi file trả lời **một** câu hỏi; khi h
 
 | Vai trò | Đọc |
 |---|---|
-| AI agent viết code | [../AGENTS.md](../AGENTS.md) → [process/ai-workflow.md](process/ai-workflow.md) → tasks.csv + backlog (task đang làm) → các FR/UC/SCR mà story trỏ tới → erd / openapi |
-| Lập trình viên mobile mới | business-analysis → prd → ui-ux-spec → system-architecture → erd → backend/API.md |
+| AI agent viết code | [../AGENTS.md](../AGENTS.md) → [process/ai-workflow.md](process/ai-workflow.md) → tasks.csv + backlog (task đang làm) → các FR/UC/SCR mà story trỏ tới → [design/](design/README.md) (màn của task) → erd / openapi |
+| Lập trình viên mobile mới | business-analysis → prd → ui-ux-spec → design/design-spec → system-architecture → erd → backend/API.md |
 | Người chạy demo | deployment → test-plan mục 5 |
 | Người chuẩn bị bảo vệ | model-card → dataset → ADR-005 … ADR-010 → `archive/MediCheck_AI_tong_hop.md` |
 
