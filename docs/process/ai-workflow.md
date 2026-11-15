@@ -33,7 +33,7 @@ flowchart LR
   I --> J[Chủ dự án merge]
 ```
 
-1. **Chọn story:** story đầu tiên chưa ✅ trong [../product/roadmap.md](../product/roadmap.md) mà các story nó phụ thuộc đã merge.
+1. **Chọn story:** story có task `Todo` đầu tiên trong [../product/tasks.csv](../product/tasks.csv) mà mọi phụ thuộc đã `Done` (mô tả task ở [../product/backlog.md](../product/backlog.md)). Mỗi task là một phase giao cho Qoder.
 2. **Plan:** Claude đọc các FR/UC/SCR/TC mà story trỏ tới, cùng erd/openapi nếu chạm dữ liệu hoặc API, rồi viết `.ai-work/ST-xx/PLAN.md` (local, không commit):
    - mục tiêu và tiêu chí chấp nhận, chép nguyên từ PRD;
    - chia **phase** nhỏ, mỗi phase: file được sửa, việc làm, test phải có, lệnh kiểm;
@@ -45,7 +45,7 @@ flowchart LR
 6. **Self-review:** Claude đọc `git diff origin/main...HEAD` thật, rà theo checklist mục 5, sửa qua Qoder.
 7. **PR:** `gh pr create --base main --title "<type>(ST-xx): ..." --body-file .ai-work/ST-xx/PR_BODY.md`. Body gồm: story, FR/SCR/TC liên quan, đã làm gì, docs đổi gì, cách test, ảnh chụp màn hình emulator, giới hạn.
 8. **Review PR:** Claude review lại bản trên GitHub và post bằng `gh pr review <n> --comment`. Còn lỗi → Qoder sửa → commit → review lại, tối đa 3 vòng.
-9. **Merge:** chủ dự án merge (squash) trên GitHub. Claude đánh dấu ✅ story trong roadmap ở PR đó hoặc PR kế tiếp, rồi xóa nhánh local.
+9. **Merge:** chủ dự án merge (squash) trên GitHub. Claude đổi trạng thái các task của story thành `Done` trong `tasks.csv` (trong chính PR của story), rồi xóa nhánh local.
 
 ## 3. Gọi Qoder
 

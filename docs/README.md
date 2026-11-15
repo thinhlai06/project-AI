@@ -10,7 +10,9 @@ Mục lục bộ tài liệu. Mỗi file trả lời **một** câu hỏi; khi h
 | App phải làm gì, đến mức nào là xong (FR-xx, NFR-xx, OQ-xx) | [product/prd.md](product/prd.md) |
 | Ai làm gì theo trình tự nào (UC-xx) | [product/use-cases.md](product/use-cases.md) |
 | Từng màn hình trông và nói thế nào (SCR-xx, MSG-xx) | [product/ui-ux-spec.md](product/ui-ux-spec.md) |
-| Làm gì trước, làm gì sau (M-x, ST-xx) | [product/roadmap.md](product/roadmap.md) |
+| Làm gì trước, làm gì sau (mốc M-x) | [product/roadmap.md](product/roadmap.md) |
+| Mọi story/task, mô tả chi tiết, ước lượng (ST-xx.y) | [product/backlog.md](product/backlog.md) |
+| Bảng theo dõi trạng thái task (import vào Google Sheets) | [product/tasks.csv](product/tasks.csv) |
 | Hệ thống gồm những phần nào, code app tổ chức ra sao | [architecture/system-architecture.md](architecture/system-architecture.md) |
 | Database trên điện thoại | [architecture/erd.md](architecture/erd.md) |
 | Hợp đồng API (máy đọc được, sinh từ code) | [architecture/openapi.yaml](architecture/openapi.yaml) |
@@ -38,7 +40,7 @@ Mục lục bộ tài liệu. Mỗi file trả lời **một** câu hỏi; khi h
 
 | Vai trò | Đọc |
 |---|---|
-| AI agent viết code | [../AGENTS.md](../AGENTS.md) → [process/ai-workflow.md](process/ai-workflow.md) → roadmap (story đang làm) → các FR/UC/SCR mà story trỏ tới → erd / openapi |
+| AI agent viết code | [../AGENTS.md](../AGENTS.md) → [process/ai-workflow.md](process/ai-workflow.md) → tasks.csv + backlog (task đang làm) → các FR/UC/SCR mà story trỏ tới → erd / openapi |
 | Lập trình viên mobile mới | business-analysis → prd → ui-ux-spec → system-architecture → erd → backend/API.md |
 | Người chạy demo | deployment → test-plan mục 5 |
 | Người chuẩn bị bảo vệ | model-card → dataset → ADR-005 … ADR-010 → `archive/MediCheck_AI_tong_hop.md` |

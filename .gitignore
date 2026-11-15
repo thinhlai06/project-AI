@@ -44,3 +44,6 @@ __pycache__/
 !/Dockerfile
 !/.dockerignore
 !/docker-compose.yml
+
+# Ảnh demo cho kịch bản trình bày và ST-16
+!/anh_demo/

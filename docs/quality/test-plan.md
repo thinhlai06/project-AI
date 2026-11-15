@@ -63,4 +63,4 @@ Không chạy lại đánh giá trên tập test của mô hình ([ADR-008](../a
 | D4 – Thừa viên | `don_thuoc_582.png` | Sáng | `anh_thuoc_A2_979_3.jpg` | Không xanh: "Có 1 viên app chưa xác nhận được." |
 | D5 – Tay thật | bất kỳ | bất kỳ | chụp bằng webcam | Câu kết quả hợp lý; chủ yếu để minh họa thao tác |
 
-Các ảnh trên hiện nằm ở `D:\project AI_cho_xoa\demo\`. Phải chép vào `mobile/assets/demo/` **trước khi** xóa thư mục chờ xóa.
+Các ảnh trên nằm ở [../../anh_demo/](../../anh_demo/) (đã chạy thử 15/11 trên server Docker: D1 xanh 3/3, D2 xanh 4/4, D3 thiếu kavasdin, D4 thừa 1 viên; ~1 giây mỗi lần kiểm). App chép chúng vào `mobile/assets/demo/` ở ST-16.1.

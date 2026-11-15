@@ -106,6 +106,6 @@ AI agent **không được** tự chọn mục nào chưa "Đã chốt". Câu h�
 | OQ-01 | Cho phép nhiều đơn cùng hiệu lực không? | **Không.** Một đơn đang dùng; đơn mới thay đơn cũ (FR-PRES-11, BR-12) | Đã chốt 2026-11-15 |
 | OQ-02 | Khi nào ngừng nhắc một dòng thuốc? | Theo FR-SCH-02 (tính từ số lượng); người dùng tự kết thúc đơn được (FR-PRES-12) | Đã chốt 2026-11-15 |
 | OQ-03 | "Gửi người thân" gửi gì? | Ảnh đơn gốc + ảnh phiếu bảng chữ to app vẽ + bản chữ (FR-PRES-09); ảnh đơn lưu trong app để gửi lại được ([ADR-016](../architecture/adr/prescription-image-on-device.md)) | Đã chốt 2026-11-15 |
-| OQ-04 | Ảnh mẫu từng thuốc lấy từ đâu? | Xuất ảnh nhỏ từ crop VAIPE (đang ở thư mục chờ xóa) thành asset của app; làm **trước khi** xóa thư mục đó (ST-00) | Đã chốt 2026-11-15 |
+| OQ-04 | Ảnh mẫu từng thuốc lấy từ đâu? | Xuất ảnh nhỏ từ crop VAIPE thành asset của app. Crop và dữ liệu thô đang ở Thùng rác (chỉ `anh_demo/` đã được khôi phục); khôi phục hoặc bỏ FR-DOSE-02 (ST-00.3) | Chờ duyệt |
 | OQ-05 | Câu hiển thị lấy từ server hay app tự soạn? | Dùng nguyên `summary`/`message` của server để chỉ có một nguồn câu chữ | Đã chốt 2026-11-15 |
 | OQ-06 | Kiểm ảnh mờ/tối trên điện thoại trước khi gửi? | Không ở MVP; chỉ dùng `quality` server trả | Đã chốt 2026-11-15 |

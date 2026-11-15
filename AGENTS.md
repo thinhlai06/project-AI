@@ -14,10 +14,10 @@ MediCheck VN: app Flutter giúp người cao tuổi kiểm thuốc theo đơn qu
 
 Luồng plan → code → review → PR và vai trò của từng công cụ AI: [docs/process/ai-workflow.md](docs/process/ai-workflow.md). Không push thẳng `main`; mỗi story một nhánh `story/ST-xx-…` và một PR.
 
-1. Tìm story trong [docs/product/roadmap.md](docs/product/roadmap.md); chỉ làm **một** story mỗi lần.
+1. Tìm task trong [docs/product/backlog.md](docs/product/backlog.md) và trạng thái ở [docs/product/tasks.csv](docs/product/tasks.csv) (task `Todo` đầu tiên có mọi phụ thuộc `Done`); chỉ làm **một** story mỗi lần.
 2. Đọc các mã FR/UC/SCR mà story trỏ tới, cùng [docs/architecture/erd.md](docs/architecture/erd.md) và [docs/architecture/openapi.yaml](docs/architecture/openapi.yaml) nếu chạm dữ liệu hoặc API.
 3. Gặp chỗ tài liệu không nói, hoặc mục `OQ-xx` chưa "Đã chốt": **hỏi người phụ trách**, không tự quyết.
-4. Xong thì đánh dấu ✅ story trong roadmap và cập nhật tài liệu bị ảnh hưởng trong cùng commit.
+4. Xong thì đổi trạng thái task trong `tasks.csv` và cập nhật tài liệu bị ảnh hưởng trong cùng commit.
 
 ## Quy tắc không được phá
 
