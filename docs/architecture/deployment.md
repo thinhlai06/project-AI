@@ -61,7 +61,7 @@ Không cần GPU. Sau khi build xong, chạy **không cần Internet**.
 - **Camera:** Advanced settings → Back camera = `Webcam0` (dùng webcam laptop để chụp thuốc trên tay thật).
 - **Ảnh có sẵn (đơn và thuốc):** kéo thả file ảnh hoặc PDF vào cửa sổ máy giả lập, file vào thư mục Download; app chọn bằng bộ chọn file/ảnh của Android (Files, Photos). Hoặc dùng `adb push anh.jpg /sdcard/Download/`. Ảnh muốn hiện trong Photos thì đẩy vào `/sdcard/Pictures/` rồi mở lại Photos. Không cần quyền đặc biệt trong app vì bộ chọn của hệ thống cấp quyền cho từng file.
 - **Giọng nói:** Settings → System → Languages → Text-to-speech → Google → cài giọng Tiếng Việt.
-- **Cleartext HTTP:** bản debug cho phép HTTP tới `10.0.2.2` và mạng nội bộ (cấu hình trong `android/app/src/main/res/xml/network_security_config.xml`).
+- **Cleartext HTTP:** bản debug cho phép HTTP tới `10.0.2.2` và mạng nội bộ (cấu hình trong `mobile/android/app/src/debug/res/xml/network_security_config.xml`), chỉ có ở bản debug; bản release chặn HTTP mặc định (ST-01.2).
 
 ## 4. Điện thoại thật (tùy chọn)
 

@@ -15,7 +15,7 @@ App hỗ trợ đối chiếu với đơn, **không thay thế dược sĩ**. D�
 | OCR đơn thuốc (PP-OCRv5 + VietOCR, ONNX) | ✅ Xong |
 | Server AI (`backend/`, FastAPI, CPU) | ✅ Xong, có test |
 | Bộ tài liệu cho app (`docs/`) | ✅ Chốt 15/11/2026 |
-| App Flutter (`mobile/`) | ⏳ Bắt đầu từ story ST-01 ([roadmap](docs/product/roadmap.md)) |
+| App Flutter (`mobile/`) | 🔄 ST-01.1 và ST-01.2 xong (khung Flutter 3.50.0, gói ADR-015, cấu hình Android); tiếp theo ST-01.3 ([roadmap](docs/product/roadmap.md)) |
 
 ## Kết quả (tập test, chạy một lần)
 
@@ -68,7 +68,7 @@ Kiểm thử: `python backend/tests/test_decide.py`.
 | [backend/](backend/) | Server AI: `medicheck_server/` (suy luận, FastAPI), `tests/`, `export_openapi.py` |
 | `out/onnx_final/` | Mô hình triển khai: ONNX, `deploy_config.json`, bảng tra tên → lớp. **Không sửa tay** |
 | `out/s2/`, `out/s3/` | Trọng số PyTorch của bản cuối (để xuất lại ONNX) |
-| `mobile/` | App Flutter (chưa tạo) |
+| `mobile/` | App Flutter (Flutter 3.50.0; xem [mobile/README.md](mobile/README.md)) |
 | [LICENSE-DINOv3.md](LICENSE-DINOv3.md) | Giấy phép DINOv3, bắt buộc kèm trọng số |
 
 Code train, dữ liệu và log thí nghiệm giữ ở máy người phụ trách AI, không đưa lên repo.

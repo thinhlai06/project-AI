@@ -11,7 +11,7 @@
 |---|---|---|
 | **Chủ dự án** (người giao việc) | Chọn story, duyệt plan, trả lời câu hỏi, **merge PR** (hoặc cho phép Claude merge cho đúng PR đó, mục 5b) | – |
 | **Claude Code** | Đọc docs, lập plan, gọi Qoder theo từng phase, kiểm diff, chạy test, commit, push, tạo PR, review PR, **ghi nhật ký vận hành** (mục 8) | Tự viết code tính năng (trừ sửa một dòng hiển nhiên khi Qoder đã thử 3 lần); merge PR (trừ khi cổng merge mục 5b đã đạt **và** chủ dự án cho phép bằng lời cho đúng PR đó); sửa docs khi chưa hỏi (trừ `tasks.csv` ở bước 6 hoặc 2b.3-8 và `workflow-log.md` ở mục 8) |
-| **Qoder CLI** | Sửa đúng các file được giao trong một phase; thử chạy `flutter analyze` / `flutter test` để tự kiểm (có chạy được hay không: xem mục 3) | Mọi lệnh git ghi, `gh`, sửa file ngoài danh sách, thêm thư viện |
+| **Qoder CLI** | Sửa đúng các file được giao trong một phase **và chạy các lệnh trong danh sách cho phép của phase đó** (`flutter create/pub/analyze/test/build`, mục 3b), tự kiểm và báo kết quả | Mọi lệnh git ghi, `gh`, sửa file ngoài danh sách, thêm thư viện |
 
 Chỉ Claude (hoặc người) giữ quyền ghi git, để không lọt commit sai nhánh, file cấm hay dòng tác giả AI.
 
@@ -151,10 +151,48 @@ qodercli -p -w "d:\project AI" -r <session-id> --permission-mode accept_edits `
 
 **Luật khi gọi Qoder:**
 - **Cấm `qodercli -c` / `--continue`**: nó nối vào session gần nhất của *bất kỳ* worktree (ở một dự án trước đã gây nhầm chéo task). Mỗi phase dùng `-n "ST-xx-p<N>"` mới; muốn tiếp tục thì chỉ `-r <session-id>` của đúng session đó ở đúng worktree đó.
-- **Qoder có chạy được `flutter` hay không là việc phải đo ở lần đầu**, rồi ghi kết quả vào [workflow-log.md](workflow-log.md). Cho tới khi có ghi chép "chạy được", Claude là bên chạy `flutter analyze` và `flutter test` sau mỗi lần Qoder chạy, và không tin câu "build OK" trong báo cáo của Qoder. Không nâng quyền (`auto`, `bypass_permissions`) để lách; muốn đổi thì hỏi chủ dự án.
+- **Đã đo 2026-11-15:** `flutter` chạy được khi giao kèm danh sách cho phép hẹp (mục 3b); không cần nâng quyền (`auto`, `bypass_permissions` vẫn cấm). Claude vẫn kiểm lại bằng lệnh ngắn (chỉ lấy vài dòng cuối) và không tin câu "build OK" của Qoder.
 - Qoder không xóa hay đổi tên được file (cổng quyền): nó làm rỗng file cũ; Claude chạy `git rm -f <file>` sau khi đọc diff rồi mới commit.
 - **Chuỗi có dấu gạch chéo ngược đứng trước `r`, `n`, `t`** (đường dẫn Windows kiểu "backend, gạch chéo ngược, requirements.txt") có thể bị biến thành ký tự xuống dòng khi đi qua công cụ; đã làm vỡ một dòng lệnh trong `deployment.md` (nhật ký 2026-11-15). Sau khi sửa file có chuỗi như vậy, kiểm ở mức byte (python: `chr(92)` là dấu gạch chéo ngược, `bytes([13])` là CR) và đừng tin chữ hiển thị. Prompt giao Qoder cho file có đường dẫn Windows phải nhắc điều này. Trong lệnh và tài liệu mới, ưu tiên viết đường dẫn bằng dấu `/`.
 - Lỗi cú pháp thường gặp của model viết code: nhầm dấu, thiếu `return`, thiếu import, gọi API Flutter không có ở bản 3.50. Gửi lỗi nguyên văn cho Qoder, một vòng thường đủ; khi một kiểu lỗi lặp lại thì thêm câu nhắc vào prompt mẫu và ghi vào nhật ký.
+
+### 3b. Qoder làm được gì và cách giao (đo 2026-11-15)
+
+Qoder làm được gì ở chế độ `accept_edits`:
+
+| Việc | Mặc định | Với `--allowed-tools` hẹp |
+|---|---|---|
+| Sửa/tạo file trong thư mục làm việc (`-w`) | được | được |
+| Đọc ngoài thư mục `-w` (ví dụ `.ai-work/`) | bị chặn | được, nếu thêm `--add-dir "<thư mục>"` |
+| `git status`, `git log`, `git diff` (chỉ đọc) | được | được |
+| `git add`, `git commit`, `git switch`, `gh` | bị chặn | **không cho phép** (chỉ Claude) |
+| `python`, `flutter`, `dart` | bị chặn | được, đúng lệnh con đã liệt kê |
+| Lệnh ngoài danh sách (ví dụ `flutter config`) | bị chặn | vẫn bị chặn |
+
+- Đã chạy thật trong Qoder với danh sách cho phép: `flutter create`, `pub add`, `pub get`, `analyze`, `test` và `build apk --debug` (151 s; lần build đầy đủ đầu tiên mất 5-8 phút). Công cụ shell của Qoder **không** timeout ở lệnh build. `flutter analyze` khoảng 11 s, `flutter test` khoảng 5 s.
+
+**Cách cấp lệnh:** một cờ `--allowed-tools "Bash(<lệnh đầy đủ>:*)"` cho mỗi tiền tố lệnh. Khớp theo tiền tố, nên phải liệt kê từng lệnh con: `Bash(D:/flutter/bin/flutter.bat analyze:*)`, `Bash(D:/flutter/bin/flutter.bat test:*)`, `Bash(D:/flutter/bin/flutter.bat pub get:*)`, `Bash(D:/flutter/bin/flutter.bat pub add:*)`, `Bash(D:/flutter/bin/flutter.bat create:*)`, `Bash(D:/flutter/bin/flutter.bat build apk:*)`. Không cấp tiền tố rộng như `flutter.bat` trần (nó sẽ cho phép cả `config`, `upgrade`, `doctor --android-licenses`). Đây là danh sách cho phép hẹp, không phải `bypass_permissions`.
+
+**Thực tế khi gọi:**
+
+- (a) Đặt việc vào `.ai-work/ST-xx/P<N>.md` và gọi Qoder bằng prompt một dòng "Read <file> and carry out exactly what it says" (tránh việc PowerShell tách sai tham số với prompt dài).
+- (b) `-w` phải là thư mục mà lệnh cần chạy trong đó (với `flutter pub/analyze/test` là `mobile/`), rồi thêm `--add-dir "d:/project AI/.ai-work/ST-xx"` để Qoder đọc được task file.
+- (c) Đặt `PUB_CACHE=D:/flutter_pub_cache` và thêm `D:/flutter/bin` vào PATH của tiến trình PowerShell gọi Qoder **trước** khi khởi động Qoder (tiến trình con kế thừa; PATH của một phiên đang chạy đã cũ).
+- (d) Luôn dùng đường dẫn đầy đủ `D:/flutter/bin/flutter.bat`.
+- (e) Công cụ Edit của Qoder có thể ghi lại file với CRLF trong bản làm việc; với `core.autocrlf=true` Git lưu LF, nên kiểm `git ls-files --eol` trước khi commit.
+
+**Ma trận giao việc:**
+
+- **Qoder:** mọi việc sửa file; `flutter create`, `pub add`, `pub get`, `analyze`, `test`, `build apk`; đọc git chỉ đọc; tự sửa lỗi analyze/test tối đa 3 vòng.
+- **Claude:** viết task file `P<N>.md`, gọi Qoder, kiểm kết quả bằng lệnh ngắn (vài dòng cuối), mọi lệnh git ghi (`add`, `commit`, `push`), `gh` (PR, review), subagent review, quyết định và hỏi chủ dự án. Claude chỉ tự chạy lệnh `flutter` khi Qoder không làm được (timeout, lỗi môi trường) và phải ghi lý do vào [workflow-log.md](workflow-log.md).
+
+Ví dụ một lần gọi (PowerShell):
+
+```powershell
+$env:PUB_CACHE = "D:/flutter_pub_cache"
+$env:PATH = "D:/flutter/bin;" + $env:PATH
+qodercli -p -w "d:/project AI/mobile" --add-dir "d:/project AI/.ai-work/ST-xx" -n "ST-xx-p<N>" --permission-mode accept_edits --allowed-tools "Bash(D:/flutter/bin/flutter.bat analyze:*)" --allowed-tools "Bash(D:/flutter/bin/flutter.bat test:*)" --append-system-prompt "<luật chung>" "Read d:/project AI/.ai-work/ST-xx/P<N>.md and carry out exactly what it says."
+```
 
 ## 4. Claude kiểm sau mỗi lần Qoder chạy
 
@@ -168,6 +206,7 @@ cd mobile && flutter analyze && flutter test
 
 Khối này chạy bằng Git Bash; các khối khác trong tài liệu là PowerShell 5.1 (không có `&&`).
 
+- Chạy lệnh kiểm ngắn (chỉ lấy vài dòng cuối), ví dụ `flutter analyze` và `flutter test` với `| tail -3`, để tiết kiệm token; đọc đầy đủ chỉ khi lệnh lỗi.
 - File ngoài danh sách bị sửa → `git restore <file>`, báo Qoder.
 - Có commit hoặc nhánh lạ → dừng, báo chủ dự án.
 - Test mới phải **fail trước khi sửa và pass sau khi sửa** (với logic ở `core/domain`).
@@ -175,7 +214,7 @@ Khối này chạy bằng Git Bash; các khối khác trong tài liệu là Powe
 
 ### 4b. Chạy máy giả lập (Claude làm, không giao Qoder)
 
-Qoder ở `accept_edits` không chạy được lệnh Python (đo 2026-11-15, cổng quyền chặn); `flutter` chưa đo (việc của ST-01), nên chưa biết nó có mở được emulator không; vì vậy **Claude** là bên mở máy giả lập, cài app, chụp màn hình và dọn dẹp. Prompt giao Qoder không yêu cầu mở emulator, và không nâng quyền để lách (mục 3).
+Qoder ở `accept_edits` mặc định không chạy được `python` và `flutter` (đo 2026-11-15, cổng quyền chặn); với danh sách cho phép hẹp thì chạy được `flutter` (mục 3b), nhưng việc mở emulator chưa đo (đo ở ST-01.3); cho tới khi có kết quả đó **Claude** là bên mở máy giả lập, cài app, chụp màn hình và dọn dẹp. Prompt giao Qoder không yêu cầu mở emulator, và không nâng quyền để lách (mục 3).
 
 | Mục | Giá trị trên máy dev (kiểm 2026-11-15) |
 |---|---|
