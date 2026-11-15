@@ -51,8 +51,7 @@ Không cần GPU. Sau khi build xong, chạy **không cần Internet**.
 2. Repo ở đường dẫn ngắn (Windows giới hạn độ dài đường dẫn, `pip` lỗi nếu lồng sâu).
 3. ```powershell
    py -3.12 -m venv .venv
-   .venv\Scripts\python.exe -m pip install -r backend
-equirements.txt
+   .venv\Scripts\python.exe -m pip install -r backend\requirements.txt
    .venv\Scripts\python.exe -m uvicorn backend.medicheck_server.app:app --host 0.0.0.0 --port 8000
    ```
 
