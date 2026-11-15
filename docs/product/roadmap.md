@@ -20,6 +20,6 @@
 
 Danh sách story và task, mô tả chi tiết, ước lượng, phụ thuộc: [backlog.md](backlog.md). Bảng theo dõi trạng thái từng task (Todo/Doing/Review/Done/Blocked): [tasks.csv](tasks.csv). **Trạng thái chỉ ghi ở `tasks.csv`**, không ghi lại ở đây.
 
-Nếu trễ: bỏ từ dưới lên theo ưu tiên (Could → Should); không bỏ Must. Thứ tự gợi ý khi cắt: ST-22 → ST-20 → ST-19 → ST-21 → ST-17.1 → ST-18.1.
+Nếu trễ: bỏ từ dưới lên theo ưu tiên (Could → Should); không bỏ Must. Thứ tự gợi ý khi cắt: ST-22 → ST-19 → ST-21 → ST-17.1 → ST-18.1.
 
 Một người làm toàn bộ (Claude lập plan và review, Qoder CLI viết code); thứ tự làm nằm ở cột `Thứ tự làm` của [tasks.csv](tasks.csv).

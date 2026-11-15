@@ -116,6 +116,7 @@ Mọi tài liệu khác phải tuân theo các quy tắc này. Muốn đổi th�
 | BR-10 | Không lưu ảnh thuốc ở đâu cả; không lưu họ tên, số BHYT dạng chữ; server không lưu gì. Ảnh đơn gốc chỉ lưu trong bộ nhớ riêng của app trên điện thoại, xóa cùng đơn, chỉ rời máy khi gửi đọc đơn hoặc khi người dùng tự bấm "Gửi người thân" ([ADR-016](../architecture/adr/prescription-image-on-device.md)) |
 | BR-11 | Chuẩn an toàn ≤ 2% không bao giờ nới; ngưỡng trong `deploy_config.json` không sửa tay |
 | BR-12 | Mỗi lúc chỉ có một đơn đang dùng; cữ, nhắc và kiểm thuốc chỉ theo đơn đó. Đơn mới thay đơn cũ sau khi người dùng xác nhận |
+| BR-13 | Ảnh viên cắt từ ảnh vừa chụp chỉ để hiển thị sau kết quả: chỉ ở bộ nhớ, không lưu, không gửi đi; không có chỗ sửa tên hay số viên; không tham gia quyết định ([ADR-018](../architecture/adr/pill-crops-in-memory.md)) |
 
 ## 10. Nguồn
 

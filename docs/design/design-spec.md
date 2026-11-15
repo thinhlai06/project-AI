@@ -97,6 +97,7 @@ abstract final class AppSpace {
 | `Switch` | 72 × 44, núm tròn 36, nền `primary` khi bật; luôn kèm chữ Bật/Tắt | Hàng chứa nó cao ≥ 72 |
 | `Spinner` | vòng 104, nét 10, nền `divider`, cung `primary` | Tĩnh trong bản vẽ; app dùng `CircularProgressIndicator` cùng màu và cỡ |
 | `StatusCircle` | tròn 64 (kết quả), 112 (trạng thái lớn); nền màu trạng thái; biểu tượng trắng 38 / 64 | Xanh ✓, vàng ?, đỏ ✗; trạng thái trung tính (lỗi, quyền) dùng nền tint + biểu tượng màu |
+| `PillResultRow` | thẻ góc 16, đệm 12, nền `surface` (nền tint theo trạng thái khi hàng đang được chọn hoặc cần chú ý); **ô ảnh 72 × 72** góc 14, viền theo trạng thái (xanh liền 4, vàng đứt 4, đỏ liền 6; hàng đỏ viền 6 nên ô 76); tên 20/700 (xuống dòng được), "× n viên" 20/500, dòng trạng thái 20/700 có biểu tượng 22 + chữ màu trạng thái; dòng phụ 20/500 cùng màu ("Bỏ viên này ra.", "Để riêng ra.") | Một ảnh mỗi thuốc. Hàng thiếu: ô không ảnh viền đứt `yellow`, biểu tượng viên thuốc. Không có nút sửa |
 | `Callout` | thẻ tint theo trạng thái, đệm 14 × 16, biểu tượng 🔊 28 + câu 20/700 | Hiện `message` của viên đang chọn; chạm viên thì đọc `message` |
 | `Scaffold` màn | nền trắng, lề ngang 16, nội dung cách 16 | |
 
@@ -122,13 +123,14 @@ Biểu tượng tự vẽ không có trong Material (nếu muốn giống hệt,
 | Cữ cần uống | `dose` | SCR-DOSE · ST-11.2 | 844 | Số viên cỡ `huge` |
 | Đổi cữ | `dose-switch` | SCR-DOSE · ST-11.2 | 844 | Bảng chọn từ đáy, góc trên 24; ô 88 cao; cữ không có thuốc không bấm được |
 | Cữ đã uống | `dose-taken` | SCR-DOSE · ST-11.3 | 844 | Dấu tích **xanh dương** (đã ghi nhận), không phải xanh lá (xanh lá chỉ dành cho viên khớp) |
-| Chụp thuốc | `capture` | SCR-CAPTURE · ST-12.1 | 844 | Khung 274 × 274 giữa màn (cách đỉnh 285), nút chụp 88, nút "Ảnh có sẵn" 112 × 68 bên trái |
+| Chụp thuốc | `capture` | SCR-CAPTURE · ST-12.1 | 844 | **Khung ngắm** 342 × 380 (trái 24, cách đỉnh 235): bốn góc chữ L 36 dp nét 5 dp góc bo 12; dấu + 40 × 4 ở giữa (tâm 195, 425); vùng ngoài tối 45%. Thanh dưới cao 144: "Ảnh có sẵn" 112 × 68 (trái 16), nút chụp 88 (giữa), "Hướng dẫn" 112 × 68 (phải) |
 | Chụp lại | `capture-retake` | SCR-CAPTURE · ST-14.2 | 844 | Câu hướng dẫn có tên thuốc còn thiếu |
-| Hướng dẫn lần đầu | `guide-first-time` | ST-17.1 | 844 | Thẻ trắng góc 24 trên nền camera tối 70% |
+| Hướng dẫn lần đầu | `guide-first-time` | ST-17.1 | 844 (mở lại bằng nút "Hướng dẫn") | Thẻ trắng góc 24 trên nền camera tối 70% |
 | Đang kiểm thuốc | `checking` | ST-13.2 | 844 | Có "Hủy" |
-| Kết quả xanh | `result-green` | SCR-RESULT · ST-13.2/13.3 | 844 | Chỉ ở đây có "Tôi đã uống" |
-| Kết quả đỏ, còn lượt | `result-retake` | SCR-RESULT · ST-14.2 | 900 | Hai dòng chú giải: "Bỏ viên này ra", "Viên này đúng, để riêng ra" |
-| Kết quả vàng, hết lượt | `result-final` | SCR-RESULT · ST-13.3 | 844 | Chỉ còn "Tôi đã kiểm vỏ hộp" |
+| Kết quả xanh | `result-green` | SCR-RESULT · ST-13.2/13.3/29.3 | 940 | Chỉ ở đây có "Tôi đã uống". Cuộn; thanh nút cố định |
+| Kết quả đỏ, còn lượt | `result-retake` | SCR-RESULT · ST-14.2/29.3 | 1150 | Dòng phụ trong từng hàng thay cho chú giải: "Bỏ viên này ra." / "Để riêng ra." |
+| Kết quả vàng, hết lượt | `result-final` | SCR-RESULT · ST-13.3/29.3 | 1090 | Chỉ còn "Tôi đã kiểm vỏ hộp". Hàng "Viên chưa xác nhận" lên đầu |
+| Kết quả còn thiếu | `result-missing` | SCR-RESULT · ST-13.3/29.3 | 1030 | Cữ `not_green` do `missing[]`: hàng thuốc thiếu (không ảnh) lên đầu; còn lượt nên có "Chụp lại" |
 | Lỗi kết nối | `result-error` | SCR-RESULT · ST-13.1 | 844 | Không có ảnh; "Thử lại" là nút chính |
 | Tự kiểm vỏ hộp | `self-check` | UC-08 · ST-15.2 | 844 | Danh sách chữ to; biểu tượng ô tích chỉ minh họa |
 | Đã ghi nhận | `done` | SCR-DONE · ST-15.1 | 844 | Tự về HOME sau 5 giây |
@@ -159,6 +161,7 @@ Mỗi màn có `<title>` và biểu tượng có `aria-label`/`aria-hidden`: đ�
 - **Viên đang chọn** (vừa chạm): thêm viền trắng 3 dp bên ngoài; `Callout` bên dưới hiện `message` của viên đó và đọc to. Mặc định chọn viên **đỏ đầu tiên**, nếu không có thì viên vàng, nếu không thì viên đầu tiên.
 - **Vùng chạm:** nếu hộp nhỏ hơn 48 × 48 thì mở rộng vùng chạm (không mở rộng nét vẽ).
 - **Thứ tự vẽ:** xanh → vàng → đỏ (đỏ nằm trên cùng để không bị che).
+- **Ảnh viên trong danh sách** (`PillResultRow`): cắt từ ảnh đã gửi theo `box`, ô vuông có cạnh = max(rộng, cao) × 1,25 quanh tâm viên, kẹp trong ảnh, thu về 160 px (hiển thị 64 dp). Mỗi thuốc một ảnh (viên đại diện: viên có trạng thái nặng nhất của thuốc đó); số viên đã có ở chữ. Chỉ ở RAM, bỏ khi rời màn ([ADR-018](../architecture/adr/pill-crops-in-memory.md)).
 - Chỉ hiện chú giải trạng thái **đang có** trong ảnh (ví dụ màn đỏ chỉ giải thích đỏ và xanh).
 
 ## 8. Hành vi mà ảnh tĩnh không thể hiện
@@ -193,8 +196,18 @@ Mỗi màn có `<title>` và biểu tượng có `aria-label`/`aria-hidden`: đ�
 
 **Vòng 2:** chụp lại và xem các màn đã sửa; không còn lỗi bố cục. Kiểm tự động: **không có chữ nhỏ hơn 20 px** ở màn hình ứng dụng; mọi vùng chạm ≥ 48; mỗi màn tối đa một nút chính; mọi cặp chữ/nền đạt ≥ 4,5:1.
 
+**Vòng 3 (sau thảo luận với chủ dự án, 15/11):**
+
+| # | Quyết định | Thay đổi |
+|---|---|---|
+| 11 | Khung ngắm kiểu bốn góc chữ L + dấu +, rộng hơn (342 × 380) để người cao tuổi khó để viên ra ngoài khung | `capture`, `capture-retake`, `pres-camera` giữ khung cũ (đơn giấy) |
+| 12 | Thêm nút "Hướng dẫn" ở màn chụp | Thanh dưới có ba nút |
+| 13 | Bỏ ảnh mẫu VAIPE; sau kết quả hiện ảnh viên cắt từ ảnh vừa chụp, mỗi thuốc một ảnh, không lưu gì | Danh sách "Thuốc theo kết quả" ở 4 màn kết quả; thêm màn `result-missing`; ADR-018 |
+| 14 | Danh sách không cho sửa tên/số viên (giữ BR-01) | Không có ô sửa trong `PillResultRow` |
+
 **Điểm còn mở (không chặn việc code):**
 - Hình minh họa bàn tay và tờ đơn là nét đơn giản tự vẽ; có thể thay bằng hình đẹp hơn sau.
 - Chưa có chế độ tối (theo PRD là giai đoạn 2).
 - Tên thuốc hiển thị viết hoa chữ đầu (`Panactol 500mg`) chỉ để hiển thị; chuỗi gửi server và `message` của server vẫn giữ nguyên chữ thường ([ui-ux-spec.md](../product/ui-ux-spec.md) mục 5).
-- Màn kết quả `partial` (cữ có thuốc chỉ nhắc lịch) dùng bố cục như `result-green` nhưng nút chính là "Tôi đã kiểm vỏ hộp" và không có nút "Tôi đã uống"; chưa có bản vẽ riêng vì chưa lấy được phản hồi `partial` thật từ server để làm mẫu. Dựng theo bảng nút ở ui-ux-spec.
+- Màn kết quả `partial` (cữ có thuốc chỉ nhắc lịch) dùng bố cục như `result-green` nhưng nút chính là "Tôi đã kiểm vỏ hộp" và không có nút "Tôi đã uống"; chưa có bản vẽ riêng vì chưa có phản hồi `partial` thật làm mẫu (server trả `not_green` khi có `unchecked_count`). Dựng theo bảng nút ở ui-ux-spec; thử với server thật khi làm ST-13.
+- Các màn kết quả cao hơn 844 dp vì có danh sách: người dùng cuộn, thanh nút ở đáy luôn thấy.

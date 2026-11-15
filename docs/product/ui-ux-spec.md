@@ -117,24 +117,25 @@ flowchart TD
 
 ### SCR-DOSE – Cữ sáng cần uống
 - Tiêu đề `font.huge`: "Cữ sáng · 3 viên".
-- Mỗi thuốc: ảnh mẫu (nếu có, ghi "ảnh minh họa"), tên chữ to, "× 2 viên", ghi chú ăn.
+- Mỗi thuốc: tên chữ to, "× 2 viên", ghi chú ăn (không có ảnh viên: app không lưu ảnh, ADR-018).
 - Thuốc chỉ nhắc lịch / nửa viên: nhãn "Tự kiểm theo vỏ hộp".
 - **Nút chính:** "Kiểm thuốc" (hoặc "Tôi đã kiểm vỏ hộp" nếu cữ không có thuốc chấm ảnh, FR-VER-04).
 - Cữ đã uống: thay toàn bộ bằng "Cữ sáng đã uống lúc 7:05." (FR-LOG-03).
 - Nút phụ "Đổi cữ" → 4 nút lớn Sáng/Trưa/Chiều/Tối.
 
 ### SCR-CAPTURE – Chụp thuốc
-- Xem trước camera toàn màn, **khung chụp** vuông ~70% chiều rộng ở giữa, viền trắng dày.
+- Xem trước camera toàn màn, **khung ngắm** chữ nhật đứng 342 × 380 dp: bốn góc chữ L (36 dp, nét 5 dp), dấu + ở giữa, vùng ngoài khung tối 45%. Khung này là `frame` gửi server.
 - Câu trên cùng: "Xòe bàn tay ra, đặt thuốc lên lòng bàn tay, các viên rời nhau, rồi chụp."
 - Lần chụp lại: "Chỉ để các viên còn thiếu trên tay: hoạt huyết dưỡng não × 1."
-- Nút chụp tròn 88 dp. Nút phụ "Chọn ảnh có sẵn" (FR-VER-10): mở bộ chọn ảnh của hệ điều hành, gửi cả ảnh (không có khung). Chế độ đơn mẫu: thêm "Dùng ảnh thuốc mẫu".
+- Thanh dưới ba nút: "Ảnh có sẵn" (trái, FR-VER-10: mở bộ chọn ảnh của hệ điều hành, gửi cả ảnh, không có khung), nút chụp tròn 88 dp (giữa), "Hướng dẫn" (phải: mở lại hướng dẫn lần đầu). Chế độ đơn mẫu: thêm "Dùng ảnh thuốc mẫu".
 - Lần đầu: hướng dẫn giọng nói + ảnh minh họa + "Bỏ qua".
 - Sau khi chụp: màn chờ "Đang kiểm thuốc" (tối đa 20 giây).
 
 ### SCR-RESULT – Kết quả
 - Trên cùng: biểu tượng lớn + câu `summary` (`font.title`), đọc ngay.
-- Giữa: ảnh vừa chụp, khoanh từng viên theo `pills[].box`; chạm vào viên → đọc `message`.
-- Dưới: danh sách `missing[]` ("Còn thiếu 1 viên …").
+- Giữa: ảnh vừa chụp (cao 300, phóng tới vùng quanh các viên), khoanh từng viên theo `pills[].box`; chạm vào viên → đọc `message` trong khung màu theo trạng thái.
+- Dưới: **"Thuốc theo kết quả"** (FR-VER-11): mỗi thuốc một hàng [ảnh viên 72 · tên · × số viên · trạng thái]; thuốc còn thiếu (`missing[]`) là hàng không ảnh "Còn thiếu n viên"; viên không thuộc thuốc nào ở hàng "Viên chưa xác nhận". Hàng cần chú ý (đỏ, vàng, thiếu) lên đầu. Chạm hàng ↔ nhấn mạnh viên trên ảnh. Không có ô sửa.
+- Màn cuộn; thanh nút cố định ở đáy.
 - Nút theo `status`:
 
 | `status` | Nút chính | Nút phụ |
@@ -199,6 +200,11 @@ Câu kiểm thuốc lấy nguyên từ server (`summary`, `message`; OQ-05). Cá
 | MSG-NO-SERVER | Lỗi mạng/timeout | "Chưa kết nối được máy kiểm thuốc. Bác thử lại, hoặc tự kiểm theo vỏ hộp." |
 | MSG-BOX-CHECK | Vào bước tự kiểm | "Hãy đối chiếu tên trên vỏ hộp với đơn." |
 | MSG-NOT-CHECKABLE | Cữ không có thuốc chấm ảnh | "Thuốc của cữ này app chưa kiểm được bằng hình, hãy kiểm theo vỏ hộp." |
+| MSG-ROW-MATCH | Hàng thuốc khớp | "Khớp đơn" |
+| MSG-ROW-WRONG | Hàng thuốc đỏ | "Không đúng cữ" + "Bỏ viên này ra." |
+| MSG-ROW-KEEP | Hàng thuốc xanh khi có viên đỏ | "Khớp đơn" + "Để riêng ra." |
+| MSG-ROW-UNSURE | Hàng viên vàng | "Viên chưa xác nhận" + "Hãy kiểm vỏ hộp" |
+| MSG-ROW-MISSING | Hàng thuốc thiếu | "Còn thiếu {n} viên" |
 | MSG-DISCLAIMER | Chào mừng, cài đặt, phiếu đơn | "App hỗ trợ đối chiếu với đơn, không thay thế dược sĩ." |
 | MSG-REPLACE-PRES | Lưu đơn mới khi có đơn đang dùng | "Đơn cũ (kê ngày {ngày}) sẽ kết thúc khi bác tạo lịch cho đơn này." |
 | MSG-SHARE-WARN | Trước khi gửi người thân | "Ảnh đơn có họ tên và số BHYT của bác. Chỉ gửi cho người thân tin cậy." |

@@ -46,9 +46,9 @@ MediCheck là app Flutter, ưu tiên Android, kèm một server AI chạy trên 
 | Mã | Yêu cầu | Ưu tiên | Tiêu chí chấp nhận |
 |---|---|---|---|
 | FR-DOSE-01 | Màn "Cữ sáng cần uống": tên chữ to, số viên từng thuốc, trước/sau ăn, nút đọc to | Must | Mở được từ thông báo và từ màn Hôm nay |
-| FR-DOSE-02 | Ảnh mẫu từng thuốc (tối đa 3 ảnh, ghi "ảnh minh họa") | Could | Thuốc không có ảnh mẫu chỉ hiện tên (xem OQ-04) |
+| FR-DOSE-02 | (bỏ) Ảnh mẫu từng thuốc. Thay bằng FR-VER-11 | – | Quyết định 2026-11-15, [ADR-018](../architecture/adr/pill-crops-in-memory.md) |
 | FR-DOSE-03 | Cữ hiện tại = cữ chưa uống gần nhất đã đến giờ trong ngày; người dùng đổi được cữ bằng nút lớn | Must | 9:30 sáng chưa uống cữ sáng → mở ra là cữ sáng |
-| FR-VER-01 | Màn chụp có khung chụp, một nút chụp to, câu hướng dẫn "Xòe bàn tay ra, đặt thuốc lên lòng bàn tay, các viên rời nhau, rồi chụp" | Must | Gửi `frame` khớp với khung trên màn hình |
+| FR-VER-01 | Màn chụp: xem trước camera với **khung ngắm** chữ nhật đứng (bốn góc chữ L, dấu + ở giữa, vùng ngoài tối), một nút chụp to, hai nút phụ "Ảnh có sẵn" (FR-VER-10) và "Hướng dẫn" (mở lại hướng dẫn lần đầu), câu hướng dẫn "Xòe bàn tay ra, đặt thuốc lên lòng bàn tay, các viên rời nhau, rồi chụp" | Must | Gửi `frame` khớp với khung ngắm trên màn hình |
 | FR-VER-02 | Trước khi gửi: xoay theo EXIF, thu cạnh dài 2048 px, JPEG q85 | Must | Ảnh gửi đi ≤ 2048 px, ~300 KB |
 | FR-VER-03 | Dựng `payload` từ database: `session_lines` (dòng chấm ảnh của cữ), `other_lines` (mọi dòng còn hiệu lực khác của đơn đang dùng, kèm buổi), `unchecked_count` (viên chỉ nhắc lịch và nửa viên của cữ) | Must | Đúng quy tắc ở [../architecture/system-architecture.md](../architecture/system-architecture.md) mục 5 |
 | FR-VER-04 | Cữ không có dòng chấm ảnh nào: không gọi server, hiện "Thuốc của cữ này app chưa kiểm được bằng hình, hãy kiểm theo vỏ hộp" và nút "Tôi đã kiểm vỏ hộp" | Must | Không gửi `session_lines` rỗng (server trả 422) |
@@ -58,6 +58,7 @@ MediCheck là app Flutter, ưu tiên Android, kèm một server AI chạy trên 
 | FR-VER-08 | Lỗi mạng/timeout/server lỗi: báo "Chưa kết nối được máy kiểm thuốc", cho thử lại và cho "Tôi đã kiểm vỏ hộp" | Must | Không bao giờ hiện xanh khi lỗi |
 | FR-VER-09 | Thời gian chờ kiểm thuốc 20 giây, có màn chờ đọc "Đang kiểm thuốc" | Must | |
 | FR-VER-10 | Ngoài camera, màn chụp có nút phụ "Chọn ảnh có sẵn" mở bộ chọn ảnh của hệ điều hành (thư viện ảnh); ảnh chọn đi qua cùng bước chuẩn bị FR-VER-02 và gửi với `frame = null` | Should | Chạy được trên máy giả lập không cần camera; kết quả hiện như ảnh chụp (cùng SCR-RESULT) |
+| FR-VER-11 | Thuốc theo kết quả: dưới ảnh khoanh, mỗi thuốc một hàng gồm **một ảnh viên** cắt từ ảnh vừa chụp theo `box`, tên, số viên, trạng thái bằng chữ + biểu tượng + kiểu viền. Thuốc còn thiếu là hàng không ảnh ("Còn thiếu n viên"); viên không thuộc thuốc nào ở hàng "Viên chưa xác nhận". Chạm hàng thì viên trên ảnh được nhấn mạnh. Không có ô sửa tên/số viên. Ảnh cắt chỉ ở bộ nhớ (ADR-018) | Should | Không ghi file hay database (TC-20); không tạo ra trạng thái xanh nào ngoài server (BR-01) |
 
 ### 2.4. Ghi nhận và lịch sử (LOG)
 
@@ -73,7 +74,7 @@ MediCheck là app Flutter, ưu tiên Android, kèm một server AI chạy trên 
 | Mã | Yêu cầu | Ưu tiên | Tiêu chí chấp nhận |
 |---|---|---|---|
 | FR-ONB-01 | Mở lần đầu: nút to "Chọn đơn thuốc" và nút phụ "Thử với đơn mẫu"; không đăng ký, không đăng nhập | Must | |
-| FR-ONB-02 | Lần đầu chụp đơn và lần đầu chụp thuốc: hướng dẫn bằng giọng nói + ảnh minh họa + "Tôi hiểu rồi"/"Bỏ qua" | Should | Từ lần thứ hai vào thẳng màn chụp |
+| FR-ONB-02 | Lần đầu chụp đơn và lần đầu chụp thuốc: hướng dẫn bằng giọng nói + hình minh họa + "Tôi hiểu rồi"/"Bỏ qua"; nút "Hướng dẫn" ở màn chụp mở lại | Should | Từ lần thứ hai vào thẳng màn chụp |
 | FR-DEMO-01 | "Thử với đơn mẫu": nạp đơn mẫu (ảnh VAIPE trong app) và cho chọn ảnh thuốc mẫu thay vì chụp | Must | Chạy được trọn kịch bản demo trên máy giả lập không cần camera |
 | FR-SET-01 | Cài đặt địa chỉ server + nút "Kiểm tra kết nối" gọi `GET /health` | Must | Mặc định `http://10.0.2.2:8000` trên máy giả lập |
 | FR-SET-02 | Bật/tắt giọng nói (mặc định bật), chỉnh giờ từng buổi | Should | |
@@ -88,7 +89,7 @@ MediCheck là app Flutter, ưu tiên Android, kèm một server AI chạy trên 
 | NFR-03 | Hoạt động khi mất mạng | Lịch, nhắc, "Tôi đã uống", lịch sử chạy không cần mạng; chỉ đọc đơn và kiểm thuốc cần server | Test bật chế độ máy bay |
 | NFR-04 | Tiếp cận | Chữ thân ≥ 20 sp, nút chính cao ≥ 56 dp, vùng chạm ≥ 48 dp, tương phản ≥ 4,5 : 1 (mục tiêu 7 : 1 cho chữ chính), không dựa chỉ vào màu | Checklist ở [ui-ux-spec.md](ui-ux-spec.md) mục 7 |
 | NFR-05 | Giọng nói | Mọi kết quả quan trọng đọc bằng TTS tiếng Việt; có nút nghe lại trên mỗi màn | Test trên máy giả lập có giọng vi-VN |
-| NFR-06 | Riêng tư | Không lưu ảnh thuốc; không lưu họ tên, số BHYT dạng chữ; ảnh đơn gốc chỉ nằm trong bộ nhớ riêng của app và xóa cùng đơn (ADR-016); ảnh chỉ gửi tới server do người dùng cấu hình hoặc khi người dùng tự bấm gửi; server không ghi ảnh ra đĩa | Rà code |
+| NFR-06 | Riêng tư | Không lưu ảnh thuốc; không lưu họ tên, số BHYT dạng chữ; ảnh đơn gốc chỉ nằm trong bộ nhớ riêng của app và xóa cùng đơn (ADR-016); ảnh cắt viên chỉ ở RAM (ADR-018); ảnh chỉ gửi tới server do người dùng cấu hình hoặc khi người dùng tự bấm gửi; server không ghi ảnh ra đĩa | Rà code |
 | NFR-07 | Ngôn ngữ | Giao diện tiếng Việt có dấu; mọi chuỗi gửi/nhận là UTF-8 | Test tên thuốc có dấu |
 | NFR-08 | Nền tảng | Android 10 (API 29) trở lên, chạy tốt trên máy giả lập API 34; code không dùng thư viện chỉ có trên Android để còn build được iOS | Build Android; xem [ADR-002](../architecture/adr/flutter-android-first.md) |
 | NFR-09 | Bảo trì | Hợp đồng API theo `openapi.yaml`; lỗi phân tích JSON không làm sập app | Test hợp đồng |
@@ -106,6 +107,6 @@ AI agent **không được** tự chọn mục nào chưa "Đã chốt". Câu h�
 | OQ-01 | Cho phép nhiều đơn cùng hiệu lực không? | **Không.** Một đơn đang dùng; đơn mới thay đơn cũ (FR-PRES-11, BR-12) | Đã chốt 2026-11-15 |
 | OQ-02 | Khi nào ngừng nhắc một dòng thuốc? | Theo FR-SCH-02 (tính từ số lượng); người dùng tự kết thúc đơn được (FR-PRES-12) | Đã chốt 2026-11-15 |
 | OQ-03 | "Gửi người thân" gửi gì? | Ảnh đơn gốc + ảnh phiếu bảng chữ to app vẽ + bản chữ (FR-PRES-09); ảnh đơn lưu trong app để gửi lại được ([ADR-016](../architecture/adr/prescription-image-on-device.md)) | Đã chốt 2026-11-15 |
-| OQ-04 | Ảnh mẫu từng thuốc lấy từ đâu? | Xuất ảnh nhỏ từ crop VAIPE thành asset của app. Crop và dữ liệu thô đang ở Thùng rác (chỉ `anh_demo/` đã được khôi phục); khôi phục hoặc bỏ FR-DOSE-02 (ST-00.3) | Chờ duyệt |
+| OQ-04 | Ảnh minh họa từng thuốc lấy từ đâu? | **Không dùng ảnh VAIPE.** Ảnh viên cắt từ ảnh vừa chụp, chỉ trong bộ nhớ, không lưu (FR-VER-11, ADR-018) | Đã chốt 2026-11-15 |
 | OQ-05 | Câu hiển thị lấy từ server hay app tự soạn? | Dùng nguyên `summary`/`message` của server để chỉ có một nguồn câu chữ | Đã chốt 2026-11-15 |
 | OQ-06 | Kiểm ảnh mờ/tối trên điện thoại trước khi gửi? | Không ở MVP; chỉ dùng `quality` server trả | Đã chốt 2026-11-15 |

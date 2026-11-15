@@ -4,6 +4,16 @@ Mỗi phần việc có một báo cáo ngắn khoảng 100 từ. Phân tích ch
 
 ---
 
+## Task 13 – Chốt ảnh viên, khung ngắm và kiểm tra sẵn sàng code (15/11/2026) ✅
+
+**Quyết định với chủ dự án:** bỏ ảnh mẫu VAIPE; sau khi kiểm, app cắt từng viên từ ảnh vừa chụp và hiện danh sách "Thuốc theo kết quả" (mỗi thuốc một ảnh), **chỉ trong bộ nhớ, không lưu** (ADR-018, BR-13). Màn chụp đổi sang khung ngắm bốn góc chữ L + dấu +, rộng hơn, thêm nút "Hướng dẫn".
+
+**Đã làm:** sửa thiết kế (màn chụp, 4 màn kết quả, thêm `result-missing`), PRD (FR-VER-11, bỏ FR-DOSE-02), BA, use case, UI spec, kiến trúc, test plan (TC-20 đến 22), backlog (thêm ST-29, bỏ ST-20 và ST-00.3), đặc tả thiết kế. Chạy kiểm tra tham chiếu chéo (đạt) và thử cài mọi thư viện ADR-015 trên Flutter 3.50.0 (đạt). Kết quả ở [../quality/readiness.md](../quality/readiness.md).
+
+**Còn lại:** chủ dự án chấp nhận giấy phép Android SDK và thêm Flutter vào PATH.
+
+---
+
 ## Task 12 – Thiết kế giao diện app (15/11/2026) ✅
 
 **Đã làm:** thiết kế 29 bảng (26 màn hình và trạng thái, 1 bảng hệ thống thiết kế, 1 bảng tham chiếu thẻ thuốc, 1 ảnh phiếu đơn) bằng công cụ Design; dùng dữ liệu thật của server (ảnh demo, toạ độ khoanh viên D1, đỏ, D4). Xuất ra [docs/design/](../design/README.md): HTML tĩnh từng màn, ảnh chuẩn PNG, trang xem tổng hợp, đặc tả dựng lại (token, linh kiện, quy tắc khoanh viên), bảng chữ theo màn. Backlog trỏ tới màn của từng story.

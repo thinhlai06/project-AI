@@ -93,19 +93,25 @@
   "file": "result-green",
   "title": "SCR-RESULT – xanh",
   "w": 390,
-  "h": 844
+  "h": 940
  },
  {
   "file": "result-retake",
   "title": "SCR-RESULT – đỏ, còn lượt",
   "w": 390,
-  "h": 900
+  "h": 1150
  },
  {
   "file": "result-final",
   "title": "SCR-RESULT – vàng, hết lượt",
   "w": 390,
-  "h": 844
+  "h": 1090
+ },
+ {
+  "file": "result-missing",
+  "title": "SCR-RESULT – còn thiếu viên",
+  "w": 390,
+  "h": 1030
  },
  {
   "file": "result-error",

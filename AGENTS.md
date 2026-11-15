@@ -26,6 +26,7 @@ Luồng plan → code → review → PR và vai trò của từng công cụ AI:
 - Không sửa `out/onnx_final/` (`deploy_config.json`, bảng tra, file ONNX) và không đổi ngưỡng trong code.
 - Không chạy đánh giá trên tập test (`--fold test`, `--unseal-test`): tập test đã dùng một lần ([ADR-008](docs/architecture/adr/safety-rule-and-sealed-test.md)).
 - **BR-10 / [ADR-016](docs/architecture/adr/prescription-image-on-device.md):** không lưu ảnh thuốc; không lưu họ tên, số BHYT dạng chữ; ảnh đơn gốc chỉ ở thư mục riêng của app và xóa cùng đơn; không log nội dung đơn.
+- **BR-13 / [ADR-018](docs/architecture/adr/pill-crops-in-memory.md):** ảnh viên cắt từ ảnh vừa chụp chỉ ở bộ nhớ (không ghi file, không database), không có ô sửa tên hay số viên.
 - **BR-12:** chỉ một đơn `active`; lưu đơn mới thì đơn cũ `ended` trong cùng transaction.
 - Không thêm câu chữ có "an toàn", "chắc chắn đúng", "có thể là thuốc…", hay tên màu viên. Câu chữ của app chỉ nằm trong `mobile/lib/core/strings_vi.dart`.
 - Gửi `name` cho `/v1/pills/verify` đúng chuỗi `matched_name` server trả, không gửi chữ OCR thô.

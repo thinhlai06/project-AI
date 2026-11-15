@@ -40,6 +40,9 @@ Không chạy lại đánh giá trên tập test của mô hình ([ADR-008](../a
 | TC-17 | Bấm "Hủy" ở SCR-CONFIRM khi đã có đơn đang dùng | Đơn cũ giữ nguyên `active`, nhắc không đổi | BR-12 |
 | TC-18 | Gửi người thân từ chi tiết đơn | Hiện MSG-SHARE-WARN trước; bảng chia sẻ có ảnh đơn gốc, ảnh phiếu (đủ cột, có chú thích), bản chữ; không có họ tên, số BHYT trong phiếu và bản chữ | FR-PRES-09, ADR-016 |
 | TC-19 | Ở màn chụp, bấm "Chọn ảnh có sẵn" và chọn ảnh thuốc trong thư viện (máy giả lập) | Ảnh được chuẩn bị ≤ 2048 px, gửi với `frame = null`, hiện SCR-RESULT; không cần quyền camera | FR-VER-10 |
+| TC-20 | Kiểm một cữ, xem kết quả rồi rời màn | Không có file mới trong thư mục dữ liệu app, không bản ghi database chứa ảnh; ảnh cắt biến mất khi rời màn hoặc xong cữ | BR-13, ADR-018 |
+| TC-21 | Kết quả D4 (viên vàng), D3 (thiếu viên), kịch bản đỏ | Mỗi thuốc đúng một ảnh; thiếu → hàng không ảnh; viên vàng → "Viên chưa xác nhận"; hàng cần chú ý lên đầu | FR-VER-11 |
+| TC-22 | Mở danh sách thuốc theo kết quả | Không có ô sửa tên/số viên; không biến được hàng vàng/đỏ thành xanh; chỉ `status = green` mới có nút "Tôi đã uống" | BR-01, BR-13 |
 
 ## 3. Tiêu chí đạt của một mốc
 

@@ -55,7 +55,7 @@ flowchart LR
 | UC-02 | Chụp đơn giấy | Should | FR-PRES-02 | SCR-IMPORT, SCR-PRES-CAMERA |
 | UC-03 | Xác nhận và sửa đơn | Must | FR-PRES-04 … 08, 11, FR-SCH-01 … 03 | SCR-CONFIRM, SCR-EDIT-LINE |
 | UC-04 | Nhận nhắc cữ | Must | FR-REM-01 … 03, FR-DOSE-01 | Thông báo, SCR-DOSE |
-| UC-05 | Kiểm thuốc theo cữ | Must | FR-DOSE-03, FR-VER-01 … 09 | SCR-DOSE, SCR-CAPTURE, SCR-RESULT |
+| UC-05 | Kiểm thuốc theo cữ | Must | FR-DOSE-03, FR-VER-01 … 09, 11 | SCR-DOSE, SCR-CAPTURE, SCR-RESULT |
 | UC-06 | Chụp lại | Must | FR-VER-07 | SCR-RESULT, SCR-CAPTURE |
 | UC-07 | Ghi nhận đã uống | Must | FR-LOG-01, 03 | SCR-RESULT, SCR-DOSE |
 | UC-08 | Tự kiểm vỏ hộp | Must | FR-LOG-02, FR-VER-04, 08 | SCR-RESULT, SCR-DOSE |
@@ -118,7 +118,7 @@ flowchart LR
   1. Từ SCR-DOSE, người dùng bấm "Kiểm thuốc".
   2. SCR-CAPTURE hiện khung chụp và câu hướng dẫn; người dùng chụp.
   3. App chuẩn bị ảnh (EXIF, 2048 px, JPEG q85), dựng `payload` (FR-VER-03), gửi `POST /v1/pills/verify`.
-  4. App hiện SCR-RESULT: đọc `summary`, khoanh từng viên.
+  4. App hiện SCR-RESULT: đọc `summary`, khoanh từng viên, và danh sách "Thuốc theo kết quả" với ảnh viên cắt từ ảnh vừa chụp (FR-VER-11; chỉ ở bộ nhớ).
   5. Nếu `status = green` → nút "Tôi đã uống" (UC-07).
 - **Luồng phụ:**
   - 2a. Người dùng bấm "Chọn ảnh có sẵn" thay vì chụp → chọn ảnh trong thư viện, đi tiếp từ bước 3 với `frame = null` (FR-VER-10).

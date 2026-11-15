@@ -105,7 +105,7 @@ erDiagram
 | `setting` | Khóa đã biết: `server_url`, `time_sang`, `time_trua`, `time_chieu`, `time_toi` (HH:MM), `tts_enabled` (0/1), `onboarding_done` (0/1), `schema_version` |
 | `catalog_name` | Bản sao `GET /v1/catalog` để sửa tên khi mất mạng; nạp lại khi `model_version` đổi |
 
-**Không lưu** (BR-10): ảnh thuốc; họ tên, số BHYT, địa chỉ dạng chữ. Ảnh thuốc chỉ nằm trong bộ nhớ lúc gửi; màn kết quả vẽ box lên ảnh đang giữ trong bộ nhớ, rời màn là bỏ.
+**Không lưu** (BR-10, BR-13): ảnh thuốc, ảnh viên cắt; họ tên, số BHYT, địa chỉ dạng chữ. Ảnh thuốc chỉ nằm trong bộ nhớ lúc gửi; màn kết quả vẽ box lên ảnh đang giữ trong bộ nhớ, rời màn là bỏ.
 
 **File ngoài database:** ảnh đơn gốc ở `<app documents>/prescriptions/<prescription_id>.<ext>` ([ADR-016](adr/prescription-image-on-device.md)). Ghi file trước, rồi commit transaction; transaction lỗi thì xóa file vừa ghi.
 

@@ -22,6 +22,7 @@ Mục lục bộ tài liệu. Mỗi file trả lời **một** câu hỏi; khi h
 | Mô hình AI: làm được gì, giỏi đến đâu, giới hạn | [ai/model-card.md](ai/model-card.md) |
 | Dữ liệu huấn luyện và cách tạo lại | [ai/dataset.md](ai/dataset.md) |
 | Kiểm cái gì, khi nào là đạt (TC-xx) | [quality/test-plan.md](quality/test-plan.md) |
+| Đã sẵn sàng code chưa (kiểm tra tài liệu + môi trường) | [quality/readiness.md](quality/readiness.md) |
 | Làm việc với AI (Claude plan/review, Qoder code), nhánh, PR | [process/ai-workflow.md](process/ai-workflow.md) |
 | Nghĩa của từng từ | [glossary.md](glossary.md) |
 | Giao diện: màu, chữ, linh kiện, từng màn (nguồn dựng lại cho app) | [design/README.md](design/README.md) |

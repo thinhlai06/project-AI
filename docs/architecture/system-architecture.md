@@ -77,7 +77,7 @@ mobile/
       api/          medicheck_api.dart (client), dto.dart (khớp openapi.yaml)
       db/           tables.dart, database.dart (drift), daos/
       domain/       session_rules.dart, payload_builder.dart, schedule_rules.dart  ← Dart thuần, có unit test
-      media/        image_prep.dart (EXIF, 2048 px, q85)
+      media/        image_prep.dart (EXIF, 2048 px, q85), pill_crop.dart (cắt viên theo box, chỉ trong RAM)
       platform/     notifications.dart, tts.dart, share.dart
       strings_vi.dart   (mọi câu chữ của app, mục 5 của ui-ux-spec)
     features/
@@ -124,7 +124,8 @@ sequenceDiagram
   A->>S: POST /v1/pills/verify (image, payload)
   S-->>A: VerifyResponse (status, summary, pills[], missing[])
   A->>D: Lưu verification_attempt + verification_item (không lưu ảnh)
-  A->>U: Đọc summary, khoanh viên
+  A->>A: Cắt từng viên theo box (chỉ trong RAM, ADR-018)
+  A->>U: Đọc summary, khoanh viên, danh sách thuốc theo kết quả
   U->>A: "Tôi đã uống" (chỉ khi status = green)
   A->>D: dose_event = taken, app_verified; hủy nhắc lại
 ```

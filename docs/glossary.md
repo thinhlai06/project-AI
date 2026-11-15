@@ -20,6 +20,7 @@ Dùng **đúng** các từ này trong tài liệu, code, câu chữ của app. C
 | Kiểm thuốc / lượt kiểm | `verification_attempt` | Một lần chụp và gửi ảnh cữ; tối đa 2 lượt mỗi cữ |
 | Xanh / đỏ / vàng | `green` / `red` / `yellow` | Khớp đơn / sai cữ hoặc ngoài đơn / chưa chắc, hãy kiểm vỏ hộp |
 | Cữ xanh / một phần / chưa xanh | `green` / `partial` / `not_green` | Trạng thái cả cữ do server trả |
+| Ảnh viên cắt | – | Ảnh một viên cắt từ ảnh vừa chụp theo `box`, chỉ trong bộ nhớ, để hiển thị ở "Thuốc theo kết quả" (ADR-018) |
 | Khung chụp | `frame` | Vùng trên ảnh mà app đếm viên |
 | Tự kiểm vỏ hộp | `confirm_type = self_confirmed` | Người dùng tự xác nhận khi app không báo xanh |
 | App xác nhận | `confirm_type = app_verified` | Cữ được ghi nhận sau khi server báo xanh |

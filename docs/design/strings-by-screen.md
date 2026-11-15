@@ -177,6 +177,7 @@
 - Quay lại
 - Xòe bàn tay ra, đặt thuốc lên lòng bàn tay, các viên rời nhau, rồi chụp.
 - Ảnh có sẵn
+- Hướng dẫn
 
 ### SCR-CAPTURE – chụp lại (`capture-retake`)
 
@@ -185,6 +186,7 @@
 - Chỉ để các viên còn thiếu trên tay: kavasdin 5 5mg × 1.
 - Đây là lần chụp lại cuối cùng của cữ này.
 - Ảnh có sẵn
+- Hướng dẫn
 
 ### Hướng dẫn lần đầu (`guide-first-time`)
 
@@ -210,6 +212,14 @@
 - [ảnh] Ảnh vừa chụp: ba viên thuốc trên lòng bàn tay
 - Viên này khớp panactol 500mg.
 - Chạm vào từng viên để nghe lại.
+- Thuốc theo kết quả
+- [ảnh] Ảnh viên hoạt huyết dưỡng não
+- Hoạt huyết dưỡng não qn 150mg+20mg
+- × 2 viên
+- Khớp đơn
+- [ảnh] Ảnh viên panactol
+- Panactol 500mg
+- × 1 viên
 - Tôi đã uống
 
 ### SCR-RESULT – đỏ, còn lượt (`result-retake`)
@@ -219,8 +229,17 @@
 - Có 2 viên không đúng, hãy bỏ ra.
 - [ảnh] Ảnh vừa chụp: ba viên thuốc, hai viên khoanh đỏ
 - Viên này là thuốc buổi tối (hoạt huyết dưỡng não qn 150mg+20mg). Đừng uống viên này trong cữ này.
+- Thuốc theo kết quả
+- [ảnh] Ảnh viên hoạt huyết dưỡng não
+- Hoạt huyết dưỡng não qn 150mg+20mg
+- × 2 viên
+- Không đúng cữ
 - Bỏ viên này ra.
-- Viên này đúng, để riêng ra.
+- [ảnh] Ảnh viên panactol
+- Panactol 500mg
+- × 1 viên
+- Khớp đơn
+- Để riêng ra.
 - Chụp lại
 - Tôi đã kiểm vỏ hộp
 
@@ -232,6 +251,36 @@
 - [ảnh] Ảnh vừa chụp: bốn viên thuốc, một viên khoanh nét đứt
 - App chưa xác nhận được viên này, hãy kiểm vỏ hộp.
 - Bác đã chụp lại 1 lần rồi.
+- Thuốc theo kết quả
+- [ảnh] Ảnh viên chưa xác nhận
+- Viên chưa xác nhận
+- × 1 viên
+- Hãy kiểm vỏ hộp
+- [ảnh] Ảnh viên hoạt huyết dưỡng não
+- Hoạt huyết dưỡng não qn 150mg+20mg
+- × 2 viên
+- Khớp đơn
+- [ảnh] Ảnh viên panactol
+- Panactol 500mg
+- Tôi đã kiểm vỏ hộp
+
+### SCR-RESULT – còn thiếu viên (`result-missing`)
+
+- Quay lại
+- Nghe lại
+- Còn thiếu 1 viên kavasdin 5 5mg.
+- [ảnh] Ảnh vừa chụp: bốn viên thuốc, đều khớp, còn thiếu một viên
+- Thuốc theo kết quả
+- Kavasdin 5 5mg
+- × 1 viên
+- Còn thiếu 1 viên
+- [ảnh] Ảnh viên panactol
+- Panactol 500mg
+- × 2 viên
+- Khớp đơn
+- [ảnh] Ảnh viên hoạt huyết dưỡng não
+- Hoạt huyết dưỡng não bdf 150mg+5mg
+- Chụp lại
 - Tôi đã kiểm vỏ hộp
 
 ### SCR-RESULT – lỗi kết nối (`result-error`)
