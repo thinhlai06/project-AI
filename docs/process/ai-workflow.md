@@ -44,7 +44,33 @@ flowchart LR
 6. **Self-review:** Claude đọc `git diff origin/main...HEAD` thật, rà theo checklist mục 5, sửa qua Qoder.
 7. **PR:** `gh pr create --base main --title "<type>(ST-xx): ..." --body-file .ai-work/ST-xx/PR_BODY.md`. Body gồm: story, FR/SCR/TC liên quan, đã làm gì, docs đổi gì, cách test, ảnh chụp màn hình emulator, giới hạn.
 8. **Review PR:** Claude review lại bản trên GitHub và post bằng `gh pr review <n> --comment`. Còn lỗi → Qoder sửa → commit → review lại, tối đa 3 vòng.
-9. **Merge:** chủ dự án merge (squash) trên GitHub. Claude đổi trạng thái các task của story thành `Done` trong `tasks.csv` (trong chính PR của story), rồi xóa nhánh local.
+9. **Merge:** chủ dự án merge (squash) trên GitHub. Claude đổi trạng thái các task của story thành `Done` trong `tasks.csv` (trong chính PR của story; khi chạy song song thì làm ở commit riêng sau merge, mục 2b), rồi xóa nhánh local.
+
+## 2b. Làm nhiều story song song bằng worktree (tùy chọn)
+
+**Mặc định làm tuần tự** (mục 2). Chỉ dùng worktree khi hai story **độc lập** và bạn muốn Qoder chạy cùng lúc. Phần lớn đường chính là chuỗi phụ thuộc (ST-06 → 07 → 09; ST-11, 12 → 13 → 14, 15), nên song song ít khi có lợi.
+
+**Cặp có thể chạy song song** (khác thư mục, khác phụ thuộc):
+- ST-08 (logic Dart thuần) ∥ ST-04 (client API) ∥ ST-03 (database) ∥ ST-02.
+- ST-10 (nhắc thuốc) ∥ ST-12 (camera, chuẩn bị ảnh) ∥ ST-11.1 (giọng nói).
+- ST-17, ST-18, ST-19, ST-21 với nhau (sau khi ST-15 xong).
+- ST-05 (đo tốc độ), ST-27 (giấy phép), ST-28 (CI) với bất kỳ story nào (không đụng `mobile/`).
+
+**Luật:**
+1. Tối đa **2 worktree** cùng lúc; mỗi worktree một story một nhánh `story/ST-xx-…`; không dùng chung. Không sửa code ở thư mục chính khi đang có worktree.
+2. Tạo worktree **ngoài** repo, từ `main` mới nhất:
+   ```powershell
+   git fetch origin
+   git worktree add -b story/ST-xx-<mo-ta> "d:\project AI_wt\ST-xx" origin/main
+   cd "d:\project AI_wt\ST-xx\mobile"; flutter pub get
+   ```
+   Gọi Qoder với `-w "d:\project AI_wt\ST-xx"`. Plan và nhật ký vẫn ở `d:\project AI\.ai-work\ST-xx\` (dùng đường dẫn tuyệt đối).
+3. **Máy giả lập chỉ chạy một bản app** (cùng `applicationId`): chạy thử story nào thì cài từ worktree đó; chuyển story thì gỡ rồi cài lại. Server Docker dùng chung được (không có trạng thái).
+4. **Chỗ dễ xung đột** khi hai nhánh cùng sửa: `strings_vi.dart`, `app/router.dart`, `app/providers.dart`, file drift sinh ra. Mỗi story chỉ **thêm** vào cuối các file này (khối riêng theo story), không sắp xếp lại. Gặp xung đột thì giải trong file của story mình; nếu ở file khác thì dừng, hỏi chủ dự án.
+5. **Không đổi `tasks.csv` trong PR story** khi chạy song song (xung đột chắc chắn). Sau khi chủ dự án merge, Claude đổi trạng thái trên `main` bằng một commit riêng `chore: mark ST-xx done`.
+6. **Đồng bộ:** story merge trước thì story còn lại `git rebase origin/main`, chạy `dart run build_runner build --delete-conflicting-outputs` nếu đụng drift, `flutter analyze` và `flutter test` lại, rồi `push --force-with-lease` (chỉ nhánh của mình). **Không rebase khi Qoder đang chạy ở worktree đó.**
+7. Dọn sau khi merge: `git worktree remove "d:\project AI_wt\ST-xx"`, `git worktree prune`, `git branch -d story/ST-xx-…` (chỉ `-d`). Không dùng `--force` khi còn thay đổi chưa commit.
+8. Trước mỗi lệnh git ghi: `git rev-parse --show-toplevel` và `git branch --show-current` phải khớp story đang làm.
 
 ## 3. Gọi Qoder
 
