@@ -73,7 +73,14 @@ File sinh ra bởi drift/build_runner (`*.g.dart`) được commit, vì máy dem
   - `RECEIVE_BOOT_COMPLETED`: khôi phục lịch nhắc sau khi khởi động lại máy.
   - `USE_EXACT_ALARM`: báo thức chính xác cho cữ thuốc, tự cấp; nhưng chính sách Google Play dành cho app báo thức/lịch nên có rủi ro nếu phát hành.
 - Quyền đã gỡ (do plugin camera gộp vào, app không dùng): `RECORD_AUDIO`, `READ_EXTERNAL_STORAGE` (dùng `tools:node="remove"`).
-- Cleartext (HTTP) chỉ ở bản debug: file `android/app/src/debug/res/xml/network_security_config.xml`; bản release không có file này và chặn HTTP theo mặc định.
+- Quyền do plugin gộp vào trong APK release: `VIBRATE`, `ACCESS_NETWORK_STATE`, `WRITE_EXTERNAL_STORAGE` (maxSdkVersion 28, vô hiệu vì minSdk 29), cộng quyền nội bộ AndroidX.
+- Cleartext (HTTP): file `android/app/src/debug/res/xml/network_security_config.xml` ở bản debug cho phép HTTP tới mọi host (không biểu diễn được dải mạng nội bộ); bản profile và release chặn HTTP.
 - Nhãn app: `MediCheck`.
-- Lần build đầu mất 5-8 phút và Gradle tự tải thêm thành phần Android SDK.
-- Nếu gặp lỗi Kotlin "Could not close incremental caches", thêm `kotlin.incremental=false` vào `android/gradle.properties`.
+- `gradlew`, `gradlew.bat` và `gradle-wrapper.jar` không được commit (theo `android/.gitignore` của template); Flutter tự tạo lại khi build.
+- Lần build đầu mất 5-8 phút (ước lượng từ lần dựng thử) và Gradle tự tải thêm thành phần Android SDK.
+- Nếu gặp lỗi Kotlin "Could not close incremental caches" thì thêm `kotlin.incremental=false` vào `android/gradle.properties`; đây chỉ là gợi ý khi lỗi đó xuất hiện (không gặp trong 3 lần build trên máy này).
+
+## Việc cho story sau
+
+- `android:allowBackup` mặc định true: xem lại khi lưu ảnh đơn (ADR-016).
+- Giữ resource icon thông báo qua R8 bằng `res/raw/keep.xml` (ST-10).

@@ -49,7 +49,7 @@ __pycache__/
 !/anh_demo/
 
 # App Flutter (ST-01): mở khóa thư mục mobile/. File sinh ra của công cụ (.dart_tool, build, local.properties, *.iml, .idea...)
-# đã được loại bởi mobile/.gitignore do flutter create tạo; hai dòng dưới đây chỉ là lớp bảo vệ thứ hai.
+# đã được loại bởi mobile/.gitignore do flutter create tạo; ba dòng dưới đây chỉ là lớp bảo vệ thứ hai.
 # File sinh ra của drift/build_runner (*.g.dart) ĐƯỢC commit (quyết định ST-01, ghi ở mobile/README.md): không loại *.g.dart.
 !/mobile/
 /mobile/build/
