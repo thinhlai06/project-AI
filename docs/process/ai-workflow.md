@@ -9,7 +9,7 @@
 
 | Ai | Làm | Không làm |
 |---|---|---|
-| **Chủ dự án** (người giao việc) | Chọn story, duyệt plan, trả lời câu hỏi, **merge PR** | – |
+| **Chủ dự án** (người giao việc) | Chọn story, duyệt plan, trả lời câu hỏi, **merge PR** (hoặc cho phép Claude merge cho đúng PR đó, mục 5b) | – |
 | **Claude Code** | Đọc docs, lập plan, gọi Qoder theo từng phase, kiểm diff, chạy test, commit, push, tạo PR, review PR, **ghi nhật ký vận hành** (mục 8) | Tự viết code tính năng (trừ sửa một dòng hiển nhiên khi Qoder đã thử 3 lần); merge PR (trừ khi cổng merge mục 5b đã đạt **và** chủ dự án cho phép bằng lời cho đúng PR đó); sửa docs khi chưa hỏi |
 | **Qoder CLI** | Sửa đúng các file được giao trong một phase; thử chạy `flutter analyze` / `flutter test` để tự kiểm (có chạy được hay không: xem mục 3) | Mọi lệnh git ghi, `gh`, sửa file ngoài danh sách, thêm thư viện |
 
@@ -45,7 +45,7 @@ flowchart LR
 6. **Self-review:** Claude đọc `git diff origin/main...HEAD` thật, rà theo checklist mục 5, sửa qua Qoder.
 7. **PR:** `gh pr create --base main --title "<type>(ST-xx): ..." --body-file .ai-work/ST-xx/PR_BODY.md`. Body gồm: story, FR/SCR/TC liên quan, đã làm gì, docs đổi gì, cách test, ảnh chụp màn hình emulator, giới hạn.
 8. **Review PR (bắt buộc, theo mục 5b):** Claude review bản diff thật trên GitHub bằng prompt chuẩn ở mục 5b (có thể chạy song song subagent theo từng trục) và post mỗi vòng bằng `gh pr review <n> --comment`. Còn BLOCKER/MAJOR → Qoder sửa → commit → review lại toàn bộ diff mới, tối đa 3 vòng; vòng 3 chưa đạt thì dừng và hỏi chủ dự án (mục 7).
-9. **Merge:** chỉ khi PR đã đạt **cổng merge ở mục 5b**. Chủ dự án merge (squash) trên GitHub, hoặc Claude merge khi chủ dự án cho phép bằng lời cho đúng PR đó. Không đạt cổng thì không ai merge. Claude đổi trạng thái các task của story thành `Done` trong `tasks.csv` (trong chính PR của story; khi chạy song song thì làm ở commit riêng sau merge, mục 2b), rồi xóa nhánh local.
+9. **Merge:** Claude chỉ merge khi PR đã đạt **cổng merge ở mục 5b** và chủ dự án cho phép bằng lời cho đúng PR đó; không thì chủ dự án merge (squash) trên GitHub. Cổng chưa đạt thì Claude không merge. Claude đổi trạng thái các task của story thành `Done` trong `tasks.csv` (trong chính PR của story, **trước vòng review cuối** (thêm commit sau vòng review cuối thì phải review lại, mục 5b); khi chạy song song thì làm ở commit riêng sau merge, mục 2b), rồi xóa nhánh local.
 
 ## 2b. Làm 2–3 story cùng lúc (worktree + nhánh xếp chồng)
 
@@ -91,7 +91,7 @@ Ghi quan hệ vào `.ai-work/STACKS.md` (ví dụ `ST-07 ← ST-06`). Gọi Qode
 5. **Flutter:** mỗi worktree có `build/` và `.dart_tool/` riêng (không copy giữa các worktree, không commit); `PUB_CACHE` và `GRADLE_USER_HOME` dùng chung nên `pub get` nhanh. **Tại một thời điểm chỉ chạy một `flutter build apk`/`flutter run`** (Gradle tranh tài nguyên và khóa nhau); `flutter analyze` và `flutter test` thì chạy song song được.
 6. **Máy giả lập chỉ chạy một bản app** (cùng `applicationId`): chạy thử story nào thì cài từ worktree đó, chuyển story thì gỡ rồi cài lại. **Server Docker dùng chung** được (không có trạng thái).
 7. **Chỗ dễ xung đột:** `strings_vi.dart`, `app/router.dart`, `app/providers.dart`, file drift sinh ra, `pubspec.lock`. Mỗi story chỉ **thêm khối riêng ở cuối** các file này, không sắp xếp lại, không đổi thứ tự. Thêm thư viện cần ADR mới nên không xảy ra ở giai đoạn code.
-8. **`tasks.csv` không đổi trong PR story.** Sau khi chủ dự án merge, Claude đổi trạng thái trên `main` bằng một commit riêng `chore: mark ST-xx done`.
+8. **`tasks.csv` không đổi trong PR story.** Sau khi PR được merge, Claude đổi trạng thái trên `main` bằng một commit riêng `chore: mark ST-xx done`.
 9. **`.gitignore` kiểu danh sách cho phép** (`/*` chặn mọi thứ): thư mục hay file mới ở gốc (ví dụ `mobile/`) **bị bỏ qua im lặng** cho tới khi được mở khóa. Trước khi `git add` đường dẫn mới: `git check-ignore -v <đường dẫn>`. Mở khóa bằng commit riêng; nếu `git add` báo "paths are ignored" thì cả lệnh add bị hủy, nên luôn đọc `git diff --cached --name-only` trước khi commit.
 
 ### 2b.4 Đồng bộ nhánh xếp chồng
@@ -121,7 +121,7 @@ ST-09 <- ST-07    cần rebase sau phase này: có (ST-06 vừa merge)
 
 ### 2b.7 Dùng subagent để chạy Qoder hoặc review song song
 
-Dùng khi bạn yêu cầu hoặc có ≥ 2 việc độc lập (mỗi việc một worktree, không chung file). Prompt cho subagent ghi: worktree duy nhất được làm; **không** lệnh git ghi, không `gh` (trừ subagent review được giao đăng review); `-n` session mới, cấm `-c` (mục 3); danh sách file được sửa; việc cần báo cáo. **Claude không tin báo cáo của subagent**: tự đọc diff thật, tự chạy `flutter analyze` và `flutter test`, rồi mới commit và push. Việc đã commit xong mà subagent còn gửi lại báo cáo cũ khi "chờ tác vụ nền" thì dừng nó (`TaskStop`).
+Dùng khi bạn yêu cầu hoặc có ≥ 2 việc độc lập (mỗi việc một worktree, không chung file). Prompt cho subagent ghi: worktree duy nhất được làm; **không** lệnh git ghi, không lệnh `gh` ghi (đọc bằng `gh pr diff`, `gh pr view`, `gh pr checks` thì được; trừ subagent review được giao đăng review); `-n` session mới, cấm `-c` (mục 3); danh sách file được sửa; việc cần báo cáo. **Claude không tin báo cáo của subagent**: tự đọc diff thật, tự chạy `flutter analyze` và `flutter test`, rồi mới commit và push. Việc đã commit xong mà subagent còn gửi lại báo cáo cũ khi "chờ tác vụ nền" thì dừng nó (`TaskStop`).
 
 ## 3. Gọi Qoder
 
@@ -136,6 +136,7 @@ qodercli -p -w "d:\project AI" -n "ST-xx-p<N>" --permission-mode accept_edits `
    Try in mobile/: flutter analyze; flutter test. If you cannot run flutter here, re-read your changes for compile errors (imports, names, signatures) and say so; the orchestrator will analyze and test.
    You cannot delete or rename files: blank the old file and say so, the orchestrator removes it.
    Never use qodercli -c; you are in your own session. The orchestrator handles all git.
+   If you edit a file containing Windows paths, never type a backslash before r, n, t, a, f or b (tool text mangling); prefer forward slashes and re-check the saved bytes.
    Report: files changed (full paths), commands run with results, anything not done and why."
 ```
 
@@ -166,20 +167,20 @@ cd mobile && flutter analyze && flutter test
 - File ngoài danh sách bị sửa → `git restore <file>`, báo Qoder.
 - Có commit hoặc nhánh lạ → dừng, báo chủ dự án.
 - Test mới phải **fail trước khi sửa và pass sau khi sửa** (với logic ở `core/domain`).
-- Story có màn hình → chạy trên emulator, chụp màn hình vào `.ai-work/ST-xx/evidence/`. Tắt server và emulator khi xong.
+- Story có màn hình → chạy trên emulator, chụp màn hình vào `.ai-work/ST-xx/evidence/`. Tắt emulator khi xong; server Docker dùng chung thì để chạy (mục 4b).
 
 ### 4b. Chạy máy giả lập (Claude làm, không giao Qoder)
 
-Qoder ở `accept_edits` không chạy được shell (đo 2026-11-15: lệnh Python bị cổng quyền chặn; `flutter` chưa đo, việc của ST-01), nên **Claude** là bên mở máy giả lập, cài app, chụp màn hình và dọn dẹp. Prompt giao Qoder không yêu cầu mở emulator, và không nâng quyền để lách (mục 3).
+Qoder ở `accept_edits` không chạy được lệnh Python (đo 2026-11-15, cổng quyền chặn); `flutter` chưa đo (việc của ST-01), nên chưa biết nó có mở được emulator không; vì vậy **Claude** là bên mở máy giả lập, cài app, chụp màn hình và dọn dẹp. Prompt giao Qoder không yêu cầu mở emulator, và không nâng quyền để lách (mục 3).
 
 | Mục | Giá trị trên máy dev (kiểm 2026-11-15) |
 |---|---|
 | AVD | `pixel_7_-_api_36_0` (chính), `Medium_Phone_API_37.0`; `emulator -list-avds` ra đúng hai tên này |
-| Thư mục AVD | `C:/Users/Adminnitrator/.android/avd/` |
-| Android SDK | `C:/Users/Adminnitrator/AppData/Local/Android/Sdk` (= `$env:LOCALAPPDATA/Android/Sdk`); có `emulator/emulator.exe` và `platform-tools/adb.exe`; **chưa** có trong PATH, `ANDROID_HOME` chưa đặt |
+| Thư mục AVD | `$env:USERPROFILE/.android/avd/` |
+| Android SDK | `$env:LOCALAPPDATA/Android/Sdk`; có `emulator/emulator.exe` và `platform-tools/adb.exe`; **chưa** có trong PATH, `ANDROID_HOME` chưa đặt |
 | Flutter | `D:/flutter/bin/flutter.bat` |
 | Camera | Back camera = `webcam0` (chụp thuốc trên tay thật) |
-| Server AI | Docker đang chạy cổng 8000; app gọi `http://10.0.2.2:8000` |
+| Server AI | Chạy bằng `docker compose up` (kiểm bằng `GET /health`, cổng 8000); app gọi `http://10.0.2.2:8000` (không thuộc phần đã kiểm) |
 
 Quy trình (PowerShell; lệnh **chưa chạy thử** trên máy này: kiểm ở ST-01.3 và sửa mục này nếu khác):
 
@@ -187,8 +188,10 @@ Quy trình (PowerShell; lệnh **chưa chạy thử** trên máy này: kiểm �
 $sdk = "$env:LOCALAPPDATA/Android/Sdk"
 Start-Process "$sdk/emulator/emulator.exe" -ArgumentList '-avd','pixel_7_-_api_36_0','-camera-back','webcam0'
 & "$sdk/platform-tools/adb.exe" wait-for-device
+# boot xong chưa? lặp lệnh dưới tới khi in ra 1 (chưa xong thì in rỗng hoặc 0)
 & "$sdk/platform-tools/adb.exe" shell getprop sys.boot_completed      # 1 = đã khởi động xong
-# chạy app từ đúng worktree của story: cd <worktree>/mobile; D:/flutter/bin/flutter.bat run -d emulator-5554
+# chạy app từ đúng worktree của story: cd <worktree>/mobile; D:/flutter/bin/flutter.bat run -d <id lấy từ `adb devices`>
+New-Item -ItemType Directory -Force "d:/project AI/.ai-work/ST-xx/evidence" | Out-Null
 & "$sdk/platform-tools/adb.exe" shell screencap -p /sdcard/s.png
 & "$sdk/platform-tools/adb.exe" pull /sdcard/s.png "d:/project AI/.ai-work/ST-xx/evidence/<màn>.png"
 & "$sdk/platform-tools/adb.exe" emu kill                               # tắt máy giả lập khi xong
@@ -197,6 +200,7 @@ Start-Process "$sdk/emulator/emulator.exe" -ArgumentList '-avd','pixel_7_-_api_3
 - Chỉ một emulator và một bản app tại một thời điểm (2b.3-6). Chụp xong thì `emu kill`; server Docker dùng chung thì để chạy.
 - Ảnh chụp chỉ ở `.ai-work/ST-xx/evidence/`, so với `docs/design/png/<màn>.png`; không commit (mục 6).
 - Emulator không lên sau khoảng 3 phút, hoặc `flutter` báo lỗi giấy phép Android SDK/PATH → dừng và hỏi chủ dự án (mục 7).
+- Ảnh chụp là pixel thật của máy ảo (Pixel 7: 1080×2400 px, khoảng 411×914 dp), không phải khung 390×844 của ảnh chuẩn: so bố cục theo dp và tỉ lệ, không so từng pixel. Muốn đúng 390×844 thì đặt `adb shell wm size` và `adb shell wm density`, xong thì `wm size reset` và `wm density reset` (chưa thử; kiểm ở ST-01.3).
 
 ## 5. Checklist review (mỗi PR)
 
@@ -217,6 +221,7 @@ Review PR là bước **bắt buộc**. Người review (Claude, có thể thêm
 **Prompt review chuẩn** (dán cho Claude hoặc subagent; chỉ đọc, không sửa file, không git ghi, không merge):
 
 ```
+CHỈ ĐỌC: không sửa file, không lệnh git ghi, không gh pr review/comment/edit/ready/merge; chỉ trả báo cáo cho người giao.
 Review PR #<n> của repo này.
 1. Lấy diff thật: gh pr diff <n>; gh pr view <n> --json files,commits,body,headRefOid.
 2. Đối chiếu với: tiêu chí chấp nhận của story trong docs/product/backlog.md; các FR/UC/SCR/TC story trỏ tới;
@@ -230,7 +235,7 @@ Review PR #<n> của repo này.
    MINOR = nhỏ, nên sửa. Nếu không có gì: ghi "Không có BLOCKER/MAJOR/MINOR" và liệt kê đã kiểm những gì.
 ```
 
-**Vòng review:** review → post `gh pr review <n> --comment` (số BLOCKER/MAJOR/MINOR và danh sách) → Qoder sửa → Claude kiểm diff và chạy lại kiểm → commit, push → vòng sau review **lại toàn bộ diff mới**. Tối đa 3 vòng; vòng 3 còn BLOCKER/MAJOR thì dừng và hỏi chủ dự án (mục 7).
+**Vòng review:** review → post `gh pr review <n> --comment` (số BLOCKER/MAJOR/MINOR và danh sách) → Qoder sửa → Claude kiểm diff và chạy lại kiểm → commit, push → vòng sau review **lại toàn bộ diff mới**. Tối đa 3 vòng; vòng 3 còn BLOCKER/MAJOR thì dừng và hỏi chủ dự án (mục 7). Comment của mỗi vòng bắt đầu bằng dòng `Vòng <k>/3 · commit <headRefOid> · BLOCKER <a> · MAJOR <b> · MINOR <c>`, rồi kết quả checklist mục 5 (tích hoặc n/a kèm lý do) và những gì đã kiểm.
 
 **Kiểm theo loại PR:** app: `flutter analyze` và `flutter test`; backend: `backend/tests/test_decide.py` và `openapi.yaml` sinh lại không lệch; chỉ docs: liên kết tương đối không hỏng, mã FR/BR/ADR/ST được nhắc đều có định nghĩa, `git diff --check`.
 
@@ -240,11 +245,11 @@ Review PR #<n> của repo này.
 2. Vòng cuối: **0 BLOCKER, 0 MAJOR**; MINOR đã sửa hoặc ghi lý do bỏ ngay trong comment review.
 3. Checklist mục 5 đã tích; mục không áp dụng ghi "n/a" kèm lý do.
 4. Các kiểm theo loại PR (trên) chạy lại trên commit cuối và đạt.
-5. `git diff --name-only origin/main...HEAD` chỉ có file trong phạm vi story; commit và PR không có dòng AI đồng tác giả hay "Generated with".
+5. `git diff --name-only origin/main...HEAD` chỉ có file trong phạm vi story, hoặc phạm vi mở rộng do chủ dự án giao bằng lời và được ghi nguyên văn trong body PR; commit và PR không có dòng AI đồng tác giả hay "Generated with".
 6. PR không phải Draft, không còn thread chưa xử lý; CI xanh nếu đã có (ST-28).
 7. Sau vòng review cuối không có commit mới (có thì quay lại một vòng review mới).
 
-Merge kiểu squash. Người merge là chủ dự án; Claude chỉ merge khi chủ dự án đã cho phép bằng lời cho **đúng PR đó**, và ghi nguyên văn câu cho phép vào comment tổng kết của PR. Không đạt cổng thì không ai merge.
+Merge kiểu squash. Người merge là chủ dự án; Claude chỉ merge khi chủ dự án đã cho phép bằng lời cho **đúng PR đó**, và ghi nguyên văn câu cho phép vào comment tổng kết của PR. Cổng chưa đạt thì Claude không merge, kể cả khi được nhờ; chủ dự án tự merge trên GitHub là quyền của chủ dự án, ngoài luồng này.
 
 ## 6. Git
 
@@ -258,7 +263,7 @@ Merge kiểu squash. Người merge là chủ dự án; Claude chỉ merge khi c
 ## 7. Dừng và hỏi chủ dự án khi
 
 - Một lỗi sửa quá 3 vòng, hoặc review PR quá 3 vòng chưa đạt.
-- Cổng merge (mục 5b) chưa đạt mà chủ dự án đã bảo merge, hoặc chưa có lời cho phép merge cho đúng PR đó.
+- Chủ dự án bảo Claude merge nhưng cổng (mục 5b) chưa đạt, hoặc chưa có lời cho phép merge cho đúng PR đó: dừng, nói rõ điều nào chưa đạt, để chủ dự án quyết.
 - Cần sửa docs, thêm thư viện, đổi `pubspec.yaml` ngoài plan, đổi API server.
 - Docs mâu thuẫn nhau, hoặc gặp `OQ-xx` chưa chốt.
 - Qoder sửa ngoài phạm vi hay chạy lệnh git.
