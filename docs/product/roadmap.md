@@ -22,10 +22,4 @@ Danh sách story và task, mô tả chi tiết, ước lượng, phụ thuộc: 
 
 Nếu trễ: bỏ từ dưới lên theo ưu tiên (Could → Should); không bỏ Must. Thứ tự gợi ý khi cắt: ST-22 → ST-20 → ST-19 → ST-21 → ST-17.1 → ST-18.1.
 
-## 3. Phân công gợi ý
-
-| Người | Phần chính |
-|---|---|
-| Phụ trách AI | Server, hợp đồng API, ST-00, ST-04, ST-05, ST-08, ST-13; review mọi chỗ chạm BR-01 |
-| Mobile 1 | ST-01 … ST-03, ST-06, ST-07, ST-09, ST-16, ST-19 |
-| Mobile 2 | ST-10 … ST-12, ST-14, ST-15, ST-17, ST-18, ST-20, ST-21 |
+Một người làm toàn bộ (Claude lập plan và review, Qoder CLI viết code); thứ tự làm nằm ở cột `Thứ tự làm` của [tasks.csv](tasks.csv).

@@ -11,7 +11,6 @@
 | **Chủ dự án** (người giao việc) | Chọn story, duyệt plan, trả lời câu hỏi, **merge PR** | – |
 | **Claude Code** | Đọc docs, lập plan, gọi Qoder theo từng phase, kiểm diff, chạy test, commit, push, tạo PR, review PR | Tự viết code tính năng (trừ sửa một dòng hiển nhiên khi Qoder đã thử 3 lần); merge PR; sửa docs khi chưa hỏi |
 | **Qoder CLI** | Sửa đúng các file được giao trong một phase, chạy `flutter analyze` / `flutter test` để tự kiểm | Mọi lệnh git ghi, `gh`, sửa file ngoài danh sách, thêm thư viện |
-| **Thành viên code tay** | Làm story được phân công theo cùng luồng nhánh + PR | Push thẳng `main` |
 
 Chỉ Claude (hoặc người) giữ quyền ghi git, để không lọt commit sai nhánh, file cấm hay dòng tác giả AI.
 
@@ -33,7 +32,7 @@ flowchart LR
   I --> J[Chủ dự án merge]
 ```
 
-1. **Chọn story:** story có task `Todo` đầu tiên trong [../product/tasks.csv](../product/tasks.csv) mà mọi phụ thuộc đã `Done` (mô tả task ở [../product/backlog.md](../product/backlog.md)). Mỗi task là một phase giao cho Qoder.
+1. **Chọn story:** story chứa task `Todo` có `Thứ tự làm` nhỏ nhất trong [../product/tasks.csv](../product/tasks.csv) (mô tả task ở [../product/backlog.md](../product/backlog.md)). Mỗi task là một phase giao cho Qoder.
 2. **Plan:** Claude đọc các FR/UC/SCR/TC mà story trỏ tới, cùng erd/openapi nếu chạm dữ liệu hoặc API, rồi viết `.ai-work/ST-xx/PLAN.md` (local, không commit):
    - mục tiêu và tiêu chí chấp nhận, chép nguyên từ PRD;
    - chia **phase** nhỏ, mỗi phase: file được sửa, việc làm, test phải có, lệnh kiểm;

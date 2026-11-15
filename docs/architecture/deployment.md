@@ -51,13 +51,14 @@ Không cần GPU. Sau khi build xong, chạy **không cần Internet**.
 2. Repo ở đường dẫn ngắn (Windows giới hạn độ dài đường dẫn, `pip` lỗi nếu lồng sâu).
 3. ```powershell
    py -3.12 -m venv .venv
-   .venv\Scripts\python.exe -m pip install -r backendequirements.txt
+   .venv\Scripts\python.exe -m pip install -r backend
+equirements.txt
    .venv\Scripts\python.exe -m uvicorn backend.medicheck_server.app:app --host 0.0.0.0 --port 8000
    ```
 
 ## 3. Máy giả lập Android
 
-- Android Studio → Device Manager → tạo máy Pixel, Android 14 (API 34), có Google Play (để cài giọng tiếng Việt).
+- Android Studio → Device Manager → tạo máy Pixel có Google Play (để cài giọng tiếng Việt), Android 14 (API 34) trở lên; máy phát triển đang có sẵn `pixel_7_-_api_36_0` và `Medium_Phone_API_37.0`.
 - **Camera:** Advanced settings → Back camera = `Webcam0` (dùng webcam laptop để chụp thuốc trên tay thật).
 - **Ảnh có sẵn (đơn và thuốc):** kéo thả file ảnh hoặc PDF vào cửa sổ máy giả lập, file vào thư mục Download; app chọn bằng bộ chọn file/ảnh của Android (Files, Photos). Hoặc dùng `adb push anh.jpg /sdcard/Download/`. Ảnh muốn hiện trong Photos thì đẩy vào `/sdcard/Pictures/` rồi mở lại Photos. Không cần quyền đặc biệt trong app vì bộ chọn của hệ thống cấp quyền cho từng file.
 - **Giọng nói:** Settings → System → Languages → Text-to-speech → Google → cài giọng Tiếng Việt.

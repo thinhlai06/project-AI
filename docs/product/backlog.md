@@ -8,41 +8,33 @@
 
 - **Story `ST-xx`** = một nhóm việc mang lại một khả năng dùng được; một story = một nhánh `story/ST-xx-…` = một PR.
 - **Task `ST-xx.y`** = một lần giao việc (một "phase" cho Qoder); làm trọn trong một phiên, tối đa khoảng 8 giờ.
-- **Ước lượng** tính bằng giờ làm việc có AI hỗ trợ, gồm cả đọc diff và sửa. Đây là ước lượng lần đầu; sai thì sửa trong `tasks.csv`, không cần viết lại tài liệu.
+- **Thứ tự làm:** cột `Thứ tự làm` trong `tasks.csv` đã sắp theo mốc và phụ thuộc; làm task `Todo` có số nhỏ nhất. Không ước lượng giờ (một người làm, tự chủ động thời gian).
 - **Ưu tiên:** Must (thiếu thì không demo được), Should (nên có), Could (làm nếu còn thời gian). Nếu trễ, bỏ từ Could lên, không bỏ Must.
 - **Trạng thái** chỉ ghi ở `tasks.csv`: `Todo`, `Doing`, `Review`, `Done`, `Blocked`. File này chỉ chứa mô tả, không ghi trạng thái, để không lệch nhau.
-- **Người đảm nhận** là vai trò gợi ý (Phụ trách AI, Mobile 1, Mobile 2, Cả nhóm); đổi người ở `tasks.csv`.
 - Mỗi task đã có mã yêu cầu (FR/UC/SCR/TC/BR); đọc các mã đó ở [prd.md](prd.md), [use-cases.md](use-cases.md), [ui-ux-spec.md](ui-ux-spec.md), [../quality/test-plan.md](../quality/test-plan.md) trước khi làm.
 - **Xong một task** nghĩa là: tiêu chí chấp nhận liên quan đạt, test đi kèm xanh, `flutter analyze` sạch, tài liệu bị ảnh hưởng đã sửa (xem "Định nghĩa xong" trong [../../AGENTS.md](../../AGENTS.md)).
 
 ## 2. Tổng quan
 
-**29 story, 82 task, 314,5 giờ** (đã xong 1 giờ).
+**29 story, 82 task** (đã xong 2).
 
-| Mốc | Thời gian | Nội dung | Số giờ |
+| Mốc | Thời gian | Nội dung | Số task |
 |---|---|---|---|
-| M0 | 14–16/11 | Nền móng: tài liệu, repo, Docker, ảnh demo | 2 |
-| M1 | 17–23/11 | Khung app, database, client API; cổng tốc độ 22/11 | 55 |
-| M2 | 24–30/11 | Nhập đơn, xác nhận, lưu lịch, màn Hôm nay | 62 |
-| M3 | 1–9/12 | Nhắc thuốc, màn Cữ cần uống, chụp, kết quả, giọng nói | 60 |
-| M4 | 10–16/12 | Chụp lại, đã uống, tự kiểm, đơn mẫu, lần đầu dùng, lịch sử | 47 |
-| M5 | 17–22/12 | Kiểm thử, tiếp cận, tính năng phụ, iPhone | 67,5 |
-| M6 | 23–31/12 | Báo cáo, video dự phòng, tập demo | 21 |
+| M0 | 14–16/11 | Nền móng: tài liệu, repo, Docker, ảnh demo | 3 |
+| M1 | 17–23/11 | Khung app, database, client API; cổng tốc độ 22/11 | 18 |
+| M2 | 24–30/11 | Nhập đơn, xác nhận, lưu lịch, màn Hôm nay | 13 |
+| M3 | 1–9/12 | Nhắc thuốc, màn Cữ cần uống, chụp, kết quả, giọng nói | 13 |
+| M4 | 10–16/12 | Chụp lại, đã uống, tự kiểm, đơn mẫu, lần đầu dùng, lịch sử | 13 |
+| M5 | 17–22/12 | Kiểm thử, tiếp cận, tính năng phụ, iPhone | 17 |
+| M6 | 23–31/12 | Báo cáo, video dự phòng, tập demo | 5 |
 
-| Người đảm nhận | Số giờ |
+| Ưu tiên | Số task |
 |---|---|
-| Phụ trách AI | 89,5 |
-| Mobile 1 | 112 |
-| Mobile 2 | 98 |
-| Cả nhóm | 15 |
+| Must | 57 |
+| Should | 15 |
+| Could | 10 |
 
-| Ưu tiên | Số giờ |
-|---|---|
-| Must | 221 |
-| Should | 57,5 |
-| Could | 36 |
-
-Tải theo mốc không đều (M2 và M3 nặng nhất). Đó là rủi ro R6 trong [business-analysis.md](business-analysis.md): nếu trễ, cắt Should/Could ở M4–M5 trước.
+Số task theo mốc không đều (M2, M3 và M5 nhiều nhất). Đó là rủi ro R6 trong [business-analysis.md](business-analysis.md): nếu trễ, cắt Could rồi Should ở M4–M5 trước.
 
 ## 3. Thứ tự và phụ thuộc giữa các story
 
@@ -80,17 +72,17 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-00 – Ảnh demo và ảnh mẫu
 
-**Mốc:** M0 · **Người gợi ý:** Phụ trách AI · **Ước lượng:** 2 giờ · **Yêu cầu:** FR-DEMO-01, FR-DOSE-02, OQ-04
+**Mốc:** M0 · **Yêu cầu:** FR-DEMO-01, FR-DOSE-02, OQ-04
 
 **Mục tiêu.** Có đủ ảnh để chạy kịch bản demo D1–D4 mà không phụ thuộc thư mục chờ xóa.
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-00.1 | Đưa 4 ảnh demo vào repo | Thư mục `anh_demo/` gồm `don_thuoc_582.png`, `don_thuoc_979.png`, `anh_thuoc_A1_582_2.jpg`, `anh_thuoc_A2_979_3.jpg`; mở khóa trong `.gitignore`; commit và push. | Must | 0,5 | – |
-| ST-00.2 | Chạy thử D1–D4 trên server Docker | Đọc đơn 582 và 979 qua `/v1/prescriptions/parse`, dựng payload từng cữ, gọi `/v1/pills/verify`. Kết quả 15/11: D1 xanh 3/3; D2 xanh 4/4; D3 thiếu 1 viên kavasdin; D4 thừa 1 viên; ~1 giây mỗi lần; OCR ~4,5–5 giây mỗi đơn. | Must | 0,5 | ST-00.1 |
-| ST-00.3 | Chốt nguồn ảnh mẫu từng viên | Khôi phục dữ liệu VAIPE thô (hoặc chỉ crop) từ Thùng rác, hoặc quyết định bỏ FR-DOSE-02. Ghi kết quả vào OQ-04 trong `prd.md`. | Could | 1 | – |
+| ST-00.1 | 1 | Đưa 4 ảnh demo vào repo | Thư mục `anh_demo/` gồm `don_thuoc_582.png`, `don_thuoc_979.png`, `anh_thuoc_A1_582_2.jpg`, `anh_thuoc_A2_979_3.jpg`; mở khóa trong `.gitignore`; commit và push. | Must | – |
+| ST-00.2 | 2 | Chạy thử D1–D4 trên server Docker | Đọc đơn 582 và 979 qua `/v1/prescriptions/parse`, dựng payload từng cữ, gọi `/v1/pills/verify`. Kết quả 15/11: D1 xanh 3/3; D2 xanh 4/4; D3 thiếu 1 viên kavasdin; D4 thừa 1 viên; ~1 giây mỗi lần; OCR ~4,5–5 giây mỗi đơn. | Must | ST-00.1 |
+| ST-00.3 | 3 | Chốt nguồn ảnh mẫu từng viên | Khôi phục dữ liệu VAIPE thô (hoặc chỉ crop) từ Thùng rác, hoặc quyết định bỏ FR-DOSE-02. Ghi kết quả vào OQ-04 trong `prd.md`. | Could | – |
 
 **Tiêu chí chấp nhận của story**
 
@@ -103,18 +95,18 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-01 – Khởi tạo dự án Flutter
 
-**Mốc:** M1 · **Người gợi ý:** Mobile 1 · **Ước lượng:** 7 giờ · **Yêu cầu:** NFR-08, ADR-002, ADR-015
+**Mốc:** M1 · **Yêu cầu:** NFR-08, ADR-002, ADR-015
 
 **Mục tiêu.** Có dự án `mobile/` chạy được trên máy giả lập Android, khóa phiên bản, sẵn sàng cho mọi story sau.
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-01.1 | Tạo dự án và cấu hình gói | `flutter create --org vn.medicheck --platforms android,ios mobile`; xóa code mẫu; thêm đúng các gói ở ADR-015 (ghi phiên bản cụ thể); `analysis_options.yaml` dùng `flutter_lints`; commit `pubspec.lock`; mở `/mobile/` trong `.gitignore` (loại `build/`, `.dart_tool/`, `*.g.dart` nếu nhóm không commit file sinh ra, ghi rõ quyết định). | Must | 2 | – |
-| ST-01.2 | Cấu hình Android | `minSdk 29`; `network_security_config.xml` cho phép cleartext tới `10.0.2.2` và mạng nội bộ ở bản debug; khai báo quyền `CAMERA`, `POST_NOTIFICATIONS`, `RECEIVE_BOOT_COMPLETED` và quyền báo thức chính xác theo hướng dẫn của `flutter_local_notifications`; bật core library desugaring. | Must | 2 | ST-01.1 |
-| ST-01.3 | Tạo máy giả lập và kiểm kết nối | Tạo AVD Pixel API 34 có Google Play, Back camera = Webcam0; chạy app trống; gọi `http://10.0.2.2:8000/health` (server Docker đang chạy) và hiện kết quả; ghi lệnh đã dùng vào `deployment.md`. | Must | 2 | ST-01.2 |
-| ST-01.4 | Khai báo iOS (chưa build) | `Info.plist`: `NSCameraUsageDescription`, `NSPhotoLibraryUsageDescription`, `NSLocalNetworkUsageDescription`, `NSAllowsLocalNetworking`; chỉ khai báo để giữ đường iOS mở, chưa cần Mac. | Should | 1 | ST-01.1 |
+| ST-01.1 | 4 | Tạo dự án và cấu hình gói | Flutter 3.50.0 (stable, Dart 3.14.0) đã cài ở `D:\flutter` ngày 15/11; trong shell cần `D:\flutter\bin` trên PATH và `PUB_CACHE=D:\flutter_pub_cache` (ghi vào `mobile/README.md`). `flutter create --org vn.medicheck --platforms android,ios mobile`; xóa code mẫu; thêm đúng các gói ở ADR-015 (ghi phiên bản cụ thể); `analysis_options.yaml` dùng `flutter_lints`; commit `pubspec.lock`; mở `/mobile/` trong `.gitignore` (loại `build/`, `.dart_tool/`, `*.g.dart` nếu nhóm không commit file sinh ra, ghi rõ quyết định). | Must | – |
+| ST-01.2 | 5 | Cấu hình Android | `minSdk 29`; `network_security_config.xml` cho phép cleartext tới `10.0.2.2` và mạng nội bộ ở bản debug; khai báo quyền `CAMERA`, `POST_NOTIFICATIONS`, `RECEIVE_BOOT_COMPLETED` và quyền báo thức chính xác theo hướng dẫn của `flutter_local_notifications`; bật core library desugaring. | Must | ST-01.1 |
+| ST-01.3 | 6 | Tạo máy giả lập và kiểm kết nối | Dùng AVD có sẵn trên máy (`pixel_7_-_api_36_0` hoặc `Medium_Phone_API_37.0`, đều có Google Play; không cần API 34), đặt Back camera = Webcam0; chạy app trống; gọi `http://10.0.2.2:8000/health` (server Docker đang chạy) và hiện kết quả; ghi lệnh đã dùng vào `deployment.md`. | Must | ST-01.2 |
+| ST-01.4 | 7 | Khai báo iOS (chưa build) | `Info.plist`: `NSCameraUsageDescription`, `NSPhotoLibraryUsageDescription`, `NSLocalNetworkUsageDescription`, `NSAllowsLocalNetworking`; chỉ khai báo để giữ đường iOS mở, chưa cần Mac. | Should | ST-01.1 |
 
 **Tiêu chí chấp nhận của story**
 
@@ -129,7 +121,7 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-02 – Theme, câu chữ, điều hướng, widget dùng chung
 
-**Mốc:** M1 · **Người gợi ý:** Mobile 1 · **Ước lượng:** 13 giờ · **Yêu cầu:** NFR-04, ui-ux-spec mục 2, 5, 7
+**Mốc:** M1 · **Yêu cầu:** NFR-04, ui-ux-spec mục 2, 5, 7
 
 **Mục tiêu.** Một bộ nền thống nhất (màu, chữ, nút, câu chữ, route) để mọi màn hình sau chỉ lắp ráp.
 
@@ -137,12 +129,12 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-02.1 | Theme theo design tokens | `app/theme.dart`: hằng số token (font.body 20, title 28, huge 34, touch 48, primary 64, màu bg/text/primary/status, spacing 8/16/24); `ThemeData` sáng; chặn `textScaler` ở 1,5×. | Must | 3 | ST-01.1 |
-| ST-02.2 | Câu chữ và kiểm từ cấm | `core/strings_vi.dart` chứa mọi MSG-* và câu trong ui-ux-spec; test đọc file tìm từ cấm ('an toàn', 'chắc chắn đúng', 'có thể là thuốc', tên màu viên). | Must | 2 | ST-01.1 |
-| ST-02.3 | Widget dùng chung | `PrimaryButton` (cao 64), `SecondaryButton` (cao 56), `ScreenScaffold` (nút Quay lại + chỗ cho 🔊), `StatusBadge` (màu + biểu tượng + kiểu nét), `BigCard`, `LoadingView`, `ErrorView` (câu + Thử lại + lối thoát); mỗi widget có Semantics tiếng Việt; widget test. | Must | 5 | ST-02.1, ST-02.2 |
-| ST-02.4 | Router và provider gốc | `app/router.dart` (go_router) có route cho mọi SCR-xx (màn tạm 'Chưa làm'), route `/dose/:session` cho thông báo; chuyển hướng WELCOME khi chưa `onboarding_done`, HOME khi rồi; `app/providers.dart` (database, api, settings). | Must | 3 | ST-02.3 |
+| ST-02.1 | 8 | Theme theo design tokens | `app/theme.dart`: hằng số token (font.body 20, title 28, huge 34, touch 48, primary 64, màu bg/text/primary/status, spacing 8/16/24); `ThemeData` sáng; chặn `textScaler` ở 1,5×. | Must | ST-01.1 |
+| ST-02.2 | 9 | Câu chữ và kiểm từ cấm | `core/strings_vi.dart` chứa mọi MSG-* và câu trong ui-ux-spec; test đọc file tìm từ cấm ('an toàn', 'chắc chắn đúng', 'có thể là thuốc', tên màu viên). | Must | ST-01.1 |
+| ST-02.3 | 10 | Widget dùng chung | `PrimaryButton` (cao 64), `SecondaryButton` (cao 56), `ScreenScaffold` (nút Quay lại + chỗ cho 🔊), `StatusBadge` (màu + biểu tượng + kiểu nét), `BigCard`, `LoadingView`, `ErrorView` (câu + Thử lại + lối thoát); mỗi widget có Semantics tiếng Việt; widget test. | Must | ST-02.1, ST-02.2 |
+| ST-02.4 | 11 | Router và provider gốc | `app/router.dart` (go_router) có route cho mọi SCR-xx (màn tạm 'Chưa làm'), route `/dose/:session` cho thông báo; chuyển hướng WELCOME khi chưa `onboarding_done`, HOME khi rồi; `app/providers.dart` (database, api, settings). | Must | ST-02.3 |
 
 **Tiêu chí chấp nhận của story**
 
@@ -157,17 +149,17 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-03 – Database trên điện thoại (drift)
 
-**Mốc:** M1 · **Người gợi ý:** Mobile 1 · **Ước lượng:** 14 giờ · **Yêu cầu:** erd.md, BR-10, BR-12
+**Mốc:** M1 · **Yêu cầu:** erd.md, BR-10, BR-12
 
 **Mục tiêu.** Lớp lưu trữ đúng ERD, có ràng buộc do database bảo vệ, kèm test.
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-03.1 | Bảng và database | `core/db/tables.dart` và `database.dart` theo `erd.md`: prescription (có `ended_at`, `image_path`, `image_mime`), drug_line, dose_schedule, dose_event, verification_attempt, verification_item, setting, catalog_name; chỉ mục duy nhất một đơn `active`; `PRAGMA foreign_keys = ON` trong `beforeOpen`. | Must | 5 | ST-01.1 |
-| ST-03.2 | DAO | PrescriptionDao (lưu đơn trong transaction, lấy đơn active, kết thúc, xóa, danh sách), DoseEventDao (lấy hoặc tạo cữ theo ngày+buổi, đánh dấu uống/bỏ lỡ), VerificationDao (lưu lượt kiểm và các viên, lấy theo cữ), SettingDao (đọc/ghi và giá trị mặc định), CatalogDao (thay toàn bộ danh sách). | Must | 6 | ST-03.1 |
-| ST-03.3 | Test ràng buộc | Test database trong bộ nhớ: UNIQUE(event_date, session), `attempt_no` chỉ 1 hoặc 2, cascade khi xóa đơn, `drug_line_id` thành null khi xóa đơn, chèn đơn `active` thứ hai bị từ chối. | Must | 3 | ST-03.2 |
+| ST-03.1 | 12 | Bảng và database | `core/db/tables.dart` và `database.dart` theo `erd.md`: prescription (có `ended_at`, `image_path`, `image_mime`), drug_line, dose_schedule, dose_event, verification_attempt, verification_item, setting, catalog_name; chỉ mục duy nhất một đơn `active`; `PRAGMA foreign_keys = ON` trong `beforeOpen`. | Must | ST-01.1 |
+| ST-03.2 | 13 | DAO | PrescriptionDao (lưu đơn trong transaction, lấy đơn active, kết thúc, xóa, danh sách), DoseEventDao (lấy hoặc tạo cữ theo ngày+buổi, đánh dấu uống/bỏ lỡ), VerificationDao (lưu lượt kiểm và các viên, lấy theo cữ), SettingDao (đọc/ghi và giá trị mặc định), CatalogDao (thay toàn bộ danh sách). | Must | ST-03.1 |
+| ST-03.3 | 14 | Test ràng buộc | Test database trong bộ nhớ: UNIQUE(event_date, session), `attempt_no` chỉ 1 hoặc 2, cascade khi xóa đơn, `drug_line_id` thành null khi xóa đơn, chèn đơn `active` thứ hai bị từ chối. | Must | ST-03.2 |
 
 **Tiêu chí chấp nhận của story**
 
@@ -182,7 +174,7 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-04 – Client API, DTO và cài đặt server
 
-**Mốc:** M1 · **Người gợi ý:** Phụ trách AI · **Ước lượng:** 13 giờ · **Yêu cầu:** openapi.yaml, backend/API.md, FR-SET-01, NFR-09, BR-01
+**Mốc:** M1 · **Yêu cầu:** openapi.yaml, backend/API.md, FR-SET-01, NFR-09, BR-01
 
 **Mục tiêu.** App nói chuyện đúng với server, lỗi nào cũng thành kết quả có kiểu, không bao giờ làm sập app hay báo xanh.
 
@@ -190,11 +182,11 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-04.1 | DTO và fixture | `core/api/dto.dart`: ParseResponse/ParsedLine, VerifyRequest/Response, PillOut, MissingOut, QualityOut, CatalogOut, HealthOut; `fromJson` an toàn (lỗi → ApiParseException); lưu JSON thật của 2 đơn demo và 4 cảnh D1–D4 vào `test/fixtures/` và viết test. | Must | 4 | ST-01.1 |
-| ST-04.2 | Client HTTP | `core/api/medicheck_api.dart`: `parse(file)`, `verify(imageBytes, payload)`, `catalog()`, `health()` (multipart, `utf8.decode(bodyBytes)`); lỗi có kiểu: NoConnection, Timeout, Http400, Http422, Server5xx, BadJson; test bằng `MockClient` cho TC-02 và TC-11. | Must | 5 | ST-04.1 |
-| ST-04.3 | Cài đặt server và nạp danh mục | Repository cài đặt; màn SCR-SETTINGS phần địa chỉ server và 'Kiểm tra kết nối' (hiện 'Đã kết nối (final-2026-11-08)' hoặc 'Chưa kết nối được'); nạp `catalog_name` khi `model_version` đổi. | Must | 4 | ST-04.2, ST-03.2, ST-02.3 |
+| ST-04.1 | 15 | DTO và fixture | `core/api/dto.dart`: ParseResponse/ParsedLine, VerifyRequest/Response, PillOut, MissingOut, QualityOut, CatalogOut, HealthOut; `fromJson` an toàn (lỗi → ApiParseException); lưu JSON thật của 2 đơn demo và 4 cảnh D1–D4 vào `test/fixtures/` và viết test. | Must | ST-01.1 |
+| ST-04.2 | 16 | Client HTTP | `core/api/medicheck_api.dart`: `parse(file)`, `verify(imageBytes, payload)`, `catalog()`, `health()` (multipart, `utf8.decode(bodyBytes)`); lỗi có kiểu: NoConnection, Timeout, Http400, Http422, Server5xx, BadJson; test bằng `MockClient` cho TC-02 và TC-11. | Must | ST-04.1 |
+| ST-04.3 | 17 | Cài đặt server và nạp danh mục | Repository cài đặt; màn SCR-SETTINGS phần địa chỉ server và 'Kiểm tra kết nối' (hiện 'Đã kết nối (final-2026-11-08)' hoặc 'Chưa kết nối được'); nạp `catalog_name` khi `model_version` đổi. | Must | ST-04.2, ST-03.2, ST-02.3 |
 
 **Tiêu chí chấp nhận của story**
 
@@ -209,17 +201,17 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-05 – Cổng tốc độ trên laptop trình bày
 
-**Mốc:** M1 · **Người gợi ý:** Phụ trách AI · **Ước lượng:** 5 giờ · **Yêu cầu:** NFR-02, ADR-017, deployment.md mục 6
+**Mốc:** M1 · **Yêu cầu:** NFR-02, ADR-017, deployment.md mục 6
 
 **Mục tiêu.** Biết sớm (trước 22/11) laptop trình bày chạy đủ nhanh bằng Docker, còn kịp đổi phương án.
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-05.1 | Chạy Docker trên laptop trình bày | Clone repo từ GitHub, cài Docker Desktop, `docker compose up --build -d`, kiểm `healthy`; ghi RAM, thời gian build, việc bật ảo hóa; nếu lỗi thì chuyển sang cách venv. | Must | 2 | – |
-| ST-05.2 | Script đo tốc độ | `backend/measure_latency.py`: gọi parse (2 đơn) và verify (D1–D4) mỗi cảnh 10 lần bằng ảnh `anh_demo/`, in trung bình và p95; chạy trên laptop trình bày; ghi kết quả vào `deployment.md`. | Must | 2 | ST-05.1 |
-| ST-05.3 | Quyết định sau cổng 22/11 | Không đạt → chỉnh `MEDICHECK_THREADS`, đóng ứng dụng nặng; vẫn không đạt → báo nhóm và viết ADR nới NFR-02 hoặc đổi máy trình bày. | Must | 1 | ST-05.2 |
+| ST-05.1 | 18 | Chạy Docker trên laptop trình bày | Clone repo từ GitHub, cài Docker Desktop, `docker compose up --build -d`, kiểm `healthy`; ghi RAM, thời gian build, việc bật ảo hóa; nếu lỗi thì chuyển sang cách venv. | Must | – |
+| ST-05.2 | 19 | Script đo tốc độ | `backend/measure_latency.py`: gọi parse (2 đơn) và verify (D1–D4) mỗi cảnh 10 lần bằng ảnh `anh_demo/`, in trung bình và p95; chạy trên laptop trình bày; ghi kết quả vào `deployment.md`. | Must | ST-05.1 |
+| ST-05.3 | 20 | Quyết định sau cổng 22/11 | Không đạt → chỉnh `MEDICHECK_THREADS`, đóng ứng dụng nặng; vẫn không đạt → báo nhóm và viết ADR nới NFR-02 hoặc đổi máy trình bày. | Must | ST-05.2 |
 
 **Tiêu chí chấp nhận của story**
 
@@ -233,7 +225,7 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-06 – Nhập đơn từ file
 
-**Mốc:** M2 · **Người gợi ý:** Mobile 1 · **Ước lượng:** 12 giờ · **Yêu cầu:** FR-PRES-01, FR-PRES-03, UC-01, SCR-WELCOME, SCR-IMPORT, SCR-READING
+**Mốc:** M2 · **Yêu cầu:** FR-PRES-01, FR-PRES-03, UC-01, SCR-WELCOME, SCR-IMPORT, SCR-READING
 
 **Mục tiêu.** Người dùng chọn ảnh/PDF đơn, chờ có thông báo rõ, và nhận bản nháp để xác nhận.
 
@@ -241,11 +233,11 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-06.1 | SCR-WELCOME và SCR-IMPORT | UI theo spec: câu giới thiệu, cảnh báo MSG-DISCLAIMER, nút chính 'Chọn đơn thuốc', nút phụ 'Thử với đơn mẫu' (nối ở ST-16); SCR-IMPORT: 'Chọn ảnh hoặc PDF đơn' và 'Chụp đơn giấy' (nối ở ST-19); đọc to bằng giọng nói khi có TTS. | Must | 4 | ST-02.3, ST-02.4 |
-| ST-06.2 | Luồng nhập đơn và màn chờ | `features/prescription_import`: `file_picker` (png/jpg/jpeg/pdf), `ImportController` (AsyncNotifier) gọi `api.parse`, tạo `DraftPrescription` thô (giữ đường dẫn và mime của file gốc); SCR-READING có MSG-READING, chặn bấm lặp, nút Hủy hủy được yêu cầu. | Must | 5 | ST-06.1, ST-04.2 |
-| ST-06.3 | Lỗi khi đọc đơn | Các nhánh UC-01: 3a (quá 30 giây/mất kết nối), 4a (HTTP 400), 4b (`lines` rỗng); mỗi nhánh một câu + 'Thử lại'/'Hủy'; widget test với API giả. | Must | 3 | ST-06.2 |
+| ST-06.1 | 22 | SCR-WELCOME và SCR-IMPORT | UI theo spec: câu giới thiệu, cảnh báo MSG-DISCLAIMER, nút chính 'Chọn đơn thuốc', nút phụ 'Thử với đơn mẫu' (nối ở ST-16); SCR-IMPORT: 'Chọn ảnh hoặc PDF đơn' và 'Chụp đơn giấy' (nối ở ST-19); đọc to bằng giọng nói khi có TTS. | Must | ST-02.3, ST-02.4 |
+| ST-06.2 | 23 | Luồng nhập đơn và màn chờ | `features/prescription_import`: `file_picker` (png/jpg/jpeg/pdf), `ImportController` (AsyncNotifier) gọi `api.parse`, tạo `DraftPrescription` thô (giữ đường dẫn và mime của file gốc); SCR-READING có MSG-READING, chặn bấm lặp, nút Hủy hủy được yêu cầu. | Must | ST-06.1, ST-04.2 |
+| ST-06.3 | 24 | Lỗi khi đọc đơn | Các nhánh UC-01: 3a (quá 30 giây/mất kết nối), 4a (HTTP 400), 4b (`lines` rỗng); mỗi nhánh một câu + 'Thử lại'/'Hủy'; widget test với API giả. | Must | ST-06.2 |
 
 **Tiêu chí chấp nhận của story**
 
@@ -259,7 +251,7 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-07 – Màn xác nhận, sửa dòng và lưu đơn
 
-**Mốc:** M2 · **Người gợi ý:** Mobile 1 · **Ước lượng:** 22 giờ · **Yêu cầu:** FR-PRES-04…06, FR-PRES-11, FR-SCH-01, UC-03, SCR-CONFIRM, SCR-EDIT-LINE, BR-02…06, BR-12
+**Mốc:** M2 · **Yêu cầu:** FR-PRES-04…06, FR-PRES-11, FR-SCH-01, UC-03, SCR-CONFIRM, SCR-EDIT-LINE, BR-02…06, BR-12
 
 **Mục tiêu.** Không có đường nào tạo lịch mà bỏ qua xác nhận; sửa bằng chọn; lưu đơn mới thay đơn cũ an toàn.
 
@@ -267,12 +259,12 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-07.1 | Mô hình bản nháp và ánh xạ | `DraftPrescription`/`DraftLine` bằng Dart thuần; ánh xạ từ ParseResponse theo `erd.md` mục 3 (`'1'`→2, `'2'`→4, `'1/2'`→1 `amount_halves`); suy `check_mode` theo BR-03/04; cờ khóa của `missing_schedule`; test. | Must | 4 | ST-04.1, ST-08.1 |
-| ST-07.2 | SCR-CONFIRM | Đầu màn, thẻ từng dòng với 5 nhãn (needs_review, missing_schedule, half_pill, as_needed, name null), nút chính khóa khi còn dòng thiếu lịch, bản đọc to tóm tắt (hàm dựng câu trong domain, có test), nút phụ Hủy. | Must | 6 | ST-07.1, ST-02.3 |
-| ST-07.3 | SCR-EDIT-LINE | Chọn tên từ `catalog_name` có ô tìm (gợi ý đầu là tên OCR gần nhất); 4 hàng buổi với nút −/+ và lựa chọn '½'; 'Chọn lịch'/'Để sau'; nút 'Xong'; tên ngoài danh mục giữ nguyên nhưng `reminder_only`. | Must | 6 | ST-07.1, ST-04.3 |
-| ST-07.4 | Lưu đơn | `SavePrescription`: một transaction (đơn active cũ → `ended` + `ended_at`; chèn prescription, drug_line, dose_schedule; `start_date` hôm nay, `end_date` tính từ số lượng); ghi file ảnh đơn vào `<documents>/prescriptions/<id>.<ext>` trước khi commit, lỗi thì xóa file; MSG-REPLACE-PRES khi đã có đơn active; Hủy giữ nguyên đơn cũ; gọi hook lên lịch nhắc. | Must | 6 | ST-07.2, ST-07.3, ST-03.2, ST-08.1 |
+| ST-07.1 | 26 | Mô hình bản nháp và ánh xạ | `DraftPrescription`/`DraftLine` bằng Dart thuần; ánh xạ từ ParseResponse theo `erd.md` mục 3 (`'1'`→2, `'2'`→4, `'1/2'`→1 `amount_halves`); suy `check_mode` theo BR-03/04; cờ khóa của `missing_schedule`; test. | Must | ST-04.1, ST-08.1 |
+| ST-07.2 | 27 | SCR-CONFIRM | Đầu màn, thẻ từng dòng với 5 nhãn (needs_review, missing_schedule, half_pill, as_needed, name null), nút chính khóa khi còn dòng thiếu lịch, bản đọc to tóm tắt (hàm dựng câu trong domain, có test), nút phụ Hủy. | Must | ST-07.1, ST-02.3 |
+| ST-07.3 | 28 | SCR-EDIT-LINE | Chọn tên từ `catalog_name` có ô tìm (gợi ý đầu là tên OCR gần nhất); 4 hàng buổi với nút −/+ và lựa chọn '½'; 'Chọn lịch'/'Để sau'; nút 'Xong'; tên ngoài danh mục giữ nguyên nhưng `reminder_only`. | Must | ST-07.1, ST-04.3 |
+| ST-07.4 | 29 | Lưu đơn | `SavePrescription`: một transaction (đơn active cũ → `ended` + `ended_at`; chèn prescription, drug_line, dose_schedule; `start_date` hôm nay, `end_date` tính từ số lượng); ghi file ảnh đơn vào `<documents>/prescriptions/<id>.<ext>` trước khi commit, lỗi thì xóa file; MSG-REPLACE-PRES khi đã có đơn active; Hủy giữ nguyên đơn cũ; gọi hook lên lịch nhắc. | Must | ST-07.2, ST-07.3, ST-03.2, ST-08.1 |
 
 **Tiêu chí chấp nhận của story**
 
@@ -287,17 +279,17 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-08 – Logic nghiệp vụ lõi (Dart thuần)
 
-**Mốc:** M2 · **Người gợi ý:** Phụ trách AI · **Ước lượng:** 13 giờ · **Yêu cầu:** erd.md mục 3, system-architecture mục 5.2, FR-SCH-02, FR-SCH-03, FR-DOSE-03, FR-VER-03, FR-VER-04
+**Mốc:** M2 · **Yêu cầu:** erd.md mục 3, system-architecture mục 5.2, FR-SCH-02, FR-SCH-03, FR-DOSE-03, FR-VER-03, FR-VER-04
 
 **Mục tiêu.** Mọi quy tắc suy ra (ngày kết thúc, cữ hiện tại, payload) nằm ở một chỗ, có test, không phụ thuộc Flutter.
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-08.1 | schedule_rules | `core/domain/schedule_rules.dart`: đổi lịch chữ sang `amount_halves`; `endDate(start, quantity, halvesPerDay)`; `activeLinesOn(date, prescription)`; `prescriptionShouldEnd(date, lines)`; test cho số lượng lẻ, null, nửa viên. | Must | 4 | ST-01.1 |
-| ST-08.2 | session_rules | `core/domain/session_rules.dart`: cữ hiện tại (cữ chưa uống gần nhất đã đến giờ; 9:30 sáng chưa uống → sáng), cữ tiếp theo, tổng số viên của cữ (⌈halves/2⌉ cộng lại), `missed` khi hết ngày, giờ mặc định 7:00/11:30/17:00/20:00; test. | Must | 4 | ST-08.1 |
-| ST-08.3 | payload_builder | `core/domain/payload_builder.dart`: dựng `session_lines`, `other_lines`, `unchecked_count` theo `erd.md` mục 3; `line_id` là `drug_line.id` dạng chuỗi; `count = amount_halves/2`; trả 'không chấm được' khi không có dòng chấm ảnh; hỗ trợ payload chụp lại; test cho TC-04, TC-05, TC-07, TC-09. | Must | 5 | ST-08.1, ST-08.2 |
+| ST-08.1 | 25 | schedule_rules | `core/domain/schedule_rules.dart`: đổi lịch chữ sang `amount_halves`; `endDate(start, quantity, halvesPerDay)`; `activeLinesOn(date, prescription)`; `prescriptionShouldEnd(date, lines)`; test cho số lượng lẻ, null, nửa viên. | Must | ST-01.1 |
+| ST-08.2 | 30 | session_rules | `core/domain/session_rules.dart`: cữ hiện tại (cữ chưa uống gần nhất đã đến giờ; 9:30 sáng chưa uống → sáng), cữ tiếp theo, tổng số viên của cữ (⌈halves/2⌉ cộng lại), `missed` khi hết ngày, giờ mặc định 7:00/11:30/17:00/20:00; test. | Must | ST-08.1 |
+| ST-08.3 | 31 | payload_builder | `core/domain/payload_builder.dart`: dựng `session_lines`, `other_lines`, `unchecked_count` theo `erd.md` mục 3; `line_id` là `drug_line.id` dạng chuỗi; `count = amount_halves/2`; trả 'không chấm được' khi không có dòng chấm ảnh; hỗ trợ payload chụp lại; test cho TC-04, TC-05, TC-07, TC-09. | Must | ST-08.1, ST-08.2 |
 
 **Tiêu chí chấp nhận của story**
 
@@ -311,7 +303,7 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-09 – Màn Hôm nay, danh sách đơn, kết thúc và xóa đơn
 
-**Mốc:** M2 · **Người gợi ý:** Mobile 1 · **Ước lượng:** 15 giờ · **Yêu cầu:** FR-PRES-08, FR-PRES-10, FR-PRES-12, UC-13, UC-14, SCR-HOME, SCR-PRES-DETAIL
+**Mốc:** M2 · **Yêu cầu:** FR-PRES-08, FR-PRES-10, FR-PRES-12, UC-13, UC-14, SCR-HOME, SCR-PRES-DETAIL
 
 **Mục tiêu.** Người dùng thấy ngay cữ tiếp theo, xem lại đơn, kết thúc hoặc xóa đơn mà không để lại nhắc hay file thừa.
 
@@ -319,11 +311,11 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-09.1 | SCR-HOME | Thẻ cữ tiếp theo + 'Uống cữ này'; 4 cữ với ✓/⏰/—/!; nhắc '{n} thuốc chưa có lịch'; liên kết Đơn thuốc/Lịch sử/Cài đặt; trạng thái rỗng 'Chưa có đơn nào'; khi mở app: đánh dấu cữ `missed`, tự kết thúc đơn hết hạn. | Must | 6 | ST-08.2, ST-03.2, ST-07.4 |
-| ST-09.2 | Danh sách đơn và SCR-PRES-DETAIL | Danh sách (đơn đang dùng trên cùng); chi tiết: nhãn Đang dùng/Đã kết thúc, ngày kê, 'Bệnh: …' (chỉ hiển thị), dòng như SCR-CONFIRM (đơn active sửa được bằng SCR-EDIT-LINE và lên lịch nhắc lại). | Must | 5 | ST-09.1, ST-07.3 |
-| ST-09.3 | Kết thúc đơn và xóa đơn | Xác nhận 2 bước; kết thúc → `ended` + hủy nhắc (hook ST-10); xóa → xóa dòng, lịch, nhắc và file ảnh, giữ lịch sử cữ (`drug_line_id` = null). | Must | 4 | ST-09.2 |
+| ST-09.1 | 32 | SCR-HOME | Thẻ cữ tiếp theo + 'Uống cữ này'; 4 cữ với ✓/⏰/—/!; nhắc '{n} thuốc chưa có lịch'; liên kết Đơn thuốc/Lịch sử/Cài đặt; trạng thái rỗng 'Chưa có đơn nào'; khi mở app: đánh dấu cữ `missed`, tự kết thúc đơn hết hạn. | Must | ST-08.2, ST-03.2, ST-07.4 |
+| ST-09.2 | 33 | Danh sách đơn và SCR-PRES-DETAIL | Danh sách (đơn đang dùng trên cùng); chi tiết: nhãn Đang dùng/Đã kết thúc, ngày kê, 'Bệnh: …' (chỉ hiển thị), dòng như SCR-CONFIRM (đơn active sửa được bằng SCR-EDIT-LINE và lên lịch nhắc lại). | Must | ST-09.1, ST-07.3 |
+| ST-09.3 | 34 | Kết thúc đơn và xóa đơn | Xác nhận 2 bước; kết thúc → `ended` + hủy nhắc (hook ST-10); xóa → xóa dòng, lịch, nhắc và file ảnh, giữ lịch sử cữ (`drug_line_id` = null). | Must | ST-09.2 |
 
 **Tiêu chí chấp nhận của story**
 
@@ -337,18 +329,18 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-10 – Nhắc thuốc cục bộ
 
-**Mốc:** M3 · **Người gợi ý:** Mobile 2 · **Ước lượng:** 17 giờ · **Yêu cầu:** FR-REM-01…03, UC-04, TC-13, TC-14
+**Mốc:** M3 · **Yêu cầu:** FR-REM-01…03, UC-04, TC-13, TC-14
 
 **Mục tiêu.** Đến giờ thì máy nhắc, kể cả khi tắt mạng hoặc khởi động lại; chạm thông báo mở đúng cữ.
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-10.1 | Dịch vụ thông báo | `core/platform/notifications.dart`: khởi tạo `flutter_local_notifications`, `timezone`, `flutter_timezone`, kênh thông báo; giao diện trừu tượng + bản giả cho test; xin quyền Android 13+ với câu giải thích và nút 'Mở cài đặt' khi bị từ chối. | Must | 4 | ST-01.2 |
-| ST-10.2 | Lên lịch nhắc | `ReminderScheduler.rescheduleAll()`: đọc đơn active và giờ từ cài đặt; mỗi buổi có thuốc một thông báo lặp hằng ngày với MSG-REMIND (số viên); gọi lại khi lưu/kết thúc/xóa đơn và khi đổi giờ; sống qua khởi động lại; không nhắc sau `end_date`. | Must | 6 | ST-10.1, ST-08.2, ST-07.4 |
-| ST-10.3 | Nhắc lại | Chưa 'Tôi đã uống' thì nhắc lại sau 15 phút, tối đa 2 lần; hủy các lần nhắc lại khi đã uống. | Should | 4 | ST-10.2 |
-| ST-10.4 | Chạm thông báo mở đúng cữ | Payload thông báo mang `session`; go_router mở `/dose/:session` cả khi app tắt hẳn hoặc đang chạy nền; thử thủ công khởi động lại emulator (TC-13). | Must | 3 | ST-10.2, ST-02.4 |
+| ST-10.1 | 35 | Dịch vụ thông báo | `core/platform/notifications.dart`: khởi tạo `flutter_local_notifications`, `timezone`, `flutter_timezone`, kênh thông báo; giao diện trừu tượng + bản giả cho test; xin quyền Android 13+ với câu giải thích và nút 'Mở cài đặt' khi bị từ chối. | Must | ST-01.2 |
+| ST-10.2 | 36 | Lên lịch nhắc | `ReminderScheduler.rescheduleAll()`: đọc đơn active và giờ từ cài đặt; mỗi buổi có thuốc một thông báo lặp hằng ngày với MSG-REMIND (số viên); gọi lại khi lưu/kết thúc/xóa đơn và khi đổi giờ; sống qua khởi động lại; không nhắc sau `end_date`. | Must | ST-10.1, ST-08.2, ST-07.4 |
+| ST-10.3 | 37 | Nhắc lại | Chưa 'Tôi đã uống' thì nhắc lại sau 15 phút, tối đa 2 lần; hủy các lần nhắc lại khi đã uống. | Should | ST-10.2 |
+| ST-10.4 | 38 | Chạm thông báo mở đúng cữ | Payload thông báo mang `session`; go_router mở `/dose/:session` cả khi app tắt hẳn hoặc đang chạy nền; thử thủ công khởi động lại emulator (TC-13). | Must | ST-10.2, ST-02.4 |
 
 **Tiêu chí chấp nhận của story**
 
@@ -363,7 +355,7 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-11 – Màn Cữ cần uống và giọng nói
 
-**Mốc:** M3 · **Người gợi ý:** Mobile 2 · **Ước lượng:** 11 giờ · **Yêu cầu:** FR-DOSE-01, FR-LOG-03, NFR-05, UC-04, SCR-DOSE
+**Mốc:** M3 · **Yêu cầu:** FR-DOSE-01, FR-LOG-03, NFR-05, UC-04, SCR-DOSE
 
 **Mục tiêu.** Trước khi chụp, người dùng thấy rõ phải uống thuốc gì, mấy viên, và nghe được bằng tiếng Việt.
 
@@ -371,11 +363,11 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-11.1 | Dịch vụ giọng nói | `core/platform/tts.dart` bằng `flutter_tts` (`vi-VN`), `speak/stop`, tôn trọng `tts_enabled`; nối nút 🔊 vào `ScreenScaffold`; thông báo hướng dẫn cài giọng khi máy thiếu giọng tiếng Việt. | Must | 3 | ST-02.3 |
-| ST-11.2 | SCR-DOSE | Tiêu đề 'Cữ sáng · 3 viên' (`font.huge`); mỗi thuốc: tên to, '× 2 viên' (nửa viên đọc là 'nửa viên'), ghi chú ăn, nhãn 'Tự kiểm theo vỏ hộp'; nút chính 'Kiểm thuốc' hoặc 'Tôi đã kiểm vỏ hộp' (FR-VER-04); nút phụ 'Đổi cữ' (4 nút lớn). | Must | 6 | ST-11.1, ST-08.2, ST-08.3 |
-| ST-11.3 | Cữ đã uống và tự đọc | Cữ đã uống hiện MSG-TAKEN-ALREADY thay toàn bộ nội dung; mở từ thông báo thì tự đọc to nội dung cữ. | Must | 2 | ST-11.2 |
+| ST-11.1 | 39 | Dịch vụ giọng nói | `core/platform/tts.dart` bằng `flutter_tts` (`vi-VN`), `speak/stop`, tôn trọng `tts_enabled`; nối nút 🔊 vào `ScreenScaffold`; thông báo hướng dẫn cài giọng khi máy thiếu giọng tiếng Việt. | Must | ST-02.3 |
+| ST-11.2 | 40 | SCR-DOSE | Tiêu đề 'Cữ sáng · 3 viên' (`font.huge`); mỗi thuốc: tên to, '× 2 viên' (nửa viên đọc là 'nửa viên'), ghi chú ăn, nhãn 'Tự kiểm theo vỏ hộp'; nút chính 'Kiểm thuốc' hoặc 'Tôi đã kiểm vỏ hộp' (FR-VER-04); nút phụ 'Đổi cữ' (4 nút lớn). | Must | ST-11.1, ST-08.2, ST-08.3 |
+| ST-11.3 | 41 | Cữ đã uống và tự đọc | Cữ đã uống hiện MSG-TAKEN-ALREADY thay toàn bộ nội dung; mở từ thông báo thì tự đọc to nội dung cữ. | Must | ST-11.2 |
 
 **Tiêu chí chấp nhận của story**
 
@@ -389,7 +381,7 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-12 – Chụp thuốc và chuẩn bị ảnh
 
-**Mốc:** M3 · **Người gợi ý:** Mobile 2 · **Ước lượng:** 14 giờ · **Yêu cầu:** FR-VER-01, FR-VER-02, FR-VER-10, ADR-014, SCR-CAPTURE
+**Mốc:** M3 · **Yêu cầu:** FR-VER-01, FR-VER-02, FR-VER-10, ADR-014, SCR-CAPTURE
 
 **Mục tiêu.** Chụp (hoặc chọn) ảnh thuốc, chuẩn bị đúng 2048 px JPEG q85 và khung chụp đúng tỉ lệ để gửi.
 
@@ -397,11 +389,11 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-12.1 | SCR-CAPTURE với camera | Gói `camera`: xem trước toàn màn, khung chụp vuông ~70% chiều rộng viền trắng dày, câu hướng dẫn, nút chụp tròn 88 dp, xin quyền camera và trạng thái bị từ chối; trả về ảnh và khung theo toạ độ màn hình. | Must | 6 | ST-02.3, ST-01.2 |
-| ST-12.2 | image_prep | `core/media/image_prep.dart` (gói `image` v4, trong isolate): xoay EXIF, thu cạnh dài 2048, JPEG q85; đổi khung màn hình sang tỉ lệ 0–1 sau khi xoay; test với 2 ảnh demo (kích thước, dung lượng, khung). | Must | 5 | ST-01.1 |
-| ST-12.3 | Chọn ảnh có sẵn | Nút phụ 'Chọn ảnh có sẵn' dùng `file_picker` (ảnh); qua `image_prep`, gửi `frame = null`; thử trên emulator bằng cách kéo thả ảnh vào cửa sổ máy ảo (TC-19). | Should | 3 | ST-12.1, ST-12.2 |
+| ST-12.1 | 42 | SCR-CAPTURE với camera | Gói `camera`: xem trước toàn màn, khung chụp vuông ~70% chiều rộng viền trắng dày, câu hướng dẫn, nút chụp tròn 88 dp, xin quyền camera và trạng thái bị từ chối; trả về ảnh và khung theo toạ độ màn hình. | Must | ST-02.3, ST-01.2 |
+| ST-12.2 | 43 | image_prep | `core/media/image_prep.dart` (gói `image` v4, trong isolate): xoay EXIF, thu cạnh dài 2048, JPEG q85; đổi khung màn hình sang tỉ lệ 0–1 sau khi xoay; test với 2 ảnh demo (kích thước, dung lượng, khung). | Must | ST-01.1 |
+| ST-12.3 | 44 | Chọn ảnh có sẵn | Nút phụ 'Chọn ảnh có sẵn' dùng `file_picker` (ảnh); qua `image_prep`, gửi `frame = null`; thử trên emulator bằng cách kéo thả ảnh vào cửa sổ máy ảo (TC-19). | Should | ST-12.1, ST-12.2 |
 
 **Tiêu chí chấp nhận của story**
 
@@ -416,7 +408,7 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-13 – Gửi kiểm thuốc và màn kết quả
 
-**Mốc:** M3 · **Người gợi ý:** Phụ trách AI · **Ước lượng:** 18 giờ · **Yêu cầu:** FR-VER-03…06, FR-VER-08, FR-VER-09, UC-05, SCR-RESULT, BR-01, ADR-009
+**Mốc:** M3 · **Yêu cầu:** FR-VER-03…06, FR-VER-08, FR-VER-09, UC-05, SCR-RESULT, BR-01, ADR-009
 
 **Mục tiêu.** Hiện đúng kết quả server trả, tuân thủ BR-01 ở đúng một chỗ trong mã.
 
@@ -424,11 +416,11 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-13.1 | VerifyDose và cổng BR-01 | Use case: lấy cữ từ database, `payload_builder`, gọi API, ánh xạ sang `DoseResult`; hàm `isGreen` là **nơi duy nhất** quyết định xanh (`status == 'green'`); mọi exception → `ResultError`; lưu `verification_attempt` + `verification_item`; test TC-01, TC-02. | Must | 6 | ST-04.2, ST-08.3, ST-03.2, ST-12.2 |
-| ST-13.2 | Màn chờ và SCR-RESULT | Màn chờ 'Đang kiểm thuốc' (20 giây); SCR-RESULT: biểu tượng + `summary` đọc ngay, ảnh với `PillBoxesPainter` (box 0–1; nét liền 4 dp / đứt 4 dp / dày 6 dp), chạm viên → đọc `message`, danh sách `missing`. | Must | 8 | ST-13.1, ST-11.1, ST-02.3 |
-| ST-13.3 | Ma trận nút theo trạng thái | Nút chính và phụ theo bảng 5 trường hợp (green, partial, not_green còn lượt, not_green hết lượt, lỗi kết nối); widget test đủ 5; test tĩnh quét `lib/` để chỉ có một nơi dựng nút 'Tôi đã uống'. | Must | 4 | ST-13.2 |
+| ST-13.1 | 45 | VerifyDose và cổng BR-01 | Use case: lấy cữ từ database, `payload_builder`, gọi API, ánh xạ sang `DoseResult`; hàm `isGreen` là **nơi duy nhất** quyết định xanh (`status == 'green'`); mọi exception → `ResultError`; lưu `verification_attempt` + `verification_item`; test TC-01, TC-02. | Must | ST-04.2, ST-08.3, ST-03.2, ST-12.2 |
+| ST-13.2 | 46 | Màn chờ và SCR-RESULT | Màn chờ 'Đang kiểm thuốc' (20 giây); SCR-RESULT: biểu tượng + `summary` đọc ngay, ảnh với `PillBoxesPainter` (box 0–1; nét liền 4 dp / đứt 4 dp / dày 6 dp), chạm viên → đọc `message`, danh sách `missing`. | Must | ST-13.1, ST-11.1, ST-02.3 |
+| ST-13.3 | 47 | Ma trận nút theo trạng thái | Nút chính và phụ theo bảng 5 trường hợp (green, partial, not_green còn lượt, not_green hết lượt, lỗi kết nối); widget test đủ 5; test tĩnh quét `lib/` để chỉ có một nơi dựng nút 'Tôi đã uống'. | Must | ST-13.2 |
 
 **Tiêu chí chấp nhận của story**
 
@@ -443,7 +435,7 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-14 – Chụp lại một lần
 
-**Mốc:** M4 · **Người gợi ý:** Mobile 2 · **Ước lượng:** 9 giờ · **Yêu cầu:** FR-VER-07, UC-06, BR-08
+**Mốc:** M4 · **Yêu cầu:** FR-VER-07, UC-06, BR-08
 
 **Mục tiêu.** Khi chưa xanh, cho thêm đúng một lần chụp với hướng dẫn rõ, giữ viên đã xanh.
 
@@ -451,10 +443,10 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-14.1 | Gộp kết quả và payload chụp lại | `core/domain/result_merge.dart`: `retakePayload(...)`, `mergeAttempts(a1, a2)`, `canRetake(attempts)`; test TC-08, TC-09. | Must | 4 | ST-08.3, ST-13.1 |
-| ST-14.2 | Giao diện chụp lại | SCR-RESULT lượt 1: 'Bỏ viên này ra' cho viên đỏ, 'Viên này đúng, để riêng ra' cho viên xanh; SCR-CAPTURE lần chụp lại hiện 'Chỉ để các viên còn thiếu trên tay: …'; lượt 2 lưu `attempt_no = 2`. | Must | 5 | ST-14.1, ST-13.2 |
+| ST-14.1 | 48 | Gộp kết quả và payload chụp lại | `core/domain/result_merge.dart`: `retakePayload(...)`, `mergeAttempts(a1, a2)`, `canRetake(attempts)`; test TC-08, TC-09. | Must | ST-08.3, ST-13.1 |
+| ST-14.2 | 49 | Giao diện chụp lại | SCR-RESULT lượt 1: 'Bỏ viên này ra' cho viên đỏ, 'Viên này đúng, để riêng ra' cho viên xanh; SCR-CAPTURE lần chụp lại hiện 'Chỉ để các viên còn thiếu trên tay: …'; lượt 2 lưu `attempt_no = 2`. | Must | ST-14.1, ST-13.2 |
 
 **Tiêu chí chấp nhận của story**
 
@@ -466,7 +458,7 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-15 – Ghi nhận đã uống, tự kiểm vỏ hộp, chống uống lặp
 
-**Mốc:** M4 · **Người gợi ý:** Mobile 2 · **Ước lượng:** 11 giờ · **Yêu cầu:** FR-LOG-01…03, UC-07, UC-08, SCR-DONE
+**Mốc:** M4 · **Yêu cầu:** FR-LOG-01…03, UC-07, UC-08, SCR-DONE
 
 **Mục tiêu.** Mỗi cữ kết thúc có ghi nhận rõ ràng (app xác nhận hay tự kiểm) và không uống lặp.
 
@@ -474,11 +466,11 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-15.1 | Tôi đã uống và SCR-DONE | Ghi `dose_event` taken, `confirm_type = app_verified`, `taken_at`; hủy nhắc lại; MSG-TAKEN-OK; SCR-DONE tự về SCR-HOME sau 5 giây. | Must | 4 | ST-13.3, ST-10.3, ST-03.2 |
-| ST-15.2 | Tự kiểm vỏ hộp | Màn hiện MSG-BOX-CHECK và danh sách thuốc của cữ chữ to; nút 'Tôi đã kiểm vỏ hộp' ghi `self_confirmed`; vào từ partial, not_green, lỗi kết nối và cữ không chấm được. | Must | 4 | ST-15.1 |
-| ST-15.3 | Chống uống lặp | Cữ đã `taken` mở lại chỉ hiện MSG-TAKEN-ALREADY; cữ hết ngày vẫn `pending` thì đánh dấu `missed` khi mở app; test TC-07, TC-10. | Must | 3 | ST-15.1, ST-11.3 |
+| ST-15.1 | 50 | Tôi đã uống và SCR-DONE | Ghi `dose_event` taken, `confirm_type = app_verified`, `taken_at`; hủy nhắc lại; MSG-TAKEN-OK; SCR-DONE tự về SCR-HOME sau 5 giây. | Must | ST-13.3, ST-10.3, ST-03.2 |
+| ST-15.2 | 51 | Tự kiểm vỏ hộp | Màn hiện MSG-BOX-CHECK và danh sách thuốc của cữ chữ to; nút 'Tôi đã kiểm vỏ hộp' ghi `self_confirmed`; vào từ partial, not_green, lỗi kết nối và cữ không chấm được. | Must | ST-15.1 |
+| ST-15.3 | 52 | Chống uống lặp | Cữ đã `taken` mở lại chỉ hiện MSG-TAKEN-ALREADY; cữ hết ngày vẫn `pending` thì đánh dấu `missed` khi mở app; test TC-07, TC-10. | Must | ST-15.1, ST-11.3 |
 
 **Tiêu chí chấp nhận của story**
 
@@ -492,7 +484,7 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-16 – Đơn mẫu và ảnh thuốc mẫu
 
-**Mốc:** M4 · **Người gợi ý:** Mobile 1 · **Ước lượng:** 7 giờ · **Yêu cầu:** FR-ONB-01, FR-DEMO-01, UC-11
+**Mốc:** M4 · **Yêu cầu:** FR-ONB-01, FR-DEMO-01, UC-11
 
 **Mục tiêu.** Chạy trọn kịch bản demo trên máy giả lập mà không cần camera hay đơn thật.
 
@@ -500,11 +492,11 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-16.1 | Đưa ảnh demo vào assets | Chép `anh_demo/*` vào `mobile/assets/demo/`, khai báo trong `pubspec.yaml`. | Must | 1 | ST-01.1 |
-| ST-16.2 | Thử với đơn mẫu | Màn chọn 1 trong 2 đơn mẫu; gửi lên server như UC-01 rồi vào SCR-CONFIRM; `source_type = sample`; ảnh đơn gốc là ảnh mẫu. | Must | 3 | ST-16.1, ST-06.2 |
-| ST-16.3 | Dùng ảnh thuốc mẫu | Khi đơn có `source_type = sample`, SCR-CAPTURE thêm nút 'Dùng ảnh thuốc mẫu' (chọn A1/A2); chạy D1–D4 thủ công và ghi kết quả. | Must | 3 | ST-16.2, ST-12.1 |
+| ST-16.1 | 53 | Đưa ảnh demo vào assets | Chép `anh_demo/*` vào `mobile/assets/demo/`, khai báo trong `pubspec.yaml`. | Must | ST-01.1 |
+| ST-16.2 | 54 | Thử với đơn mẫu | Màn chọn 1 trong 2 đơn mẫu; gửi lên server như UC-01 rồi vào SCR-CONFIRM; `source_type = sample`; ảnh đơn gốc là ảnh mẫu. | Must | ST-16.1, ST-06.2 |
+| ST-16.3 | 55 | Dùng ảnh thuốc mẫu | Khi đơn có `source_type = sample`, SCR-CAPTURE thêm nút 'Dùng ảnh thuốc mẫu' (chọn A1/A2); chạy D1–D4 thủ công và ghi kết quả. | Must | ST-16.2, ST-12.1 |
 
 **Tiêu chí chấp nhận của story**
 
@@ -518,7 +510,7 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-17 – Lần đầu dùng và cảnh báo
 
-**Mốc:** M4 · **Người gợi ý:** Mobile 2 · **Ước lượng:** 6 giờ · **Yêu cầu:** FR-ONB-02, FR-SET-03, MSG-DISCLAIMER
+**Mốc:** M4 · **Yêu cầu:** FR-ONB-02, FR-SET-03, MSG-DISCLAIMER
 
 **Mục tiêu.** Người mới được hướng dẫn bằng giọng nói ở lần đầu chụp đơn và chụp thuốc; cảnh báo không thay dược sĩ luôn hiện.
 
@@ -526,10 +518,10 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-17.1 | Hướng dẫn lần đầu | Lớp phủ hướng dẫn cho chụp đơn (SCR-PRES-CAMERA) và chụp thuốc (SCR-CAPTURE): giọng nói + hình minh họa + hai nút; lưu cờ đã xem trong `setting`. | Should | 5 | ST-11.1, ST-12.1 |
-| ST-17.2 | Cảnh báo cố định | Hiện MSG-DISCLAIMER ở Cài đặt và rà màn chào; đặt `onboarding_done` sau lần xác nhận đơn đầu tiên. | Must | 1 | ST-02.4 |
+| ST-17.1 | 56 | Hướng dẫn lần đầu | Lớp phủ hướng dẫn cho chụp đơn (SCR-PRES-CAMERA) và chụp thuốc (SCR-CAPTURE): giọng nói + hình minh họa + hai nút; lưu cờ đã xem trong `setting`. | Should | ST-11.1, ST-12.1 |
+| ST-17.2 | 57 | Cảnh báo cố định | Hiện MSG-DISCLAIMER ở Cài đặt và rà màn chào; đặt `onboarding_done` sau lần xác nhận đơn đầu tiên. | Must | ST-02.4 |
 
 **Tiêu chí chấp nhận của story**
 
@@ -542,7 +534,7 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-18 – Lịch sử và cài đặt
 
-**Mốc:** M4 · **Người gợi ý:** Mobile 2 · **Ước lượng:** 9 giờ · **Yêu cầu:** FR-LOG-04, FR-REM-04, FR-SET-02, UC-09, UC-12, SCR-HISTORY, SCR-SETTINGS
+**Mốc:** M4 · **Yêu cầu:** FR-LOG-04, FR-REM-04, FR-SET-02, UC-09, UC-12, SCR-HISTORY, SCR-SETTINGS
 
 **Mục tiêu.** Xem lại 7 ngày gần nhất và chỉnh giờ nhắc, giọng nói.
 
@@ -550,10 +542,10 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-18.1 | SCR-HISTORY | Lưới 7 ngày × 4 cữ đọc từ `dose_event`, biểu tượng theo `confirm_type`; chạm xem chi tiết lượt kiểm. | Should | 5 | ST-15.1, ST-03.2 |
-| ST-18.2 | Cài đặt: giờ, giọng nói, phiên bản | Chọn giờ từng buổi bằng bộ chọn giờ cỡ lớn (gọi `rescheduleAll`), bật/tắt giọng nói, hiện `model_version`. | Should | 4 | ST-04.3, ST-10.2 |
+| ST-18.1 | 58 | SCR-HISTORY | Lưới 7 ngày × 4 cữ đọc từ `dose_event`, biểu tượng theo `confirm_type`; chạm xem chi tiết lượt kiểm. | Should | ST-15.1, ST-03.2 |
+| ST-18.2 | 59 | Cài đặt: giờ, giọng nói, phiên bản | Chọn giờ từng buổi bằng bộ chọn giờ cỡ lớn (gọi `rescheduleAll`), bật/tắt giọng nói, hiện `model_version`. | Should | ST-04.3, ST-10.2 |
 
 **Tiêu chí chấp nhận của story**
 
@@ -564,7 +556,7 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-19 – Chụp đơn giấy
 
-**Mốc:** M4 · **Người gợi ý:** Mobile 1 · **Ước lượng:** 5 giờ · **Yêu cầu:** FR-PRES-02, UC-02, SCR-PRES-CAMERA
+**Mốc:** M4 · **Yêu cầu:** FR-PRES-02, UC-02, SCR-PRES-CAMERA
 
 **Mục tiêu.** Chụp đơn giấy bằng camera làm đường phụ của việc nhập đơn.
 
@@ -572,9 +564,9 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-19.1 | SCR-PRES-CAMERA | Camera chụp đơn, hướng dẫn lần đầu, dùng `image_prep` (giữ 2048 px), gửi như UC-01 và lưu file làm ảnh đơn gốc. | Should | 5 | ST-06.2, ST-12.2 |
+| ST-19.1 | 60 | SCR-PRES-CAMERA | Camera chụp đơn, hướng dẫn lần đầu, dùng `image_prep` (giữ 2048 px), gửi như UC-01 và lưu file làm ảnh đơn gốc. | Should | ST-06.2, ST-12.2 |
 
 **Tiêu chí chấp nhận của story**
 
@@ -587,16 +579,16 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-20 – Ảnh mẫu thuốc trên màn Cữ cần uống
 
-**Mốc:** M5 · **Người gợi ý:** Mobile 2 · **Ước lượng:** 6 giờ · **Yêu cầu:** FR-DOSE-02, OQ-04
+**Mốc:** M5 · **Yêu cầu:** FR-DOSE-02, OQ-04
 
 **Mục tiêu.** Người dùng nhìn ảnh minh họa từng thuốc để đối chiếu trước khi chụp.
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-20.1 | Xuất ảnh mẫu | Từ crop VAIPE, xuất ≤ 3 ảnh nhỏ (JPEG, cạnh ≤ 256 px) mỗi tên trong danh mục vào `assets/pills/` kèm `manifest.json`; kiểm dung lượng. | Could | 3 | ST-00.3 |
-| ST-20.2 | Hiển thị ảnh mẫu | SCR-DOSE hiện ảnh mẫu theo tên đã khớp, nhãn 'ảnh minh họa'. | Could | 3 | ST-20.1, ST-11.2 |
+| ST-20.1 | 61 | Xuất ảnh mẫu | Từ crop VAIPE, xuất ≤ 3 ảnh nhỏ (JPEG, cạnh ≤ 256 px) mỗi tên trong danh mục vào `assets/pills/` kèm `manifest.json`; kiểm dung lượng. | Could | ST-00.3 |
+| ST-20.2 | 62 | Hiển thị ảnh mẫu | SCR-DOSE hiện ảnh mẫu theo tên đã khớp, nhãn 'ảnh minh họa'. | Could | ST-20.1, ST-11.2 |
 
 **Tiêu chí chấp nhận của story**
 
@@ -609,7 +601,7 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-21 – Gửi người thân kiểm tra
 
-**Mốc:** M5 · **Người gợi ý:** Mobile 2 · **Ước lượng:** 14 giờ · **Yêu cầu:** FR-PRES-09, UC-10, SCR-SHARE, ADR-016, TC-18
+**Mốc:** M5 · **Yêu cầu:** FR-PRES-09, UC-10, SCR-SHARE, ADR-016, TC-18
 
 **Mục tiêu.** Chia sẻ ảnh đơn gốc, ảnh phiếu bảng chữ to và bản chữ để người thân đối chiếu.
 
@@ -617,11 +609,11 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-21.1 | Bản chữ | Hàm dựng bản chữ mỗi thuốc một dòng ('1. Panactol 500mg – SL 10 – Sáng 1, Tối 1 – Sau ăn') trong domain; test với đơn 582 và 979. | Could | 2 | ST-07.1 |
-| ST-21.2 | Ảnh phiếu đơn | Widget phiếu theo bố cục SCR-SHARE (tiêu đề, dòng ngày/bệnh, bảng 8 cột, ★ chỉ nhắc lịch, ⚠ chưa có lịch, chú thích, câu MSG-DISCLAIMER), vẽ ra PNG rộng 1080 px; golden test. | Could | 8 | ST-21.1, ST-02.1 |
-| ST-21.3 | Luồng chia sẻ | Hộp xác nhận MSG-SHARE-WARN; `share_plus` gửi file ảnh đơn/PDF + ảnh phiếu + chữ; thiếu file ảnh thì chỉ gửi phiếu và chữ kèm thông báo; vào từ SCR-CONFIRM (bản nháp) và SCR-PRES-DETAIL. | Could | 4 | ST-21.2, ST-09.2 |
+| ST-21.1 | 63 | Bản chữ | Hàm dựng bản chữ mỗi thuốc một dòng ('1. Panactol 500mg – SL 10 – Sáng 1, Tối 1 – Sau ăn') trong domain; test với đơn 582 và 979. | Could | ST-07.1 |
+| ST-21.2 | 64 | Ảnh phiếu đơn | Widget phiếu theo bố cục SCR-SHARE (tiêu đề, dòng ngày/bệnh, bảng 8 cột, ★ chỉ nhắc lịch, ⚠ chưa có lịch, chú thích, câu MSG-DISCLAIMER), vẽ ra PNG rộng 1080 px; golden test. | Could | ST-21.1, ST-02.1 |
+| ST-21.3 | 65 | Luồng chia sẻ | Hộp xác nhận MSG-SHARE-WARN; `share_plus` gửi file ảnh đơn/PDF + ảnh phiếu + chữ; thiếu file ảnh thì chỉ gửi phiếu và chữ kèm thông báo; vào từ SCR-CONFIRM (bản nháp) và SCR-PRES-DETAIL. | Could | ST-21.2, ST-09.2 |
 
 **Tiêu chí chấp nhận của story**
 
@@ -636,17 +628,17 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-22 – Thử cài lên iPhone
 
-**Mốc:** M5 · **Người gợi ý:** Mobile 1 · **Ước lượng:** 12 giờ · **Yêu cầu:** ADR-002
+**Mốc:** M5 · **Yêu cầu:** ADR-002
 
 **Mục tiêu.** Kiểm xem có chạy được trên iPhone không, để báo cáo trung thực dù kết quả ra sao.
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-22.1 | Rà cấu hình iOS | Kiểm `Info.plist`, `Podfile` (iOS 13+), cài đặt iOS của `flutter_local_notifications`, quyền camera/ảnh, mạng nội bộ HTTP. | Could | 2 | ST-01.4 |
-| ST-22.2 | Build và cài trên Mac | Mượn Mac: `flutter build ios`, ký bằng Apple ID miễn phí trong Xcode, cài lên iPhone, chạy luồng chính, ghi vấn đề. | Could | 6 | ST-22.1 |
-| ST-22.3 | Sửa khác biệt hoặc ghi kết luận | Sửa khác biệt nền tảng nếu có; hoặc ghi 'không làm được' và lý do vào phần Hệ quả của ADR-002. | Could | 4 | ST-22.2 |
+| ST-22.1 | 66 | Rà cấu hình iOS | Kiểm `Info.plist`, `Podfile` (iOS 13+), cài đặt iOS của `flutter_local_notifications`, quyền camera/ảnh, mạng nội bộ HTTP. | Could | ST-01.4 |
+| ST-22.2 | 67 | Build và cài trên Mac | Mượn Mac: `flutter build ios`, ký bằng Apple ID miễn phí trong Xcode, cài lên iPhone, chạy luồng chính, ghi vấn đề. | Could | ST-22.1 |
+| ST-22.3 | 68 | Sửa khác biệt hoặc ghi kết luận | Sửa khác biệt nền tảng nếu có; hoặc ghi 'không làm được' và lý do vào phần Hệ quả của ADR-002. | Could | ST-22.2 |
 
 **Tiêu chí chấp nhận của story**
 
@@ -659,17 +651,17 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-23 – Kiểm thử tích hợp với server thật
 
-**Mốc:** M5 · **Người gợi ý:** Phụ trách AI · **Ước lượng:** 13 giờ · **Yêu cầu:** test-plan mục 1, 5, TC-02, TC-14
+**Mốc:** M5 · **Yêu cầu:** test-plan mục 1, 5, TC-02, TC-14
 
 **Mục tiêu.** Tự động chạy trọn luồng từ nhập đơn tới ghi nhận đã uống với server Docker thật.
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-23.1 | Khung integration_test | Cấu hình `integration_test`, hàm đặt lại database, khởi động với server Docker thật ở `10.0.2.2:8000`. | Should | 4 | ST-16.3 |
-| ST-23.2 | Kịch bản D1–D4 | Nhập đơn 582 → xác nhận → lưu → cữ sáng → chọn ảnh mẫu A1 → xanh → 'Tôi đã uống'; D2, D3, D4 tương tự; D3/D4 kết thúc bằng tự kiểm vỏ hộp. | Should | 6 | ST-23.1, ST-15.2 |
-| ST-23.3 | Mất mạng và dừng server | Dừng container giữa chừng → MSG-NO-SERVER, không xanh; chế độ máy bay → lịch, nhắc, ghi nhận, lịch sử vẫn chạy. | Should | 3 | ST-23.2 |
+| ST-23.1 | 69 | Khung integration_test | Cấu hình `integration_test`, hàm đặt lại database, khởi động với server Docker thật ở `10.0.2.2:8000`. | Should | ST-16.3 |
+| ST-23.2 | 70 | Kịch bản D1–D4 | Nhập đơn 582 → xác nhận → lưu → cữ sáng → chọn ảnh mẫu A1 → xanh → 'Tôi đã uống'; D2, D3, D4 tương tự; D3/D4 kết thúc bằng tự kiểm vỏ hộp. | Should | ST-23.1, ST-15.2 |
+| ST-23.3 | 71 | Mất mạng và dừng server | Dừng container giữa chừng → MSG-NO-SERVER, không xanh; chế độ máy bay → lịch, nhắc, ghi nhận, lịch sử vẫn chạy. | Should | ST-23.2 |
 
 **Tiêu chí chấp nhận của story**
 
@@ -682,18 +674,18 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-24 – Tiếp cận, trạng thái chung và rà quy tắc
 
-**Mốc:** M5 · **Người gợi ý:** Cả nhóm · **Ước lượng:** 20 giờ · **Yêu cầu:** NFR-04, NFR-05, ui-ux-spec mục 6, 7, BR-01, BR-10, BR-12
+**Mốc:** M5 · **Yêu cầu:** NFR-04, NFR-05, ui-ux-spec mục 6, 7, BR-01, BR-10, BR-12
 
 **Mục tiêu.** Mỗi màn đạt checklist tiếp cận; các trạng thái lỗi/rỗng/từ chối quyền đều xử lý; mã tuân thủ BR-01, BR-10, BR-12.
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-24.1 | Rà tiếp cận từng màn | Cỡ chữ hệ thống 1,5×, vùng chạm, tương phản, `Semantics`, nút 🔊, chỉ một nút chính; sửa lỗi tìm thấy. | Must | 8 | ST-13.3, ST-15.3, ST-18.2 |
-| ST-24.2 | TalkBack | Đi trọn luồng cữ bằng TalkBack trên máy giả lập; sửa nhãn và thứ tự đọc. | Should | 4 | ST-24.1 |
-| ST-24.3 | Trạng thái chung | Quyền camera/thông báo bị từ chối, danh sách rỗng, mất mạng ở mọi màn cần server; thử TC-13 và TC-14 thủ công. | Must | 5 | ST-24.1 |
-| ST-24.4 | Rà BR-01, BR-10, BR-12 trong mã | Tìm tĩnh nơi tạo nút 'Tôi đã uống' và `isGreen`; không có `print`/log nội dung đơn; không ghi ảnh thuốc ra đĩa; không thể có hai đơn `active`; lập checklist dùng cho mọi PR. | Must | 3 | ST-13.3, ST-07.4 |
+| ST-24.1 | 72 | Rà tiếp cận từng màn | Cỡ chữ hệ thống 1,5×, vùng chạm, tương phản, `Semantics`, nút 🔊, chỉ một nút chính; sửa lỗi tìm thấy. | Must | ST-13.3, ST-15.3, ST-18.2 |
+| ST-24.2 | 73 | TalkBack | Đi trọn luồng cữ bằng TalkBack trên máy giả lập; sửa nhãn và thứ tự đọc. | Should | ST-24.1 |
+| ST-24.3 | 74 | Trạng thái chung | Quyền camera/thông báo bị từ chối, danh sách rỗng, mất mạng ở mọi màn cần server; thử TC-13 và TC-14 thủ công. | Must | ST-24.1 |
+| ST-24.4 | 75 | Rà BR-01, BR-10, BR-12 trong mã | Tìm tĩnh nơi tạo nút 'Tôi đã uống' và `isGreen`; không có `print`/log nội dung đơn; không ghi ảnh thuốc ra đĩa; không thể có hai đơn `active`; lập checklist dùng cho mọi PR. | Must | ST-13.3, ST-07.4 |
 
 **Tiêu chí chấp nhận của story**
 
@@ -705,17 +697,17 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-25 – Chuẩn bị trình bày và demo
 
-**Mốc:** M6 · **Người gợi ý:** Cả nhóm · **Ước lượng:** 10 giờ · **Yêu cầu:** deployment.md mục 6, test-plan mục 5, R2, R3, R4
+**Mốc:** M6 · **Yêu cầu:** deployment.md mục 6, test-plan mục 5, R2, R3, R4
 
 **Mục tiêu.** Buổi trình bày chạy được cả khi có sự cố: có kịch bản, bản quay dự phòng, đã tập trên đúng laptop.
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-25.1 | Kịch bản demo | `docs/quality/demo-script.md`: kịch bản theo phút (lời thoại, thao tác, cảnh D1–D5), cách xử lý khi lỗi (mất kết nối, OCR sai, webcam đen). | Must | 3 | ST-16.3 |
-| ST-25.2 | Video dự phòng | Quay màn hình máy giả lập chạy trọn kịch bản, có giọng nói; lưu ngoài repo (không đưa video lên GitHub). | Must | 3 | ST-25.1 |
-| ST-25.3 | Tập demo trên laptop trình bày | Docker + máy giả lập + webcam; bấm giờ; quy trình đặt lại (xóa dữ liệu app, bật lại server); thử hotspot và `cloudflared` dự phòng. | Must | 4 | ST-25.1, ST-23.2 |
+| ST-25.1 | 78 | Kịch bản demo | `docs/quality/demo-script.md`: kịch bản theo phút (lời thoại, thao tác, cảnh D1–D5), cách xử lý khi lỗi (mất kết nối, OCR sai, webcam đen). | Must | ST-16.3 |
+| ST-25.2 | 79 | Video dự phòng | Quay màn hình máy giả lập chạy trọn kịch bản, có giọng nói; lưu ngoài repo (không đưa video lên GitHub). | Must | ST-25.1 |
+| ST-25.3 | 80 | Tập demo trên laptop trình bày | Docker + máy giả lập + webcam; bấm giờ; quy trình đặt lại (xóa dữ liệu app, bật lại server); thử hotspot và `cloudflared` dự phòng. | Must | ST-25.1, ST-23.2 |
 
 **Tiêu chí chấp nhận của story**
 
@@ -727,16 +719,16 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-26 – Báo cáo và số liệu từ app
 
-**Mốc:** M6 · **Người gợi ý:** Phụ trách AI · **Ước lượng:** 11 giờ · **Yêu cầu:** work-log.md, báo cáo v6
+**Mốc:** M6 · **Yêu cầu:** work-log.md, báo cáo v6
 
 **Mục tiêu.** Có số liệu và ảnh chụp thật từ app để đưa vào báo cáo.
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-26.1 | Chụp màn hình và số đo | Chụp ảnh các màn chính trên máy giả lập (theo kịch bản demo), tổng hợp số đo tốc độ từ ST-05.2 và kết quả D1–D4. | Should | 3 | ST-25.3 |
-| ST-26.2 | Cập nhật báo cáo | Khi chủ dự án yêu cầu: thêm phần app vào báo cáo, giữ ≤ 60 trang, Word gốc. | Should | 8 | ST-26.1 |
+| ST-26.1 | 81 | Chụp màn hình và số đo | Chụp ảnh các màn chính trên máy giả lập (theo kịch bản demo), tổng hợp số đo tốc độ từ ST-05.2 và kết quả D1–D4. | Should | ST-25.3 |
+| ST-26.2 | 82 | Cập nhật báo cáo | Khi chủ dự án yêu cầu: thêm phần app vào báo cáo, giữ ≤ 60 trang, Word gốc. | Should | ST-26.1 |
 
 **Tiêu chí chấp nhận của story**
 
@@ -747,16 +739,16 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-27 – Giấy phép và hồ sơ nộp
 
-**Mốc:** M5 · **Người gợi ý:** Phụ trách AI · **Ước lượng:** 2,5 giờ · **Yêu cầu:** model-card.md mục giấy phép, README
+**Mốc:** M5 · **Yêu cầu:** model-card.md mục giấy phép, README
 
 **Mục tiêu.** Hồ sơ nộp không thiếu giấy phép và nhất quán về tên nhóm.
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-27.1 | Kiểm giấy phép | Kiểm giấy phép PP-OCRv5, VietOCR và các gói trong ADR-015; ghi vào `model-card.md`, README; nếu cần thì thêm file giấy phép đi kèm. | Should | 2 | – |
-| ST-27.2 | Chốt tên nhóm | Bìa báo cáo ghi GROUP 05, tên file ghi GROUP_01: chủ dự án chọn một, sửa cho thống nhất. | Should | 0,5 | – |
+| ST-27.1 | 76 | Kiểm giấy phép | Kiểm giấy phép PP-OCRv5, VietOCR và các gói trong ADR-015; ghi vào `model-card.md`, README; nếu cần thì thêm file giấy phép đi kèm. | Should | – |
+| ST-27.2 | 77 | Chốt tên nhóm | Bìa báo cáo ghi GROUP 05, tên file ghi GROUP_01: chủ dự án chọn một, sửa cho thống nhất. | Should | – |
 
 **Tiêu chí chấp nhận của story**
 
@@ -765,15 +757,15 @@ ST-05, ST-17, ST-19, ST-20, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm tr
 
 ### ST-28 – Kiểm tra tự động trên GitHub (CI)
 
-**Mốc:** M1 · **Người gợi ý:** Phụ trách AI · **Ước lượng:** 3 giờ · **Yêu cầu:** test-plan mục 1
+**Mốc:** M1 · **Yêu cầu:** test-plan mục 1
 
 **Mục tiêu.** Mỗi PR tự chạy test, tránh lỗi lọt vào `main`.
 
 **Tasks**
 
-| Mã | Task | Mô tả chi tiết | Ưu tiên | Giờ | Phụ thuộc |
+| Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-28.1 | Workflow CI | `.github/workflows/ci.yml`: job backend (cài `requirements.txt`, `test_decide.py`, `export_openapi` rồi `git diff --exit-code`) và job mobile (`flutter analyze`, `flutter test`). | Could | 3 | ST-01.1 |
+| ST-28.1 | 21 | Workflow CI | `.github/workflows/ci.yml`: job backend (cài `requirements.txt`, `test_decide.py`, `export_openapi` rồi `git diff --exit-code`) và job mobile (`flutter analyze`, `flutter test`). | Could | ST-01.1 |
 
 **Tiêu chí chấp nhận của story**
 

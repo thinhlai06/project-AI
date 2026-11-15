@@ -14,9 +14,9 @@ Mỗi phần việc có một báo cáo ngắn khoảng 100 từ. Phân tích ch
 
 ## Task 11 – Product backlog và bảng task (15/11/2026) ✅
 
-**Đã làm:** [backlog.md](../product/backlog.md) (29 story, 82 task, 314,5 giờ, mô tả chi tiết, tiêu chí chấp nhận, phụ thuộc) và [tasks.csv](../product/tasks.csv) (bảng theo dõi để nhập vào Google Sheets). Đưa `anh_demo/` vào repo và chạy thử D1–D4 trên server Docker (đúng kỳ vọng). Roadmap, AGENTS.md và quy trình AI trỏ sang backlog; trạng thái task chỉ ghi ở `tasks.csv`.
+**Đã làm:** [backlog.md](../product/backlog.md) (29 story, 82 task, mô tả chi tiết, tiêu chí chấp nhận, phụ thuộc, thứ tự làm) và [tasks.csv](../product/tasks.csv) (bảng theo dõi để nhập vào Google Sheets). Đưa `anh_demo/` vào repo và chạy thử D1–D4 trên server Docker (đúng kỳ vọng). Roadmap, AGENTS.md và quy trình AI trỏ sang backlog; trạng thái task chỉ ghi ở `tasks.csv`.
 
-**Phản biện:** tổng 314,5 giờ so với khoảng 270 giờ năng lực ước tính của 3 người trong 6 tuần: sát giới hạn, nên Could (36 giờ) và một phần Should là phần đệm để cắt. Ảnh mẫu từng viên (FR-DOSE-02) chưa có nguồn vì dữ liệu thô vẫn ở Thùng rác.
+**Phản biện:** khối lượng lớn so với 6 tuần và một người làm, nên Could và một phần Should là phần đệm để cắt. Ảnh mẫu từng viên (FR-DOSE-02) chưa có nguồn vì dữ liệu thô vẫn ở Thùng rác.
 
 ---
 
