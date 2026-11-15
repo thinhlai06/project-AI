@@ -31,7 +31,7 @@ Bản canvas tương tác (chủ dự án xem được trên claude.ai) chỉ l�
 Đặt ở `mobile/lib/app/tokens.dart` (ST-02.1). Mã mẫu:
 
 ```dart
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 abstract final class AppColors {
   static const bg = Color(0xFFFFFFFF);
@@ -75,6 +75,8 @@ abstract final class AppSpace {
   static const radiusButton = 16.0, radiusCard = 16.0, radiusField = 12.0, radiusBox = 10.0;
 }
 ```
+
+Từ ST-01 dự án dùng `package:material_ui/material_ui.dart` (ADR-019); `package:flutter/material.dart` đã deprecated.
 
 - Cỡ chữ người dùng phải đọc **không nhỏ hơn 20**. Chỉ có hai ngoại lệ: chữ trong bảng phiếu đơn gửi người thân (≥ 32 trên ảnh rộng 1080 px) và các chú thích thiết kế (không có trong app).
 - Chữ hệ thống phóng tới **1,5 lần** (`textScaler` chặn ở 1,5); bố cục phải xuống dòng, không cắt chữ.

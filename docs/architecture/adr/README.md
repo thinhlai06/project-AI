@@ -31,3 +31,4 @@ Mỗi ADR ghi **một** quyết định quan trọng: bối cảnh, lựa chọn
 | ADR-016 | [Lưu ảnh đơn gốc trên điện thoại để gửi người thân (thay ADR-012)](prescription-image-on-device.md) | Đã chấp nhận | 2026-11-15 |
 | ADR-017 | [Đóng gói server bằng Docker Compose](docker-server.md) | Đã chấp nhận | 2026-11-15 |
 | ADR-018 | [Ảnh viên cắt chỉ trong bộ nhớ, thay ảnh mẫu VAIPE](pill-crops-in-memory.md) | Đã chấp nhận | 2026-11-15 |
+| ADR-019 | [Dùng gói material_ui (thành phần Material của Flutter 3.50)](material-ui-package.md) | Đã chấp nhận | 2026-11-15 |

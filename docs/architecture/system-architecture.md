@@ -23,7 +23,7 @@ flowchart LR
 
 | Khối | Công nghệ | Trách nhiệm | Thư mục |
 |---|---|---|---|
-| App di động | Flutter (Dart), Android trước ([ADR-002](adr/flutter-android-first.md)) | Giao diện, lịch và nhắc, database cục bộ, chuẩn bị ảnh, gọi API, đọc giọng nói | `mobile/` (chưa tạo) |
+| App di động | Flutter (Dart), Android trước ([ADR-002](adr/flutter-android-first.md)) | Giao diện, lịch và nhắc, database cục bộ, chuẩn bị ảnh, gọi API, đọc giọng nói | `mobile/` |
 | Database cục bộ | SQLite qua `drift` | Đơn, dòng thuốc, lịch, cữ, lịch sử kiểm | trong app |
 | Server AI | Python 3.10–3.13, FastAPI, Uvicorn, ONNX Runtime CPU | Đọc đơn (OCR), kiểm thuốc, danh mục | `backend/medicheck_server/` |
 | Module kiểm thuốc | `PillVerifier` (`infer.py`) | Detector → crop → nhận dạng → ghép → xanh/đỏ/vàng, câu nói | `backend/medicheck_server/infer.py` |

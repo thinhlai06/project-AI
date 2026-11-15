@@ -7,7 +7,7 @@ Hướng dẫn cho AI coding agent (Claude Code, Cursor, Copilot, Codex…) và 
 MediCheck VN: app Flutter giúp người cao tuổi kiểm thuốc theo đơn qua camera. Repo gồm:
 - `backend/`: server AI (FastAPI, ONNX Runtime CPU) – **đã xong, đã đo an toàn**;
 - `out/onnx_final/`: mô hình đã chốt;
-- `mobile/`: app Flutter – **đang làm** (chưa tạo);
+- `mobile/`: app Flutter – **đang làm** (ST-01.1 và ST-01.2 xong);
 - `docs/`: tài liệu, bắt đầu từ [docs/README.md](docs/README.md).
 
 ## Trước khi làm một việc
@@ -45,7 +45,7 @@ python -m uvicorn backend.medicheck_server.app:app --host 0.0.0.0 --port 8000   
 python backend/tests/test_decide.py                                              # test logic quyết định
 python -m backend.export_openapi                                                 # sinh lại docs/architecture/openapi.yaml sau khi sửa app.py
 
-# App (khi mobile/ đã tạo)
+# App (trong thư mục mobile/)
 cd mobile && flutter pub get && flutter analyze && flutter test
 flutter run                                                                      # máy giả lập gọi server ở http://10.0.2.2:8000
 dart run build_runner build --delete-conflicting-outputs                        # sau khi sửa bảng drift

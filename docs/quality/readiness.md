@@ -5,7 +5,7 @@
 
 ## Kết luận
 
-**Sẵn sàng code.** Tài liệu nhất quán, mọi quyết định đã chốt, thư viện cài được. Chỉ còn **hai việc của chủ dự án** (mục 3) trước khi bắt đầu ST-01.
+**Sẵn sàng code.** Tài liệu nhất quán, mọi quyết định đã chốt, thư viện cài được. **Hai việc của chủ dự án** (mục 3) đã xong ngày 2026-11-15; ST-01.1 và ST-01.2 đã làm.
 
 ## 1. Tài liệu (kiểm tự động)
 
@@ -16,7 +16,7 @@ Script đọc PRD, BA, use case, UI spec, test plan, backlog, `tasks.csv` rồi 
 | Mã FR/NFR/BR/UC/TC/ADR/OQ được nhắc mà chưa định nghĩa | Không có |
 | Yêu cầu FR chưa có task nào trỏ tới | Không có |
 | Câu hỏi mở (OQ) chưa chốt | Không có (OQ-01 … OQ-06 đã chốt) |
-| ADR còn "Đề xuất" | Không có (ADR-001 … ADR-018 đã chấp nhận hoặc bị thay thế) |
+| ADR còn "Đề xuất" | Không có (ADR-001 … ADR-019 đã chấp nhận hoặc bị thay thế) |
 | Tài liệu còn "nháp chờ duyệt" | Không có |
 | Task: phụ thuộc trỏ tới task không tồn tại; thứ tự làm sai phụ thuộc | Không có (82 task) |
 | Màn thiết kế: HTML và PNG đủ; backlog không trỏ tới màn không có | Đạt (31 màn) |
@@ -33,11 +33,13 @@ Script đọc PRD, BA, use case, UI spec, test plan, backlog, `tasks.csv` rồi 
 | Server AI bằng Docker: `docker compose up --build` | ✅ Chạy tốt trên PC này; D1–D4 đúng kỳ vọng |
 | Qoder CLI | ✅ Có trong PATH |
 | Kho mã: nhánh `main` đã push, không có thay đổi dở | ✅ |
-| Chấp nhận giấy phép Android SDK (`flutter doctor --android-licenses`) | ⏳ **Việc của chủ dự án** |
-| Flutter và `PUB_CACHE` trong PATH người dùng | ⏳ **Việc của chủ dự án** |
+| Chấp nhận giấy phép Android SDK (`flutter doctor --android-licenses`) | ✅ đã xong: `flutter doctor` báo All Android licenses accepted (kiểm 2026-11-15) |
+| Flutter và `PUB_CACHE` trong PATH người dùng | ✅ đã xong: `D:/flutter/bin` có trong PATH người dùng và `PUB_CACHE=D:/flutter_pub_cache` đã đặt (kiểm 2026-11-15) |
 | Visual Studio thiếu thành phần C++ | Bỏ qua: app không build cho Windows |
 
 ## 3. Việc cần chủ dự án làm trước ST-01
+
+Cả hai việc dưới đây đã xong (2026-11-15).
 
 1. Chạy `D:\flutter\bin\flutter doctor --android-licenses`, gõ `y` cho từng mục (không có giấy phép này thì không build được Android).
 2. Thêm `D:\flutter\bin` vào PATH và đặt `PUB_CACHE=D:\flutter_pub_cache` (lệnh ở `docs/process/ai-workflow.md` hoặc hỏi lại); mở terminal mới.
