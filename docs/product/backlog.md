@@ -88,7 +88,7 @@ ST-05, ST-17, ST-19, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm trên đ�
 
 - 4 ảnh demo nằm trong repo (`anh_demo/`) và chạy đúng D1–D4 trên server Docker.
 
-**Kiểm thử:** Chạy D1–D4 qua `/v1/pills/verify` (đã làm 15/11)..
+**Kiểm thử:** Chạy D1–D4 qua `/v1/pills/verify` (đã làm 15/11).
 
 **Lưu ý.** Không cần ảnh mẫu từng viên: ảnh viên trên màn kết quả được cắt từ chính ảnh vừa chụp (ST-29, ADR-018).
 
