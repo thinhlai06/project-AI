@@ -10,6 +10,7 @@
 - **Task `ST-xx.y`** = một lần giao việc (một "phase" cho Qoder); làm trọn trong một phiên, tối đa khoảng 8 giờ.
 - **Thứ tự làm:** cột `Thứ tự làm` trong `tasks.csv` đã sắp theo mốc và phụ thuộc; làm task `Todo` có số nhỏ nhất. Không ước lượng giờ (một người làm, tự chủ động thời gian).
 - **Ưu tiên:** Must (thiếu thì không demo được), Should (nên có), Could (làm nếu còn thời gian). Nếu trễ, bỏ từ Could lên, không bỏ Must.
+- **`backlog.md` và `tasks.csv` là nguồn, sửa tay** (file sinh một lần ngày 15/11, không còn script; sinh lại sẽ mất chỉnh sửa). Đừng mở và lưu `tasks.csv` bằng Excel (làm hỏng dấu tiếng Việt).
 - **Trạng thái** chỉ ghi ở `tasks.csv`: `Todo`, `Doing`, `Review`, `Done`, `Blocked`. File này chỉ chứa mô tả, không ghi trạng thái, để không lệch nhau.
 - Mỗi task đã có mã yêu cầu (FR/UC/SCR/TC/BR); đọc các mã đó ở [prd.md](prd.md), [use-cases.md](use-cases.md), [ui-ux-spec.md](ui-ux-spec.md), [../quality/test-plan.md](../quality/test-plan.md) trước khi làm.
 - **Xong một task** nghĩa là: tiêu chí chấp nhận liên quan đạt, test đi kèm xanh, `flutter analyze` sạch, tài liệu bị ảnh hưởng đã sửa (xem "Định nghĩa xong" trong [../../AGENTS.md](../../AGENTS.md)).
