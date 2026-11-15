@@ -10,7 +10,7 @@
 | Ai | Làm | Không làm |
 |---|---|---|
 | **Chủ dự án** (người giao việc) | Chọn story, duyệt plan, trả lời câu hỏi, **merge PR** (hoặc cho phép Claude merge cho đúng PR đó, mục 5b) | – |
-| **Claude Code** | Đọc docs, lập plan, gọi Qoder theo từng phase, kiểm diff, chạy test, commit, push, tạo PR, review PR, **ghi nhật ký vận hành** (mục 8) | Tự viết code tính năng (trừ sửa một dòng hiển nhiên khi Qoder đã thử 3 lần); merge PR (trừ khi cổng merge mục 5b đã đạt **và** chủ dự án cho phép bằng lời cho đúng PR đó); sửa docs khi chưa hỏi (trừ `tasks.csv` ở bước 9 và `workflow-log.md` ở mục 8) |
+| **Claude Code** | Đọc docs, lập plan, gọi Qoder theo từng phase, kiểm diff, chạy test, commit, push, tạo PR, review PR, **ghi nhật ký vận hành** (mục 8) | Tự viết code tính năng (trừ sửa một dòng hiển nhiên khi Qoder đã thử 3 lần); merge PR (trừ khi cổng merge mục 5b đã đạt **và** chủ dự án cho phép bằng lời cho đúng PR đó); sửa docs khi chưa hỏi (trừ `tasks.csv` ở bước 6 hoặc 2b.3-8 và `workflow-log.md` ở mục 8) |
 | **Qoder CLI** | Sửa đúng các file được giao trong một phase; thử chạy `flutter analyze` / `flutter test` để tự kiểm (có chạy được hay không: xem mục 3) | Mọi lệnh git ghi, `gh`, sửa file ngoài danh sách, thêm thư viện |
 
 Chỉ Claude (hoặc người) giữ quyền ghi git, để không lọt commit sai nhánh, file cấm hay dòng tác giả AI.
@@ -45,7 +45,7 @@ flowchart LR
 6. **Self-review:** Claude đọc `git diff origin/main...HEAD` thật (với nhánh xếp chồng: `<nhánh-cha>...HEAD`), rà theo checklist mục 5, sửa qua Qoder. Sau self-review đạt, trước khi tạo PR: một commit riêng `chore(ST-xx): mark done` đổi trạng thái các task của story trong `tasks.csv` và, nếu có gì đáng ghi, thêm 1–3 dòng nhìn lại vào `workflow-log.md` (mục 8.3 bước 5), để hai thay đổi này được review cùng PR. Khi chạy song song (có từ 2 story mở cùng lúc, mục 2b) thì bỏ commit này và làm sau merge (bước 9, 2b.3-8).
 7. **PR:** `gh pr create --base main --title "<type>(ST-xx): ..." --body-file "d:/project AI/.ai-work/ST-xx/PR_BODY.md"`. Body gồm: story, FR/SCR/TC liên quan, đã làm gì, docs đổi gì, cách test, mô tả và đường dẫn ảnh chụp emulator ở `.ai-work/ST-xx/evidence/` (ảnh không commit; chủ dự án tự đính nếu cần), giới hạn.
 8. **Review PR (bắt buộc, theo mục 5b):** Claude review bản diff thật trên GitHub bằng prompt chuẩn ở mục 5b (có thể chạy song song subagent theo từng trục) và post mỗi vòng bằng `gh pr review <n> --comment`. Còn High/Medium → Qoder sửa → commit → review lại toàn bộ diff mới, tối đa 3 vòng; vòng 3 chưa đạt thì dừng và hỏi chủ dự án (mục 7). **3 là trần, không phải số vòng bắt buộc:** PR đạt cổng merge (mục 5b) ở vòng nào, kể cả vòng 1, thì được merge ngay ở vòng đó, không cần review thêm cho đủ 3 vòng.
-9. **Merge:** Claude chỉ merge khi PR đã đạt **cổng merge ở mục 5b** và chủ dự án cho phép bằng lời cho đúng PR đó (lệnh merge: `gh pr merge <n> --squash`); không thì chủ dự án merge (squash) trên GitHub (chủ dự án tự merge trên GitHub là quyền của họ, ngoài luồng này). Cổng chưa đạt thì Claude không merge. Trạng thái `Done` đã đổi ở bước 6 (hoặc làm sau merge nếu chạy song song, mục 2b.3-8). Sau merge: `git switch main`, `git pull`, xác nhận `gh pr view <n> --json state` ra MERGED; squash merge làm `git branch -d` báo 'not fully merged', nên chỉ trong trường hợp này được dùng `git branch -D <nhánh story>` (ngoại lệ của 2b.3-4, chỉ khi state = MERGED và `git status` sạch); xóa nhánh remote bằng `git push origin --delete <nhánh story>`; không xóa nhánh cha khi nhánh con xếp chồng chưa `rebase --onto` (2b.4).
+9. **Merge:** Claude chỉ merge khi PR đã đạt **cổng merge ở mục 5b** và chủ dự án cho phép bằng lời cho đúng PR đó (lệnh merge: `gh pr merge <n> --squash`); không thì chủ dự án merge (squash) trên GitHub (chủ dự án tự merge trên GitHub là quyền của họ, ngoài luồng này). Cổng chưa đạt thì Claude không merge. Trạng thái `Done` đã đổi ở bước 6 (hoặc làm sau merge nếu chạy song song, mục 2b.3-8). Dọn sau merge theo đúng thứ tự: (a) `gh pr view <n> --json state,headRefName,headRefOid` ra state MERGED; (b) nếu story có worktree: `git -C <worktree> status --short` rỗng, rồi `git worktree remove <worktree>` (không `--force`); (c) `git switch main`, `git pull`; (d) `git branch -D <headRefName>` (squash merge làm `git branch -d` báo 'not fully merged', nên đây là ngoại lệ của 2b.3-4) chỉ khi state = MERGED, `git status` sạch, tên nhánh đúng bằng headRefName của PR và khác `main`, và `git rev-parse <nhánh>` bằng headRefOid (không mất commit chưa push); (e) `git push origin --delete <headRefName>` chỉ sau khi (d) thành công; (f) `git worktree prune`. Không xóa nhánh cha khi nhánh con xếp chồng chưa `rebase --onto` (2b.4).
 
 ## 2b. Làm 2–3 story cùng lúc (worktree + nhánh xếp chồng)
 
@@ -80,18 +80,20 @@ git worktree list
 cd "d:\project AI_wt\ST-07\mobile"; flutter pub get      # mỗi worktree một lần
 ```
 
+Trong worktree vừa tạo, đẩy nhánh bằng `git push -u origin HEAD` (không `git push` trần: nhánh đang theo dõi `origin/main`).
+
 Ghi quan hệ vào `.ai-work/STACKS.md` (ví dụ `ST-07 ← ST-06`). Gọi Qoder với `-w "d:\project AI_wt\ST-xx"`.
 
 ### 2b.3 Luật worktree
 
 1. **1 worktree = 1 nhánh = 1 story.** Không làm hai story trong một worktree; không sửa code ở thư mục chính.
-2. Tối đa **3 worktree** mở cùng lúc; xếp chồng sâu tối đa **3** (`main` ← A ← B ← C). Worktree chỉ để review (`review-pr<N>`) nằm ngoài giới hạn và phải dọn ngay sau review.
+2. Tối đa **3 worktree** mở cùng lúc; xếp chồng sâu tối đa **3** (`main` ← A ← B ← C). Worktree chỉ để review (`review-pr<N>`) hoặc chỉ để làm PR docs `docs/mark-ST-xx-done` (`d:/project AI_wt/docs-mark-ST-xx`) nằm ngoài giới hạn và phải dọn ngay sau khi xong.
 3. Mọi lệnh (Qoder `-w`, `flutter`, git) chạy **trong worktree của story đó**. Trước mỗi lệnh git ghi: `git rev-parse --show-toplevel` và `git branch --show-current` phải khớp story.
 4. **Không xóa worktree còn thay đổi chưa commit** (`git -C <wt> status --short` phải rỗng). Không dùng `git worktree remove --force`, không `git branch -D`, trừ khi chủ dự án đồng ý, trừ ngoại lệ ở mục 2 bước 9 (nhánh story đã squash-merge, state MERGED).
 5. **Flutter:** mỗi worktree có `build/` và `.dart_tool/` riêng (không copy giữa các worktree, không commit); `PUB_CACHE` và `GRADLE_USER_HOME` dùng chung nên `pub get` nhanh. **Tại một thời điểm chỉ chạy một `flutter build apk`/`flutter run`** (Gradle tranh tài nguyên và khóa nhau); `flutter analyze` và `flutter test` thì chạy song song được.
 6. **Máy giả lập chỉ chạy một bản app** (cùng `applicationId`): chạy thử story nào thì cài từ worktree đó, chuyển story thì gỡ rồi cài lại. **Server Docker dùng chung** được (không có trạng thái).
 7. **Chỗ dễ xung đột:** `strings_vi.dart`, `app/router.dart`, `app/providers.dart`, file drift sinh ra, `pubspec.lock`. Mỗi story chỉ **thêm khối riêng ở cuối** các file này, không sắp xếp lại, không đổi thứ tự. Thêm thư viện cần ADR mới nên không xảy ra ở giai đoạn code.
-8. **`tasks.csv` không đổi trong PR story.** Sau khi PR được merge, Claude đổi trạng thái bằng một PR docs nhỏ riêng (nhánh `docs/mark-ST-xx-done`, commit `chore(ST-xx): mark done`), không push thẳng `main` (mục 6); PR nhỏ này cũng qua mục 5b.
+8. **`tasks.csv` không đổi trong PR story.** Sau khi PR được merge, Claude đổi trạng thái bằng một PR docs nhỏ riêng (nhánh `docs/mark-ST-xx-done`, commit `chore(ST-xx): mark done`), không push thẳng `main` (mục 6); PR nhỏ này cũng qua mục 5b; làm ở worktree tạm `d:/project AI_wt/docs-mark-ST-xx` (mục 2b.3-2), không làm ở thư mục chính.
 9. **`.gitignore` kiểu danh sách cho phép** (`/*` chặn mọi thứ): thư mục hay file mới ở gốc (ví dụ `mobile/`) **bị bỏ qua im lặng** cho tới khi được mở khóa. Trước khi `git add` đường dẫn mới: `git check-ignore -v <đường dẫn>`. Mở khóa bằng commit riêng; nếu `git add` báo "paths are ignored" thì cả lệnh add bị hủy, nên luôn đọc `git diff --cached --name-only` trước khi commit.
 
 ### 2b.4 Đồng bộ nhánh xếp chồng
@@ -225,7 +227,7 @@ Review PR là bước **bắt buộc**. Người review (Claude, có thể thêm
 **Prompt review chuẩn** (dán cho Claude hoặc subagent; chỉ đọc, không sửa file, không git ghi, không merge):
 
 ```
-CHỈ ĐỌC: không sửa file, không lệnh git ghi, chỉ dùng `gh pr diff`, `gh pr view`, `gh pr checks` (đọc); không dùng lệnh gh nào khác; chỉ trả báo cáo cho người giao.
+CHỈ ĐỌC: không sửa file, không lệnh git ghi, chỉ dùng `gh pr diff`, `gh pr view`, `gh pr checks` (đọc); không dùng lệnh gh nào khác (áp dụng cho subagent review; Claude đăng review theo mục 2 bước 8); chỉ trả báo cáo cho người giao.
 Review PR #<n> của repo này.
 1. Lấy diff thật: gh pr diff <n>; gh pr view <n> --json files,commits,body,headRefOid,reviews.
 2. Đối chiếu với: tiêu chí chấp nhận của story trong docs/product/backlog.md; các FR/UC/SCR/TC story trỏ tới;
@@ -233,7 +235,7 @@ Review PR #<n> của repo này.
 3. Tìm lỗi THẬT, không bàn phong cách: sai yêu cầu, hồi quy, vi phạm BR-01/BR-10/BR-12/ADR, lộ dữ liệu hoặc file cấm
    (out/onnx_final/, ảnh người dùng, token, .ai-work), tài liệu mâu thuẫn hoặc liên kết hỏng, thiếu test cho logic mới,
    thay đổi ngoài phạm vi story, dòng AI đồng tác giả hay "Generated with" trong commit/PR.
-4. Kiểm từng khẳng định trong body PR bằng lệnh hoặc đọc file; không tin lời tự báo cáo. Đọc file ở đầu PR bằng `git show origin/<nhánh>:<đường dẫn>`, không đọc bản trên main hay trong thư mục làm việc (PR có thể sửa chính tài liệu đang dùng để review).
+4. Kiểm từng khẳng định trong body PR bằng lệnh hoặc đọc file; không tin lời tự báo cáo. Đọc file ở đầu PR bằng `git show origin/<nhánh>:<đường dẫn>` (người giao đã `git fetch`; kiểm `git rev-parse origin/<nhánh>` bằng headRefOid), không đọc bản trên main hay trong thư mục làm việc (PR có thể sửa chính tài liệu đang dùng để review).
 Vòng ≥ 2: đọc comment các vòng trước (reviews), kiểm từng mục đã được sửa thật chưa, và tìm lỗi mới do chính bản sửa gây ra.
 5. Dòng đầu báo cáo ghi headRefOid đã review. Trả về danh sách xếp theo mức, mỗi mục: file:dòng · vấn đề · cách sửa ngắn gọn.
    High = sai hoặc hại nếu làm theo, lộ dữ liệu hay file cấm, vi phạm BR-01/BR-10/BR-12/ADR (trước đây gọi BLOCKER). Medium = sai yêu cầu, thiếu việc story phải làm, hoặc mâu thuẫn mà người làm theo sẽ vấp (trước đây MAJOR). Low = nhỏ, bỏ qua cũng không làm hỏng việc (trước đây MINOR). Nếu không có gì: ghi "Không có High/Medium/Low" và liệt kê đã kiểm những gì.
@@ -249,7 +251,7 @@ Vòng ≥ 2: đọc comment các vòng trước (reviews), kiểm từng mục �
 2. Vòng cuối: **0 High, 0 Medium** (cổng chỉ cần vậy); Low đã sửa hoặc ghi lý do bỏ ngay trong comment review.
 3. Checklist mục 5 đã tích; mục không áp dụng ghi "n/a" kèm lý do.
 4. Các kiểm theo loại PR (trên) chạy lại trên commit cuối và đạt.
-5. `git diff --name-only origin/main...HEAD` (với nhánh xếp chồng: `<nhánh-cha>...HEAD`) chỉ có file trong phạm vi story, hoặc phạm vi mở rộng do chủ dự án giao bằng lời và được ghi nguyên văn trong body PR (thay đổi `tasks.csv` và `workflow-log.md` của chính story được coi là trong phạm vi); commit và PR không có dòng AI đồng tác giả hay "Generated with".
+5. `git diff --name-only origin/main...HEAD` (tại cổng nhánh cha đã merge và nhánh con đã `rebase --onto origin/main`, nên luôn dùng `origin/main...HEAD`; `<nhánh-cha>...HEAD` chỉ dùng ở self-review khi cha chưa merge) chỉ có file trong phạm vi story, hoặc phạm vi mở rộng do chủ dự án giao bằng lời và được ghi nguyên văn trong body PR (thay đổi `tasks.csv` và `workflow-log.md` của chính story được coi là trong phạm vi); commit và PR không có dòng AI đồng tác giả hay "Generated with".
 6. PR không phải Draft, không còn thread chưa xử lý; CI xanh nếu đã có (ST-28).
 7. Sau vòng review cuối không có commit mới (có thì quay lại một vòng review mới) (ghi nhật ký sau vòng cuối không phải commit trong PR story: dùng LOG_PENDING.md, mục 8.3).
 
@@ -266,12 +268,12 @@ Merge kiểu squash (lệnh merge: `gh pr merge <n> --squash`). Người merge l
 
 ## 7. Dừng và hỏi chủ dự án khi
 
-- Một lỗi sửa quá 3 vòng, hoặc review PR quá 3 vòng chưa đạt.
+- Một lỗi sửa quá 3 vòng, hoặc sau vòng 3 vẫn còn High/Medium.
 - Chủ dự án bảo Claude merge nhưng cổng (mục 5b) chưa đạt, hoặc chưa có lời cho phép merge cho đúng PR đó: dừng, nói rõ điều nào chưa đạt, để chủ dự án quyết.
-- Cần sửa docs (trừ `tasks.csv` ở bước 9 và `workflow-log.md` ở mục 8), thêm thư viện, đổi `pubspec.yaml` ngoài plan, đổi API server.
+- Cần sửa docs (trừ `tasks.csv` ở bước 6 hoặc 2b.3-8 và `workflow-log.md` ở mục 8), thêm thư viện, đổi `pubspec.yaml` ngoài plan, đổi API server.
 - Docs mâu thuẫn nhau, hoặc gặp `OQ-xx` chưa chốt.
 - Qoder sửa ngoài phạm vi hay chạy lệnh git.
-- Sự cố mức **S1** (mục 8.2): dừng, báo, ghi vào [workflow-log.md](workflow-log.md) rồi mới tiếp tục.
+- Sự cố mức **S1** (mục 8.2): dừng, báo, ghi vào [workflow-log.md](workflow-log.md) rồi mới tiếp tục (đã qua bước 6 của mục 2 thì ghi vào `LOG_PENDING.md`, mục 8.3).
 
 ## 8. Nhật ký vận hành: ghi lại để luồng ngày càng an toàn và hiệu quả
 
@@ -309,7 +311,7 @@ Không ghi token, nội dung đơn thuốc thật hay dữ liệu cá nhân.
 2. Nếu cần **đổi luật** (thêm cấm, đổi cách làm): ghi `Đề xuất luật` và **hỏi chủ dự án**; đồng ý thì sửa file này (ghi số mục) và đổi trạng thái thành `Đã áp dụng`. Không tự đổi luật cứng.
 3. Lỗi **cùng loại xuất hiện lần thứ hai** mà chưa có luật: báo chủ dự án và đề xuất luật ngay.
 4. **S1 → dừng việc đang làm**, báo chủ dự án trước khi tiếp tục.
-5. **Cuối mỗi story:** Claude thêm 1–3 dòng nhìn lại (gì trục trặc, gì tốt, đề xuất đổi gì) vào `workflow-log.md`, trong cùng commit với đổi trạng thái `Done`: ở commit trước vòng review 1 trong PR story, hoặc trong PR docs nhỏ sau merge khi chạy song song (mục 2 bước 9).
+5. **Cuối mỗi story:** Claude thêm 1–3 dòng nhìn lại (gì trục trặc, gì tốt, đề xuất đổi gì) vào `workflow-log.md`, trong cùng commit với đổi trạng thái `Done`: ở commit trước vòng review 1 trong PR story, hoặc trong PR docs nhỏ sau merge khi chạy song song (mục 2 bước 6 hoặc 2b.3-8).
 6. **Cuối mỗi mốc** (M1, M2, …): Claude rà toàn bộ nhật ký, gom các lỗi lặp, các mục `Đề xuất luật` chưa duyệt, và đề xuất một danh sách cải tiến ngắn.
 
 ### 8.4 Dùng nhật ký
