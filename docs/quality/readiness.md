@@ -33,8 +33,8 @@ Script đọc PRD, BA, use case, UI spec, test plan, backlog, `tasks.csv` rồi 
 | Server AI bằng Docker: `docker compose up --build` | ✅ Chạy tốt trên PC này; D1–D4 đúng kỳ vọng |
 | Qoder CLI | ✅ Có trong PATH |
 | Kho mã: nhánh `main` đã push, không có thay đổi dở | ✅ |
-| Chấp nhận giấy phép Android SDK (`flutter doctor --android-licenses`) | ✅ (đã xong, kiểm 2026-11-15: `flutter doctor` báo All Android licenses accepted; `D:/flutter/bin` có trong PATH người dùng và `PUB_CACHE=D:/flutter_pub_cache` đã đặt) |
-| Flutter và `PUB_CACHE` trong PATH người dùng | ✅ (đã xong, kiểm 2026-11-15: `flutter doctor` báo All Android licenses accepted; `D:/flutter/bin` có trong PATH người dùng và `PUB_CACHE=D:/flutter_pub_cache` đã đặt) |
+| Chấp nhận giấy phép Android SDK (`flutter doctor --android-licenses`) | ✅ đã xong: `flutter doctor` báo All Android licenses accepted (kiểm 2026-11-15) |
+| Flutter và `PUB_CACHE` trong PATH người dùng | ✅ đã xong: `D:/flutter/bin` có trong PATH người dùng và `PUB_CACHE=D:/flutter_pub_cache` đã đặt (kiểm 2026-11-15) |
 | Visual Studio thiếu thành phần C++ | Bỏ qua: app không build cho Windows |
 
 ## 3. Việc cần chủ dự án làm trước ST-01

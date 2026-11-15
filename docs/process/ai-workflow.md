@@ -11,7 +11,7 @@
 |---|---|---|
 | **Chủ dự án** (người giao việc) | Chọn story, duyệt plan, trả lời câu hỏi, **merge PR** (hoặc cho phép Claude merge cho đúng PR đó, mục 5b) | – |
 | **Claude Code** | Đọc docs, lập plan, gọi Qoder theo từng phase, kiểm diff, chạy test, commit, push, tạo PR, review PR, **ghi nhật ký vận hành** (mục 8) | Tự viết code tính năng (trừ sửa một dòng hiển nhiên khi Qoder đã thử 3 lần); merge PR (trừ khi cổng merge mục 5b đã đạt **và** chủ dự án cho phép bằng lời cho đúng PR đó); sửa docs khi chưa hỏi (trừ `tasks.csv` ở bước 6 hoặc 2b.3-8 và `workflow-log.md` ở mục 8) |
-| **Qoder CLI** | Sửa đúng các file được giao trong một phase **và chạy các lệnh trong danh sách cho phép của phase đó** (`flutter create/pub/analyze/test/build`, mục 3b), tự kiểm và báo kết quả | Mọi lệnh git ghi, `gh`, sửa file ngoài danh sách, thêm thư viện |
+| **Qoder CLI** | Sửa đúng các file được giao trong một phase **và chạy các lệnh trong danh sách cho phép của phase đó** (`flutter create/pub/analyze/test/build`, mục 3b), tự kiểm và báo kết quả | Mọi lệnh git ghi, `gh`, sửa file ngoài danh sách, thêm thư viện ngoài ADR-015 (hoặc ngoài danh sách trong task file) |
 
 Chỉ Claude (hoặc người) giữ quyền ghi git, để không lọt commit sai nhánh, file cấm hay dòng tác giả AI.
 
@@ -131,7 +131,7 @@ Giao một phase (task có màn hình thì thêm vào lời giao: `UI reference:
 
 ```powershell
 qodercli -p -w "d:\project AI" -n "ST-xx-p<N>" --permission-mode accept_edits `
-  --append-system-prompt "You implement code for MediCheck. Follow AGENTS.md strictly. NEVER run git write commands, never call gh, never run 'qodercli commit'. Edit ONLY the files listed. Do not add packages or edit pubspec.yaml, AndroidManifest.xml, Info.plist, docs/ or backend/ unless explicitly allowed below. All user-facing text goes in mobile/lib/core/strings_vi.dart. Never add AI attribution." `
+  --append-system-prompt "You implement code for MediCheck. Follow AGENTS.md strictly. NEVER run git write commands, never call gh, never run 'qodercli commit'. Edit ONLY the files listed. Do not add packages or edit pubspec.yaml, AndroidManifest.xml, Info.plist, docs/ or backend/ unless explicitly allowed below, or unless the task file names the exact packages (ADR-015 only) or the exact pubspec.yaml change. All user-facing text goes in mobile/lib/core/strings_vi.dart. Never add AI attribution." `
   "Implement ONLY Phase <N> of d:\project AI\.ai-work\ST-xx\PLAN.md.
    Allowed files: <list>. Explicitly allowed extras: <none | ...>.
    Exit criteria: <from plan>.
@@ -141,6 +141,8 @@ qodercli -p -w "d:\project AI" -n "ST-xx-p<N>" --permission-mode accept_edits `
    If you edit a file containing Windows paths, never type a backslash before r, n, t, a, f or b (tool text mangling); prefer forward slashes and re-check the saved bytes.
    Report: files changed (full paths), commands run with results, anything not done and why."
 ```
+
+Mẫu này dùng cho phase chỉ sửa file; phase có chạy lệnh `flutter` dùng mẫu ở mục 3b (có `--allowed-tools`).
 
 Giao sửa lỗi (giữ ngữ cảnh phiên cũ):
 
@@ -169,9 +171,9 @@ Qoder làm được gì ở chế độ `accept_edits`:
 | `python`, `flutter`, `dart` | bị chặn | được, đúng lệnh con đã liệt kê |
 | Lệnh ngoài danh sách (ví dụ `flutter config`) | bị chặn | vẫn bị chặn |
 
-- Đã chạy thật trong Qoder với danh sách cho phép: `flutter create`, `pub add`, `pub get`, `analyze`, `test` và `build apk --debug` (151 s; lần build đầy đủ đầu tiên mất 5-8 phút). Công cụ shell của Qoder **không** timeout ở lệnh build. `flutter analyze` khoảng 11 s, `flutter test` khoảng 5 s.
+- Đã chạy thật trong Qoder với danh sách cho phép: `flutter create`, `pub add`, `pub get`, `analyze`, `test` và `build apk --debug` (151 s). Lần build đầy đủ đầu tiên có thể lâu hơn (ước lượng 5-8 phút từ lần dựng thử, chưa đo trong luồng thật). Công cụ shell của Qoder **không** timeout ở lệnh build. `flutter analyze` khoảng 11 s, `flutter test` khoảng 5 s.
 
-**Cách cấp lệnh:** một cờ `--allowed-tools "Bash(<lệnh đầy đủ>:*)"` cho mỗi tiền tố lệnh. Khớp theo tiền tố, nên phải liệt kê từng lệnh con: `Bash(D:/flutter/bin/flutter.bat analyze:*)`, `Bash(D:/flutter/bin/flutter.bat test:*)`, `Bash(D:/flutter/bin/flutter.bat pub get:*)`, `Bash(D:/flutter/bin/flutter.bat pub add:*)`, `Bash(D:/flutter/bin/flutter.bat create:*)`, `Bash(D:/flutter/bin/flutter.bat build apk:*)`. Không cấp tiền tố rộng như `flutter.bat` trần (nó sẽ cho phép cả `config`, `upgrade`, `doctor --android-licenses`). Đây là danh sách cho phép hẹp, không phải `bypass_permissions`.
+**Cách cấp lệnh:** một cờ `--allowed-tools "Bash(<lệnh đầy đủ>:*)"` cho mỗi tiền tố lệnh. Khớp theo tiền tố, nên phải liệt kê từng lệnh con: `Bash(D:/flutter/bin/flutter.bat analyze:*)`, `Bash(D:/flutter/bin/flutter.bat test:*)`, `Bash(D:/flutter/bin/flutter.bat pub get:*)`, `Bash(D:/flutter/bin/flutter.bat pub add:*)`, `Bash(D:/flutter/bin/flutter.bat create:*)`, `Bash(D:/flutter/bin/flutter.bat build apk:*)`. Không cấp tiền tố rộng như `flutter.bat` trần (nó sẽ cho phép cả `config`, `upgrade`, `doctor --android-licenses`). Đây là danh sách cho phép hẹp, không phải `bypass_permissions`. `pub add` chỉ dùng cho gói ADR-015 và task file `P<N>.md` phải ghi đúng tên gói; `create` chỉ cấp cho phase tạo dự án; không cấp sẵn mọi lệnh con cho mọi phase. Khớp theo tiền tố chưa được đo với lệnh nối (`;`, `&&`): đừng giả định nó chặn được.
 
 **Thực tế khi gọi:**
 
@@ -180,19 +182,22 @@ Qoder làm được gì ở chế độ `accept_edits`:
 - (c) Đặt `PUB_CACHE=D:/flutter_pub_cache` và thêm `D:/flutter/bin` vào PATH của tiến trình PowerShell gọi Qoder **trước** khi khởi động Qoder (tiến trình con kế thừa; PATH của một phiên đang chạy đã cũ).
 - (d) Luôn dùng đường dẫn đầy đủ `D:/flutter/bin/flutter.bat`.
 - (e) Công cụ Edit của Qoder có thể ghi lại file với CRLF trong bản làm việc; với `core.autocrlf=true` Git lưu LF, nên kiểm `git ls-files --eol` trước khi commit.
+- (f) Lệnh chạy lâu (build): ghi trong task file "chạy ở foreground, đợi xong, không chuyển sang chạy nền". Qoder `-p` đã thoát khi còn tác vụ nền (ST-01 phase 7: chỉ báo `analyze` và `test`, build vẫn chạy sau đó); gặp vậy Claude tự chạy lại lệnh kiểm và ghi vào workflow-log.
 
 **Ma trận giao việc:**
 
 - **Qoder:** mọi việc sửa file; `flutter create`, `pub add`, `pub get`, `analyze`, `test`, `build apk`; đọc git chỉ đọc; tự sửa lỗi analyze/test tối đa 3 vòng.
-- **Claude:** viết task file `P<N>.md`, gọi Qoder, kiểm kết quả bằng lệnh ngắn (vài dòng cuối), mọi lệnh git ghi (`add`, `commit`, `push`), `gh` (PR, review), subagent review, quyết định và hỏi chủ dự án. Claude chỉ tự chạy lệnh `flutter` khi Qoder không làm được (timeout, lỗi môi trường) và phải ghi lý do vào [workflow-log.md](workflow-log.md).
+- **Claude:** viết task file `P<N>.md`, gọi Qoder, kiểm kết quả bằng lệnh ngắn (vài dòng cuối), mọi lệnh git ghi (`add`, `commit`, `push`), `gh` (PR, review), subagent review, quyết định và hỏi chủ dự án. Claude chỉ tự chạy `flutter create`/`build`/`pub` khi Qoder không làm được (timeout, lỗi môi trường) và ghi lý do vào [workflow-log.md](workflow-log.md); Claude vẫn chạy lại `flutter analyze` và `flutter test` bằng lệnh ngắn để kiểm (mục 4).
 
 Ví dụ một lần gọi (PowerShell):
 
 ```powershell
 $env:PUB_CACHE = "D:/flutter_pub_cache"
 $env:PATH = "D:/flutter/bin;" + $env:PATH
-qodercli -p -w "d:/project AI/mobile" --add-dir "d:/project AI/.ai-work/ST-xx" -n "ST-xx-p<N>" --permission-mode accept_edits --allowed-tools "Bash(D:/flutter/bin/flutter.bat analyze:*)" --allowed-tools "Bash(D:/flutter/bin/flutter.bat test:*)" --append-system-prompt "<luật chung>" "Read d:/project AI/.ai-work/ST-xx/P<N>.md and carry out exactly what it says."
+qodercli -p -w "d:/project AI/mobile" --add-dir "d:/project AI/.ai-work/ST-xx" -n "ST-xx-p<N>" --permission-mode accept_edits --allowed-tools "Bash(D:/flutter/bin/flutter.bat analyze:*)" --allowed-tools "Bash(D:/flutter/bin/flutter.bat test:*)" --append-system-prompt "Follow AGENTS.md; never run git write commands or gh; edit only the files in the task file; never type a backslash" "Read d:/project AI/.ai-work/ST-xx/P<N>.md and carry out exactly what it says."
 ```
+
+Khi làm bằng worktree (mục 2b), thay `d:/project AI` bằng thư mục worktree `d:/project AI_wt/ST-xx`.
 
 ## 4. Claude kiểm sau mỗi lần Qoder chạy
 
