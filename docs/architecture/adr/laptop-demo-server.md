@@ -1,6 +1,6 @@
-# ADR-004: Laptop làm server khi demo, không Docker, không cloud
+# ADR-004: Laptop làm server khi demo, không cloud (điểm "không Docker" đã bị ADR-017 thay)
 
-- **Trạng thái:** Đã chấp nhận (2026-11-15)
+- **Trạng thái:** Bị thay thế một phần bởi ADR-017 (chỉ điểm "không Docker")
 - **Ngày:** 2026-11-14 (xác nhận lại quyết định 2026-11-08 "không dùng Hugging Face Spaces")
 - **Người quyết:** phụ trách AI
 

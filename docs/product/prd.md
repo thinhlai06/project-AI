@@ -57,6 +57,7 @@ MediCheck là app Flutter, ưu tiên Android, kèm một server AI chạy trên 
 | FR-VER-07 | Chụp lại 1 lần: giữ các viên đã xanh, hướng dẫn bỏ viên đỏ ra, chỉ gửi các dòng còn thiếu với số viên còn lại | Must | Lần thứ hai vẫn chưa xanh thì chỉ còn "Tôi đã kiểm vỏ hộp" (BR-08) |
 | FR-VER-08 | Lỗi mạng/timeout/server lỗi: báo "Chưa kết nối được máy kiểm thuốc", cho thử lại và cho "Tôi đã kiểm vỏ hộp" | Must | Không bao giờ hiện xanh khi lỗi |
 | FR-VER-09 | Thời gian chờ kiểm thuốc 20 giây, có màn chờ đọc "Đang kiểm thuốc" | Must | |
+| FR-VER-10 | Ngoài camera, màn chụp có nút phụ "Chọn ảnh có sẵn" mở bộ chọn ảnh của hệ điều hành (thư viện ảnh); ảnh chọn đi qua cùng bước chuẩn bị FR-VER-02 và gửi với `frame = null` | Should | Chạy được trên máy giả lập không cần camera; kết quả hiện như ảnh chụp (cùng SCR-RESULT) |
 
 ### 2.4. Ghi nhận và lịch sử (LOG)
 

@@ -32,7 +32,7 @@
 | ST-09 | Màn Hôm nay + danh sách/chi tiết đơn + kết thúc/xóa đơn | FR-PRES-08, 10, 12 | M2 | ⏳ |
 | ST-10 | Nhắc cục bộ + nhắc lại + mở đúng cữ từ thông báo | FR-REM-01 … 03 | M3 | ⏳ |
 | ST-11 | Màn Cữ cần uống + TTS | FR-DOSE-01, NFR-05 | M3 | ⏳ |
-| ST-12 | Màn chụp (khung, camera, chuẩn bị ảnh 2048 px) | FR-VER-01, 02 | M3 | ⏳ |
+| ST-12 | Màn chụp (khung, camera, chọn ảnh có sẵn, chuẩn bị ảnh 2048 px) | FR-VER-01, 02, 10 | M3 | ⏳ |
 | ST-13 | Dựng payload + gọi verify + màn kết quả (khoanh viên, nút theo trạng thái) | FR-VER-03 … 06, 08, 09 | M3 | ⏳ |
 | ST-14 | Chụp lại 1 lần + gộp kết quả | FR-VER-07 | M4 | ⏳ |
 | ST-15 | "Tôi đã uống", tự kiểm vỏ hộp, chống uống lặp | FR-LOG-01 … 03 | M4 | ⏳ |

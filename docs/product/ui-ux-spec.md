@@ -126,7 +126,7 @@ flowchart TD
 - Xem trước camera toàn màn, **khung chụp** vuông ~70% chiều rộng ở giữa, viền trắng dày.
 - Câu trên cùng: "Xòe bàn tay ra, đặt thuốc lên lòng bàn tay, các viên rời nhau, rồi chụp."
 - Lần chụp lại: "Chỉ để các viên còn thiếu trên tay: hoạt huyết dưỡng não × 1."
-- Nút chụp tròn 88 dp. Chế độ đơn mẫu: thêm "Dùng ảnh thuốc mẫu".
+- Nút chụp tròn 88 dp. Nút phụ "Chọn ảnh có sẵn" (FR-VER-10): mở bộ chọn ảnh của hệ điều hành, gửi cả ảnh (không có khung). Chế độ đơn mẫu: thêm "Dùng ảnh thuốc mẫu".
 - Lần đầu: hướng dẫn giọng nói + ảnh minh họa + "Bỏ qua".
 - Sau khi chụp: màn chờ "Đang kiểm thuốc" (tối đa 20 giây).
 

@@ -39,7 +39,13 @@ Cữ không được báo xanh sẽ báo vàng ("hãy kiểm vỏ hộp"), khôn
 
 ## Chạy server
 
-Cần Python 3.10–3.13. Chạy từ thư mục gốc repo:
+**Bằng Docker (khuyên dùng, cần Docker Desktop):**
+
+```bash
+docker compose up --build -d     # lần đầu build ~1 GB; tắt: docker compose down
+```
+
+**Bằng Python** (dự phòng, Python 3.10–3.13), chạy từ thư mục gốc repo:
 
 ```bash
 python -m venv .venv
@@ -48,7 +54,7 @@ python -m pip install -r backend/requirements.txt
 python -m uvicorn backend.medicheck_server.app:app --host 0.0.0.0 --port 8000
 ```
 
-Mở <http://localhost:8000/docs> để thử API. Máy giả lập Android gọi server ở `http://10.0.2.2:8000`. Cài đặt cho buổi demo, mạng, xử lý sự cố: [docs/architecture/deployment.md](docs/architecture/deployment.md). Hướng dẫn API có ví dụ curl và Dart: [backend/API.md](backend/API.md).
+Cả hai cách đều phục vụ ở cổng 8000. Mở <http://localhost:8000/docs> để thử API. Máy giả lập Android gọi server ở `http://10.0.2.2:8000`. Cài đặt cho buổi demo, mạng, xử lý sự cố: [docs/architecture/deployment.md](docs/architecture/deployment.md). Hướng dẫn API có ví dụ curl và Dart: [backend/API.md](backend/API.md).
 
 Kiểm thử: `python backend/tests/test_decide.py`.
 
@@ -58,6 +64,7 @@ Kiểm thử: `python backend/tests/test_decide.py`.
 |---|---|
 | [AGENTS.md](AGENTS.md) | Luật cho AI agent và người mới: đọc trước khi sửa code |
 | [docs/](docs/README.md) | Bộ tài liệu: sản phẩm, kiến trúc, ADR, AI, kiểm thử, quy trình |
+| `Dockerfile`, `docker-compose.yml` | Đóng gói server ([ADR-017](docs/architecture/adr/docker-server.md)) |
 | [backend/](backend/) | Server AI: `medicheck_server/` (suy luận, FastAPI), `tests/`, `export_openapi.py` |
 | `out/onnx_final/` | Mô hình triển khai: ONNX, `deploy_config.json`, bảng tra tên → lớp. **Không sửa tay** |
 | `out/s2/`, `out/s3/` | Trọng số PyTorch của bản cuối (để xuất lại ONNX) |

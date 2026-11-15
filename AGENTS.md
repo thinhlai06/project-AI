@@ -34,7 +34,10 @@ Luồng plan → code → review → PR và vai trò của từng công cụ AI:
 ## Lệnh
 
 ```bash
-# Server (từ thư mục gốc repo, Python 3.10–3.13)
+# Server bằng Docker (cách chính, ADR-017): từ thư mục gốc repo
+docker compose up --build -d                                                     # tắt: docker compose down
+
+# Server bằng Python (dự phòng / khi sửa code backend; Python 3.10–3.13)
 python -m pip install -r backend/requirements.txt
 python -m uvicorn backend.medicheck_server.app:app --host 0.0.0.0 --port 8000   # thử: http://localhost:8000/docs
 python backend/tests/test_decide.py                                              # test logic quyết định

@@ -39,6 +39,7 @@ Không chạy lại đánh giá trên tập test của mô hình ([ADR-008](../a
 | TC-16 | Có đơn đang dùng, nhập và lưu đơn mới | Hiện MSG-REPLACE-PRES; sau khi lưu chỉ còn 1 đơn `active`; nhắc đơn cũ bị hủy; chèn thẳng đơn `active` thứ hai vào database bị từ chối | BR-12, FR-PRES-11 |
 | TC-17 | Bấm "Hủy" ở SCR-CONFIRM khi đã có đơn đang dùng | Đơn cũ giữ nguyên `active`, nhắc không đổi | BR-12 |
 | TC-18 | Gửi người thân từ chi tiết đơn | Hiện MSG-SHARE-WARN trước; bảng chia sẻ có ảnh đơn gốc, ảnh phiếu (đủ cột, có chú thích), bản chữ; không có họ tên, số BHYT trong phiếu và bản chữ | FR-PRES-09, ADR-016 |
+| TC-19 | Ở màn chụp, bấm "Chọn ảnh có sẵn" và chọn ảnh thuốc trong thư viện (máy giả lập) | Ảnh được chuẩn bị ≤ 2048 px, gửi với `frame = null`, hiện SCR-RESULT; không cần quyền camera | FR-VER-10 |
 
 ## 3. Tiêu chí đạt của một mốc
 

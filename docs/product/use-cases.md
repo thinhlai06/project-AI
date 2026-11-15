@@ -121,6 +121,7 @@ flowchart LR
   4. App hiện SCR-RESULT: đọc `summary`, khoanh từng viên.
   5. Nếu `status = green` → nút "Tôi đã uống" (UC-07).
 - **Luồng phụ:**
+  - 2a. Người dùng bấm "Chọn ảnh có sẵn" thay vì chụp → chọn ảnh trong thư viện, đi tiếp từ bước 3 với `frame = null` (FR-VER-10).
   - 1a. Cữ không có dòng chấm ảnh → bỏ bước 2–4, đi thẳng UC-08 (FR-VER-04).
   - 4a. `status = partial` → hiện "Tôi đã kiểm vỏ hộp" cho phần chưa chấm được (UC-08).
   - 4b. `status = not_green` và còn lượt chụp lại → UC-06.

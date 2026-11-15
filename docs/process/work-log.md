@@ -4,6 +4,16 @@ Mỗi phần việc có một báo cáo ngắn khoảng 100 từ. Phân tích ch
 
 ---
 
+## Task 10 – Docker cho server (15/11/2026) ✅
+
+**Đã làm:** thêm `Dockerfile`, `.dockerignore`, `docker-compose.yml`; viết ADR-017 (thay điểm "không Docker" của ADR-004); viết lại mục chạy server trong `deployment.md`. Thêm yêu cầu FR-VER-10 "Chọn ảnh có sẵn" ở màn chụp thuốc.
+
+**Kiểm chứng:** build image 1,5 GB; container `healthy`; `/health`, `/v1/catalog`, `/v1/pills/verify`, `/v1/prescriptions/parse` chạy đúng (ảnh trắng: không thấy viên, không có dòng thuốc, đúng kỳ vọng). Chưa thử với ảnh đơn thật vì ảnh demo nằm trong thư mục chờ xóa (đang ở Thùng rác).
+
+**Rủi ro:** Docker Desktop và máy giả lập cùng chiếm RAM; cần thử trên chính laptop trình bày.
+
+---
+
 ## Task 9 – Bộ tài liệu cho app và dọn thư mục gốc (15/11/2026) ✅
 
 **Đã làm:** viết bộ tài liệu trong `docs/` để nhóm và AI agent làm app không lệch hướng:
@@ -17,7 +27,7 @@ Các file `.md` cũ chuyển vào `docs/archive/`; README viết lại.
 **Quyết định đã chốt với chủ dự án:**
 - một đơn đang dùng (BR-12);
 - gửi người thân kèm ảnh đơn gốc và phiếu bảng chữ to (ADR-016 thay ADR-012);
-- demo trên máy giả lập Android, không Docker;
+- demo trên máy giả lập Android;
 - mỗi story một nhánh và một PR.
 
 **Phản biện:** schema `payload` thiếu trong OpenAPI nên phải tự thêm. Sổ quyết định mục 8 lỗi thời. Ảnh demo còn nằm trong thư mục chờ xóa (ST-00).

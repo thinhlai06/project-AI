@@ -1,0 +1,12 @@
+# Start the AI server:  docker compose up --build
+# Stop:                 docker compose down
+# The Android emulator reaches it at http://10.0.2.2:8000, a real phone at http://<laptop IP>:8000
+services:
+  medicheck-server:
+    build: .
+    image: medicheck-server:latest
+    ports:
+      - "8000:8000"
+    environment:
+      MEDICHECK_THREADS: "4"     # set to the laptop's physical core count
+    restart: unless-stopped

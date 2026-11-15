@@ -153,5 +153,5 @@ sequenceDiagram
 ## 7. Hướng phát triển (không làm ở MVP)
 
 - Chạy mô hình trên điện thoại (ONNX Runtime Mobile, ~120 MB cho 2 mô hình kiểm thuốc) để bỏ phụ thuộc laptop.
-- Đưa server lên cloud bằng Docker (cần xem lại riêng tư vì ảnh đơn là dữ liệu sức khỏe).
+- Đưa server lên cloud (đã có Docker, [ADR-017](adr/docker-server.md); cần xem lại riêng tư vì ảnh đơn là dữ liệu sức khỏe).
 - Làm quen thuốc mới, tương tác thuốc, chế độ người thân.

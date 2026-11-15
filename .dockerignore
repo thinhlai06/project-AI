@@ -1,0 +1,8 @@
+# Allow-list: only what the server image needs
+*
+!backend
+!out/onnx_final
+out/onnx_final/detector.pt
+**/__pycache__
+**/*.pyc
+backend/tests

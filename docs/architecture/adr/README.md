@@ -16,7 +16,7 @@ Mỗi ADR ghi **một** quyết định quan trọng: bối cảnh, lựa chọn
 | ADR-001 | [Suy luận trên server, app không chạy mô hình](server-side-inference.md) | Đã chấp nhận | 2026-11-08 |
 | ADR-002 | [Flutter, demo chính trên máy giả lập Android, giữ đường iOS](flutter-android-first.md) | Đã chấp nhận | 2026-11-15 |
 | ADR-003 | [Dữ liệu cục bộ, không tài khoản, server không database](local-first-no-accounts.md) | Đã chấp nhận | 2026-11-03 |
-| ADR-004 | [Laptop làm server khi demo, không Docker, không cloud](laptop-demo-server.md) | Đã chấp nhận | 2026-11-15 |
+| ADR-004 | [Laptop làm server khi demo, không cloud](laptop-demo-server.md) | Bị thay thế một phần bởi ADR-017 | 2026-11-15 |
 | ADR-005 | [Danh mục đóng + bộ nhận dạng embedding](closed-catalog-embedding-recognizer.md) | Đã chấp nhận | 2026-11-03 |
 | ADR-006 | [Detector YOLO26s nhánh NMS](yolo26s-detector.md) | Đã chấp nhận | 2026-11-08 |
 | ADR-007 | [Bộ nhận dạng DINOv3 ViT-S/16](dinov3-recognizer.md) | Đã chấp nhận | 2026-11-08 |
@@ -29,3 +29,4 @@ Mỗi ADR ghi **một** quyết định quan trọng: bối cảnh, lựa chọn
 | ADR-014 | [App gửi ảnh 2048 px JPEG q85](upload-2048-jpeg.md) | Đã chấp nhận | 2026-11-08 |
 | ADR-015 | [Bộ thư viện app: Riverpod, go_router, drift, http](flutter-app-stack.md) | Đã chấp nhận | 2026-11-15 |
 | ADR-016 | [Lưu ảnh đơn gốc trên điện thoại để gửi người thân (thay ADR-012)](prescription-image-on-device.md) | Đã chấp nhận | 2026-11-15 |
+| ADR-017 | [Đóng gói server bằng Docker Compose](docker-server.md) | Đã chấp nhận | 2026-11-15 |
