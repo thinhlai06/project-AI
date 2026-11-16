@@ -9,15 +9,17 @@
 |---|---|---|---|---|---|
 | Flutter SDK 3.50.0 (stable) | `D:/flutter` | 1,5 GB | Dựng và chạy app `mobile/` | Có | Xóa thư mục; bỏ `D:/flutter/bin` khỏi PATH người dùng |
 | Pub cache | `D:/flutter_pub_cache` (biến `PUB_CACHE`) | 0,3 GB | Gói Dart của app | Có | Xóa thư mục và biến `PUB_CACHE` |
-| Gradle home | `D:/gradle_home` (biến `GRADLE_USER_HOME`) | 3,5 GB, sẽ phình thêm | Gradle 9.5.0 và cache build | Có | Xóa thư mục (tải lại khi build); bỏ biến `GRADLE_USER_HOME` |
+| Gradle home | `D:/gradle_home` (biến `GRADLE_USER_HOME`) | 3,5 GB, sẽ phình thêm | Gradle 9.5.0 và cache build | Có | Xóa thư mục (tải lại khi build); bỏ biến `GRADLE_USER_HOME`; kiểm không có `gradle.properties` hay `init.d` riêng của chủ máy trong đó, và chạy `gradlew --stop` trước |
 | Android platform 35 | `%LOCALAPPDATA%/Android/Sdk/platforms/android-35` | 0,1 GB | Thư viện `jni`, `jni_flutter` (qua `path_provider`) và `flutter_timezone` biên dịch với compileSdk 35 | Có, khi còn các gói đó | Xóa thư mục hoặc `sdkmanager --uninstall "platforms;android-35"`; build sau tự cài lại |
 | Android platform 36 | `Sdk/platforms/android-36` | 0,1 GB | `flutter_tts` biên dịch với compileSdk 36 | Có | như trên |
 | Android platform 37 | `Sdk/platforms/android-37.0` | 0,1 GB | compileSdk của app (`flutter_local_notifications` 23 đòi 37) | Có | không gỡ |
 | CMake 3.22.1 | `Sdk/cmake/3.22.1` | 0,04 GB | Biên dịch `libdartjni.so` của thư viện `jni` | Có, khi còn `path_provider` | như trên |
-| NDK 28.2.13676358 | `Sdk/ndk/28.2.13676358` (có thể là junction sang ổ khác) | 2,1 GB | Biên dịch mã gốc `libdartjni.so` | Có, khi còn `path_provider` | **Đừng gỡ bằng SDK Manager khi đang là junction** (có thể xóa cả dữ liệu đích); gỡ thì xóa liên kết trước. Build sau tự tải lại 2 GB |
-| Khóa ký debug | `%USERPROFILE%/.android/debug.keystore` | nhỏ | Ký APK debug, do build debug đầu tiên tạo | Có | Xóa; tự tạo lại |
+| NDK 28.2.13676358 | `Sdk/ndk/28.2.13676358` (có thể là junction sang ổ khác) | 2,1 GB | Biên dịch mã gốc `libdartjni.so` | Có, khi còn `path_provider` | Nếu là junction: **không** dùng SDK Manager và không dùng `Remove-Item -Recurse`. Kiểm bằng `dir` thấy `<JUNCTION>`, xóa liên kết bằng `cmd /c rmdir "<đường dẫn thư mục ndk/28.2.13676358>"` (không `/s`), rồi xóa riêng thư mục đích bằng đường dẫn đã xác nhận. Không phải junction: `sdkmanager --uninstall "ndk;28.2.13676358"`. Build sau tự tải lại 2 GB |
+| Khóa ký debug | `%USERPROFILE%/.android/debug.keystore` | nhỏ | Ký APK debug | Có | **Không xóa**: file dùng chung cho mọi dự án Android và Android Studio trên máy; tạo lại sẽ đổi dấu vân tay, làm app debug khác không cập nhật đè được và hỏng SHA-1 đã đăng ký (Firebase, Google Sign-In). Chỉ xóa khi chắc máy không có dự án Android nào khác, và sao lưu trước |
 | Kết quả build trong repo | `mobile/build`, `mobile/.dart_tool`, `mobile/android/.gradle` | ~1 GB | Đầu ra build | Không | `flutter clean`; không commit (đã bị `.gitignore` bỏ qua) |
-| Image và container Docker của server AI | image `medicheck-server:latest` (~1,5 GB), container `projectai-medicheck-server-1`; dữ liệu nằm trong ổ ảo của Docker Desktop | ~1,5 GB | Chạy server AI (ADR-017) | Có, khi demo | `docker compose down` rồi `docker rmi medicheck-server:latest` (image có tag riêng nên `--rmi local` không gỡ) |
+| Image và container Docker của server AI | image `medicheck-server:latest` (~1,5 GB), container `projectai-medicheck-server-1`; dữ liệu nằm trong ổ ảo của Docker Desktop | ~1,5 GB | Chạy server AI (ADR-017) | Có, khi demo | `docker compose down` rồi `docker rmi medicheck-server:latest` (image có tag riêng nên `--rmi local` không gỡ); chạy từ thư mục gốc repo; chỉ khi chủ máy đồng ý vì server dùng chung; build cache của Docker không nằm trong số liệu này |
+
+`sdkmanager` nằm ở `<Sdk>/cmdline-tools/latest/bin/sdkmanager.bat`, không có trong PATH.
 
 Ghi chú: ba biến môi trường người dùng `PATH` (có `D:/flutter/bin`), `PUB_CACHE`, `GRADLE_USER_HOME` đặt ở mức User. Một phiên Claude Code đang chạy không thấy biến mới đặt: phải mở phiên mới, hoặc đặt biến cho từng tiến trình (nếu thiếu `GRADLE_USER_HOME`, Gradle tạo thư mục trùng ở ổ C).
 

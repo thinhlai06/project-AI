@@ -177,7 +177,7 @@ Qoder làm được gì ở chế độ `accept_edits`:
 
 **Đo ngày 2026-11-16: danh sách cho phép không phải sandbox.** Quy tắc `--allowed-tools "Bash(<tiền tố>:*)"` chỉ khớp phần **đầu** của lệnh: nối thêm bằng `;`, `&&`, `|` hay chuyển hướng `>` vẫn qua cổng và chạy lệnh thứ hai; còn `$(...)`, `&` và tiền tố giả mạo (`git statusx`) thì bị chặn. Ngược lại, quy tắc `--disallowed-tools` áp cho **mọi phần** của lệnh nối (cấm `hostname` chặn được `git --version; hostname`, cả bản `&&` và `|`). Vậy danh sách cho phép là rào chắn chống nhầm lẫn, **không phải ranh giới bảo mật**. Giảm rủi ro (đã áp dụng): chỉ cấp đúng các lệnh con flutter cần cho phase kèm một danh sách cấm rộng; không bao giờ cấp `adb`, `emulator`, `docker` cho Qoder; Claude kiểm `git status` và diff sau mỗi phase. Danh sách cấm đã dùng: các lệnh con git `add`, `commit`, `push`, `pull`, `fetch`, `switch`, `checkout`, `reset`, `restore`, `clean`, `stash`, `rebase`, `merge`, `branch`, `tag`, `rm`, `mv`, `config`, `remote`; rồi `gh`, `docker`, `adb`, `emulator`, `wsl`, `rm`, `rmdir`, `del`, `Remove-Item`, `Move-Item`, `Copy-Item`, `curl`, `wget`, `Invoke-WebRequest`, `Start-Process`, `cmd`, `powershell`, `pwsh`, `bash`, `sh`, `python`, `node`, `npm`, `npx`, `setx`, `reg`, `taskkill`, `Stop-Process`, `winget`, `sdkmanager`, `qodercli`, `Set-Content`, `Out-File`, `Add-Content`, `iex`, `Invoke-Expression`, `move`, `copy`, `xcopy`, `robocopy`, `rd`, `ri`, `erase`. Cũng đo được: Qoder báo sai cỡ APK (267,6 MB, thực 188 MB), nên cỡ và các số đo khác phải do Claude đo lại.
 
-**Danh sách cấm là blacklist có lỗ hổng đã biết.** Các lệnh ghi/xóa file `Set-Content`, `Out-File`, `Add-Content`, `iex`/`Invoke-Expression`, `move`, `copy`, `xcopy`, `robocopy`, `rd`, `ri`, `erase` trước đây không có trong danh sách (nay đã thêm ở trên); `flutter.bat config` vẫn không bị cấm; `git -C . push` có thể không khớp quy tắc cấm "lệnh con git" (tiền tố là `git -C`, không phải `git push`); và Claude chỉ thấy thay đổi trong repo (`git status`, `git diff`), không thấy lệnh ghi ngoài repo. Vậy danh sách cấm **giảm nhầm lẫn**, chứ **không** làm Qoder an toàn trước cố ý lạm dụng. `dart` cố ý không nằm trong danh sách cấm vì phase drift cần `dart run build_runner` (chỉ cấp hẹp khi cần).
+**Danh sách cấm là blacklist có lỗ hổng đã biết.** Các lệnh ghi/xóa file `Set-Content`, `Out-File`, `Add-Content`, `iex`/`Invoke-Expression`, `move`, `copy`, `xcopy`, `robocopy`, `rd`, `ri`, `erase` trước đây không có trong danh sách (nay đã thêm ở trên); `flutter.bat config` vẫn không bị cấm; `git -C . push` có thể không khớp quy tắc cấm "lệnh con git" (tiền tố là `git -C`, không phải `git push`); và Claude chỉ thấy thay đổi trong repo (`git status`, `git diff`), không thấy lệnh ghi ngoài repo. Vậy danh sách cấm **giảm nhầm lẫn**, chứ **không** làm Qoder an toàn trước cố ý lạm dụng. `dart` cố ý không nằm trong danh sách cấm vì phase drift cần `dart run build_runner` (chỉ cấp hẹp khi cần). `dart run` và `dart pub` chạy được mã tùy ý nên coi như lệnh shell: chỉ cấp mẫu hẹp khi cần, ví dụ `Bash(D:/flutter/bin/dart.bat run build_runner:*)`.
 
 **Thực tế khi gọi:**
 
@@ -191,7 +191,7 @@ Qoder làm được gì ở chế độ `accept_edits`:
 **Ma trận giao việc:**
 
 - **Qoder:** mọi việc sửa file; `flutter create`, `pub add`, `pub get`, `analyze`, `test`, `build apk`; đọc git chỉ đọc; tự sửa lỗi analyze/test tối đa 3 vòng.
-- **Claude:** viết task file `P<N>.md`, gọi Qoder, kiểm kết quả bằng lệnh ngắn (vài dòng cuối), mọi lệnh git ghi (`add`, `commit`, `push`), `gh` (PR, review), subagent review, quyết định và hỏi chủ dự án. Claude chỉ tự chạy `flutter create`/`build`/`pub` khi Qoder không làm được (timeout, lỗi môi trường) và ghi lý do vào [workflow-log.md](workflow-log.md); Claude vẫn chạy lại `flutter analyze` và `flutter test` bằng lệnh ngắn để kiểm (mục 4). `adb` chỉ do Claude chạy và luôn kèm `-s <serial>` (ví dụ `-s emulator-5554`); Qoder không bao giờ được cấp `adb`, `emulator` hay `docker`.
+- **Claude:** viết task file `P<N>.md`, gọi Qoder, kiểm kết quả bằng lệnh ngắn (vài dòng cuối), mọi lệnh git ghi (`add`, `commit`, `push`), `gh` (PR, review), subagent review, quyết định và hỏi chủ dự án. Claude chỉ tự chạy `flutter create`/`build`/`pub` khi Qoder không làm được (timeout, lỗi môi trường) và ghi lý do vào [workflow-log.md](workflow-log.md); Claude vẫn chạy lại `flutter analyze` và `flutter test` bằng lệnh ngắn để kiểm (mục 4). `adb` chỉ do Claude chạy và luôn kèm `-s <serial>` (serial do `Get-OurSerial` trả về, mục 4b); Qoder không bao giờ được cấp `adb`, `emulator` hay `docker`.
 
 Ví dụ một lần gọi (PowerShell):
 
@@ -203,6 +203,8 @@ $env:PATH = "D:/flutter/bin;" + $env:PATH
 qodercli -p -w "d:/project AI/mobile" --add-dir "d:/project AI/.ai-work/ST-xx" -n "ST-xx-p<N>" --permission-mode accept_edits --allowed-tools "Bash(D:/flutter/bin/flutter.bat analyze:*)" --allowed-tools "Bash(D:/flutter/bin/flutter.bat test:*)" --disallowed-tools "Bash(git add:*)" --disallowed-tools "Bash(git commit:*)" --disallowed-tools "Bash(git push:*)" --disallowed-tools "Bash(gh:*)" --disallowed-tools "Bash(docker:*)" --disallowed-tools "Bash(adb:*)" --append-system-prompt "Follow AGENTS.md; never run git write commands or gh; edit only the files in the task file; never type a backslash" "Read d:/project AI/.ai-work/ST-xx/P<N>.md and carry out exactly what it says."
 ```
 
+Ví dụ chỉ vài mục; bản đầy đủ là cả danh sách cấm ở trên, và `.ai-work/qoder-run.ps1` (bản cục bộ, không commit) dựng sẵn cả danh sách; không chép ví dụ rút gọn.
+
 Khi làm bằng worktree (mục 2b), thay `d:/project AI` bằng thư mục worktree `d:/project AI_wt/ST-xx`.
 
 #### Cài đặt ngoài repo
@@ -210,7 +212,7 @@ Khi làm bằng worktree (mục 2b), thay `d:/project AI` bằng thư mục work
 - Mọi thứ cài hoặc tải ngoài thư mục repo phải ghi vào [machine-installs.md](machine-installs.md) trong cùng PR.
 - Dự án thử và bản clone do subagent tạo phải nằm ở ổ D (ví dụ `D:/project AI_tmp/`) và xóa ngay khi xong nếu được; nếu cơ chế an toàn chặn lệnh xóa thì báo chủ máy tự xóa.
 - Không đóng hay gỡ ứng dụng, phiên làm việc của chủ máy.
-- Không sửa `.wslconfig`.
+- Không sửa `.wslconfig` trên máy dev dùng chung.
 - Docker do chủ máy bật thì giữ nguyên trạng thái khi tiếp quản.
 - Số đo Qoder báo (dung lượng, thời gian) phải được Claude đo lại.
 
@@ -245,37 +247,50 @@ Qoder ở `accept_edits` mặc định không chạy được `python` và `flut
 | Camera | giữ `virtualscene` (mặc định AVD `pixel_7_-_api_36_0`): máy dev không có webcam (`emulator -webcam-list` rỗng, đo 2026-11-16). Máy có webcam thì thêm cờ `-camera-back webcam0`; kiểm thật ở ST-12.1/ST-25.3 |
 | Server AI | Chạy bằng `docker compose up` (kiểm bằng `GET /health`, cổng 8000); app gọi `http://10.0.2.2:8000` — đã kiểm 2026-11-16: hiện "Đã kết nối (final-2026-11-08)"; tắt container thì hiện "Chưa kết nối được", bật lại thì hồi |
 
-Quy trình (PowerShell; lệnh **đã chạy thật** trên máy này ngày 2026-11-16, ST-01.3). Kiểm số emulator trước và sau khi mở; dùng đúng serial mà `adb devices` in ra, không ghim cứng `emulator-5554`:
+Quy trình (PowerShell; các lệnh `adb`/`emulator` đã chạy thật ngày 2026-11-16; hàm `Get-OurSerial` và các dòng `throw` mới thêm sau review vòng 2, đã thử riêng hàm với dữ liệu giả, chưa chạy lại cả khối trên emulator). Kiểm số emulator trước và sau khi mở; serial do hàm `Get-OurSerial` trả về, không ghim cứng:
 
 ```powershell
 $sdk = "$env:LOCALAPPDATA/Android/Sdk"
-# (a) TRƯỚC khi mở: adb devices phải KHÔNG có dòng emulator-* nào. Nếu đã có một dòng (AVD có sẵn của chủ máy, Android Studio, dự án khác) → DỪNG, hỏi chủ máy (mục 7); không kill, không dùng lại.
-& "$sdk/platform-tools/adb.exe" devices
-# (b) mở emulator, gán tiến trình vào biến để giữ PID
+$adb = "$sdk/platform-tools/adb.exe"
+# Hàm kiểm: trả về serial CHỈ KHI có đúng MỘT dòng emulator-*, nó ở trạng thái device và tiến trình $p của ta còn sống; ngược lại trả $null
+function Get-OurSerial {
+  $all = @(& $adb devices | Select-String '^emulator-\d+')
+  if ($p.HasExited -or $all.Count -ne 1 -or $all[0].Line -notmatch '\sdevice\s*$') { return $null }
+  return ($all[0].Line -split '\s+')[0]
+}
+# (a) TRƯỚC khi mở: không được có dòng emulator-* nào. Có (AVD của chủ máy, Android Studio, dự án khác) → DỪNG, hỏi chủ máy (mục 7); không kill, không dùng lại.
+if (@(& $adb devices | Select-String '^emulator-\d+').Count -gt 0) { throw "Đã có emulator đang chạy: dừng và hỏi chủ máy" }
+# (b) mở emulator, giữ tiến trình trong $p
 $p = Start-Process "$sdk/emulator/emulator.exe" -ArgumentList '-avd','pixel_7_-_api_36_0','-no-snapshot','-read-only','-no-audio','-no-boot-anim' -PassThru   # giữ PID; AVD có sẵn của chủ máy: không nạp/lưu snapshot
-# sau khi mở, adb devices in ra serial emulator-*; gán đúng serial đó vào $serial (không ghim cứng)
-& "$sdk/platform-tools/adb.exe" devices
-$serial = "emulator-5554"   # ví dụ: thay bằng đúng serial mà adb devices vừa in ra
-# boot xong chưa? lặp lệnh dưới tới khi in ra 1 (chưa xong thì in rỗng hoặc 0; máy này boot khoảng 30 s)
-& "$sdk/platform-tools/adb.exe" -s $serial shell getprop sys.boot_completed      # 1 = đã khởi động xong
-# (c) SAU khi boot: adb devices phải có ĐÚNG MỘT dòng emulator-* (là máy mình, vì trước đó không có dòng nào)
-& "$sdk/platform-tools/adb.exe" devices
-& "$sdk/platform-tools/adb.exe" -s $serial emu avd name   # (chưa thử) kiểm thêm: phải in ra pixel_7_-_api_36_0
-# (d) chỉ sau (c) mới chạy các lệnh dưới, tất cả kèm -s $serial
+# (c) đợi (khoảng 30 s) tới khi Get-OurSerial trả về serial; quá 3 phút vẫn $null thì DỪNG, hỏi chủ máy, không chạy lệnh nào dùng serial
+$deadline = (Get-Date).AddMinutes(3)
+do { Start-Sleep 5; $serial = Get-OurSerial } until ($serial -or $p.HasExited -or (Get-Date) -gt $deadline)
+if (-not $serial) { throw "Không có đúng một emulator của mình: dừng và hỏi chủ máy" }
+& $adb -s $serial shell getprop sys.boot_completed      # lặp tới khi in ra 1
+# (d) kiểm lại bằng `if ((Get-OurSerial) -ne $serial) { throw "emulator đổi: dừng" }` trước các lệnh ghi (install, uninstall) và trước emu kill (có dòng kiểm sẵn ở dưới); các lệnh còn lại đã kèm -s $serial
 # cài APK debug đã build bằng `flutter build apk --debug` (không dùng `flutter run`/`flutter install`); đường dẫn tính từ thư mục gốc repo hoặc worktree
-& "$sdk/platform-tools/adb.exe" -s $serial install -r mobile/build/app/outputs/flutter-apk/app-debug.apk
-& "$sdk/platform-tools/adb.exe" -s $serial shell am start -n vn.medicheck.mobile/.MainActivity
+if ((Get-OurSerial) -ne $serial) { throw "emulator đổi: dừng" }
+& $adb -s $serial install -r mobile/build/app/outputs/flutter-apk/app-debug.apk
+& $adb -s $serial shell am start -n vn.medicheck.mobile/.MainActivity
 New-Item -ItemType Directory -Force "d:/project AI/.ai-work/ST-xx/evidence" | Out-Null
-& "$sdk/platform-tools/adb.exe" -s $serial shell screencap -p /sdcard/x.png
-& "$sdk/platform-tools/adb.exe" -s $serial pull /sdcard/x.png "<đường dẫn đích>"
-& "$sdk/platform-tools/adb.exe" -s $serial shell rm /sdcard/x.png   # xóa ảnh trên máy ảo sau khi pull
-& "$sdk/platform-tools/adb.exe" -s $serial logcat -d -s flutter:V AndroidRuntime:E
-& "$sdk/platform-tools/adb.exe" -s $serial uninstall vn.medicheck.mobile   # gỡ app sau khi thử (AVD của chủ máy)
-& "$sdk/platform-tools/adb.exe" -s $serial emu kill                               # (e) chỉ emu kill máy mình đã mở (PID trong $p); không bao giờ kill emulator không phải do mình mở
+& $adb -s $serial shell screencap -p /sdcard/medicheck_evidence.png
+& $adb -s $serial pull /sdcard/medicheck_evidence.png "<đường dẫn đích>"
+& $adb -s $serial shell rm /sdcard/medicheck_evidence.png   # xóa ảnh trên máy ảo sau khi pull
+& $adb -s $serial logcat -d -s flutter:V AndroidRuntime:E
+if ((Get-OurSerial) -ne $serial) { throw "emulator đổi: dừng" }
+& $adb -s $serial uninstall vn.medicheck.mobile   # gỡ app sau khi thử (AVD của chủ máy)
+if ((Get-OurSerial) -ne $serial) { throw "emulator đổi: dừng" }
+& $adb -s $serial emu kill   # (e) chỉ emu kill máy mình đã mở (PID trong $p); không bao giờ kill emulator không phải do mình mở
 ```
 
+Đã thử hàm `Get-OurSerial` với dữ liệu `adb devices` giả: 0 dòng, 2 dòng, `offline`, `unauthorized`, tiến trình đã thoát đều trả rỗng; điện thoại thật cùng emulator thì chỉ đếm emulator. Còn lại một khe hở: chủ máy mở emulator của họ đúng lúc emulator của ta không lên; hàm chặn được (tiến trình `$p` đã thoát) nhưng nếu muốn chắc hơn thì mở với `-port 5580` để serial là `emulator-5580` (chưa thử).
+
+- Serial lấy từ hàm, không bao giờ gõ tay.
+- Nếu (a), (c) hay bước kiểm lại trước `uninstall`/`emu kill` thất bại: DỪNG, hỏi chủ máy, không làm gì thêm.
+- Bỏ lệnh `emu avd name`: AVD của chủ máy cũng cùng tên `pixel_7_-_api_36_0` nên lệnh đó không phân biệt được emulator của mình với emulator của chủ máy.
+
 - Chỉ một emulator và một bản app tại một thời điểm (2b.3-6). Chụp xong thì `emu kill`; server Docker dùng chung thì để chạy.
-- Không `adb kill-server` (adb dùng chung với IDE khác), không `wsl --shutdown`; mọi lệnh `adb` kèm `-s <serial>` (serial do `adb devices` in ra, không ghim cứng) và chỉ `emu kill` máy mình đã mở.
+- Không `adb kill-server` (adb dùng chung với IDE khác), không `wsl --shutdown` trên máy dev dùng chung; mọi lệnh `adb` kèm `-s <serial>` (serial do `adb devices` in ra, không ghim cứng) và chỉ `emu kill` máy mình đã mở.
 - Gỡ app sau khi thử là lưới an toàn phòng khi emulator lỡ được mở mà thiếu `-read-only` (AVD có sẵn của chủ máy luôn chạy `-no-snapshot -read-only`).
 - Không dán output `logcat` vào nhật ký hay PR nếu nó có thể chứa chữ từ đơn thuốc (BR-10).
 - Ảnh chụp chỉ ở `.ai-work/ST-xx/evidence/`, so với `docs/design/png/<màn>.png`; không commit (mục 6).
@@ -349,6 +364,7 @@ Merge kiểu squash (lệnh merge: `gh pr merge <n> --squash`). Người merge l
 - Cần sửa docs (trừ `tasks.csv` ở bước 6 hoặc 2b.3-8, `workflow-log.md` ở mục 8 và `docs/process/machine-installs.md` khi story cài thứ gì ngoài repo), thêm thư viện, đổi `pubspec.yaml` ngoài plan, đổi API server.
 - Docs mâu thuẫn nhau, hoặc gặp `OQ-xx` chưa chốt.
 - Qoder sửa ngoài phạm vi hay chạy lệnh git.
+- Có emulator khác đang chạy (kiểm (a) mục 4b thất bại), emulator của ta không lên sau khoảng 3 phút, hoặc `adb devices` có thiết bị `offline`/`unauthorized`.
 - Sự cố mức **S1** (mục 8.2): dừng, báo, ghi vào [workflow-log.md](workflow-log.md) rồi mới tiếp tục (đã qua bước 6 của mục 2 thì ghi vào `LOG_PENDING.md`, mục 8.3).
 
 ## 8. Nhật ký vận hành: ghi lại để luồng ngày càng an toàn và hiệu quả
