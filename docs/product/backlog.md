@@ -12,6 +12,7 @@
 - **Ưu tiên:** Must (thiếu thì không demo được), Should (nên có), Could (làm nếu còn thời gian). Nếu trễ, bỏ từ Could lên, không bỏ Must.
 - **`backlog.md` và `tasks.csv` là nguồn, sửa tay** (file sinh một lần ngày 15/11, không còn script; sinh lại sẽ mất chỉnh sửa). Đừng mở và lưu `tasks.csv` bằng Excel (làm hỏng dấu tiếng Việt).
 - **Trạng thái** chỉ ghi ở `tasks.csv`: `Todo`, `Doing`, `Review`, `Done`, `Blocked`. File này chỉ chứa mô tả, không ghi trạng thái, để không lệch nhau.
+- **Mô tả task:** `backlog.md` là nguồn; cột Mô tả của `tasks.csv` có thể cũ hơn, `tasks.csv` chỉ là nơi ghi trạng thái.
 - Mỗi task đã có mã yêu cầu (FR/UC/SCR/TC/BR); đọc các mã đó ở [prd.md](prd.md), [use-cases.md](use-cases.md), [ui-ux-spec.md](ui-ux-spec.md), [../quality/test-plan.md](../quality/test-plan.md) trước khi làm.
 - **Xong một task** nghĩa là: tiêu chí chấp nhận liên quan đạt, test đi kèm xanh, `flutter analyze` sạch, tài liệu bị ảnh hưởng đã sửa (xem "Định nghĩa xong" trong [../../AGENTS.md](../../AGENTS.md)).
 
@@ -104,7 +105,7 @@ ST-05, ST-17, ST-19, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm trên đ�
 |---|---|---|---|---|---|
 | ST-01.1 | 3 | Tạo dự án và cấu hình gói | Flutter 3.50.0 (stable, Dart 3.14.0) đã cài ở `D:\flutter` ngày 15/11; trong shell cần `D:\flutter\bin` trên PATH và `PUB_CACHE=D:\flutter_pub_cache` (ghi vào `mobile/README.md`). `flutter create --org vn.medicheck --platforms android,ios mobile`; xóa code mẫu; thêm đúng các gói ở ADR-015 (ghi phiên bản cụ thể); `analysis_options.yaml` dùng `flutter_lints`; commit `pubspec.lock`; mở `/mobile/` trong `.gitignore` (loại `build/`, `.dart_tool/`, `*.g.dart` nếu nhóm không commit file sinh ra, ghi rõ quyết định). | Must | – |
 | ST-01.2 | 4 | Cấu hình Android | `minSdk 29`; `network_security_config.xml` cho phép cleartext tới `10.0.2.2` và mạng nội bộ ở bản debug; khai báo quyền `CAMERA`, `POST_NOTIFICATIONS`, `RECEIVE_BOOT_COMPLETED` và quyền báo thức chính xác theo hướng dẫn của `flutter_local_notifications`; bật core library desugaring. | Must | ST-01.1 |
-| ST-01.3 | 5 | Tạo máy giả lập và kiểm kết nối | Dùng AVD có sẵn trên máy (`pixel_7_-_api_36_0` hoặc `Medium_Phone_API_37.0`, đều có Google Play; không cần API 34), Back camera = Webcam0 khi máy có webcam; máy dev hiện không có webcam nên dùng `virtualscene` (đã chọn 2026-11-16); chạy app trống; gọi `http://10.0.2.2:8000/health` (server Docker đang chạy) và hiện kết quả; ghi lệnh đã dùng vào `deployment.md`. | Must | ST-01.2 |
+| ST-01.3 | 5 | Tạo máy giả lập và kiểm kết nối | Dùng AVD có sẵn trên máy (`pixel_7_-_api_36_0`, đều có Google Play; không cần API 34), Back camera = Webcam0 khi máy có webcam; máy dev hiện không có webcam nên dùng `virtualscene` (đã chọn 2026-11-16); chạy app trống; gọi `http://10.0.2.2:8000/health` (server Docker đang chạy) và hiện kết quả; ghi lệnh đã dùng vào `deployment.md`. | Must | ST-01.2 |
 | ST-01.4 | 6 | Khai báo iOS (chưa build) | `Info.plist`: `NSCameraUsageDescription`, `NSPhotoLibraryUsageDescription`, `NSLocalNetworkUsageDescription`, `NSAllowsLocalNetworking`; chỉ khai báo để giữ đường iOS mở, chưa cần Mac. | Should | ST-01.1 |
 
 **Tiêu chí chấp nhận của story**
@@ -390,7 +391,7 @@ ST-05, ST-17, ST-19, ST-21, ST-22, ST-26, ST-27 và ST-28 không nằm trên đ�
 
 | Mã | Thứ tự | Task | Mô tả chi tiết | Ưu tiên | Phụ thuộc |
 |---|---|---|---|---|---|
-| ST-12.1 | 41 | SCR-CAPTURE với camera | Gói `camera`: xem trước toàn màn; khung ngắm chữ nhật đứng 342 × 380 dp với bốn góc chữ L và dấu + ở giữa, vùng ngoài tối 45% (đúng `capture.html`); câu hướng dẫn; thanh dưới ba nút: "Ảnh có sẵn" (trái), nút chụp tròn 88 dp (giữa), "Hướng dẫn" (phải, mở lại hướng dẫn lần đầu); xin quyền camera và màn bị từ chối (`camera-denied.html`); trả về ảnh và khung theo toạ độ màn hình. Kiểm Webcam0 thật (`-camera-back webcam0`) khi có webcam hoặc camera ảo. | Must | ST-02.3, ST-01.2 |
+| ST-12.1 | 41 | SCR-CAPTURE với camera | Gói `camera`: xem trước toàn màn; khung ngắm chữ nhật đứng 342 × 380 dp với bốn góc chữ L và dấu + ở giữa, vùng ngoài tối 45% (đúng `capture.html`); câu hướng dẫn; thanh dưới ba nút: "Ảnh có sẵn" (trái), nút chụp tròn 88 dp (giữa), "Hướng dẫn" (phải, mở lại hướng dẫn lần đầu); xin quyền camera và màn bị từ chối (`camera-denied.html`); trả về ảnh và khung theo toạ độ màn hình. Kiểm Webcam0 thật (`-camera-back webcam0`) khi có webcam thật (hoặc camera ảo kiểu webcam, ví dụ OBS Virtual Camera); `virtualscene` không thay được Webcam0. | Must | ST-02.3, ST-01.2 |
 | ST-12.2 | 42 | image_prep | `core/media/image_prep.dart` (gói `image` v4, trong isolate): xoay EXIF, thu cạnh dài 2048, JPEG q85; đổi khung màn hình sang tỉ lệ 0–1 sau khi xoay; test với 2 ảnh demo (kích thước, dung lượng, khung). | Must | ST-01.1 |
 | ST-12.3 | 43 | Chọn ảnh có sẵn | Nút phụ 'Chọn ảnh có sẵn' dùng `file_picker` (ảnh); qua `image_prep`, gửi `frame = null`; thử trên emulator bằng cách kéo thả ảnh vào cửa sổ máy ảo (TC-19). | Should | ST-12.1, ST-12.2 |
 

@@ -57,28 +57,39 @@ Không cần GPU. Sau khi build xong, chạy **không cần Internet**.
 
 ## 3. Máy giả lập Android
 
-Dùng AVD có sẵn `pixel_7_-_api_36_0` (API 36, ảnh Google Play để cài giọng tiếng Việt, 1536 MB RAM): API 36 thỏa yêu cầu "API 34 trở lên". Không dùng `Medium_Phone_API_37.0`: chưa chạy lần nào và sẽ chiếm thêm khoảng 10 GB ở ổ C. AVD này thuộc dự án khác của chủ máy nên chỉ chạy ở chế độ `-no-snapshot -read-only` (không nạp và không lưu snapshot, mọi thay đổi bị bỏ khi tắt) và phải gỡ app sau khi thử; `config.ini` và `snapshots/` đã kiểm là không đổi (2026-11-16). Không sửa `config.ini` của AVD.
+Dùng AVD có sẵn `pixel_7_-_api_36_0` (API 36, ảnh Google Play để cài giọng tiếng Việt, 1536 MB RAM): API 36 thỏa yêu cầu "API 34 trở lên". Không dùng `Medium_Phone_API_37.0`: chưa chạy lần nào và sẽ chiếm thêm khoảng 10 GB ở ổ C. AVD này là AVD có sẵn của chủ máy nên chỉ chạy ở chế độ `-no-snapshot -read-only` (không nạp và không lưu snapshot, mọi thay đổi bị bỏ khi tắt) và phải gỡ app sau khi thử; `config.ini` và `snapshots/` đã kiểm là không đổi (2026-11-16). Không sửa `config.ini` của AVD.
 
 Build APK debug bằng `flutter build apk --debug` (chạy trong `mobile/`; đặt `GRADLE_USER_HOME=D:/gradle_home` và `PUB_CACHE=D:/flutter_pub_cache` cho tiến trình build, thiếu thì Gradle tạo bản cache thứ hai ở ổ C). APK debug đo được 188 MB.
 
-Lệnh đã chạy thật ngày 2026-11-16 (PowerShell, đường dẫn viết bằng dấu `/`; `adb` không có trong PATH nên gọi bằng đường dẫn đầy đủ, luôn kèm `-s emulator-5554`):
+Lệnh đã chạy thật ngày 2026-11-16 (PowerShell, đường dẫn viết bằng dấu `/`; `adb` không có trong PATH nên gọi bằng đường dẫn đầy đủ, luôn kèm `-s <serial>` với serial do `adb devices` in ra, không ghim cứng). Kiểm số emulator trước và sau khi mở:
 
 ```powershell
 $sdk = "$env:LOCALAPPDATA/Android/Sdk"
-Start-Process "$sdk/emulator/emulator.exe" -ArgumentList '-avd','pixel_7_-_api_36_0','-no-snapshot','-read-only','-no-audio','-no-boot-anim' -PassThru   # giữ lại PID
+# (a) TRƯỚC khi mở: adb devices phải KHÔNG có dòng emulator-* nào. Nếu đã có một dòng (AVD có sẵn của chủ máy, Android Studio, dự án khác) → DỪNG, hỏi chủ máy (ai-workflow mục 7); không kill, không dùng lại.
+& "$sdk/platform-tools/adb.exe" devices
+# (b) mở emulator, gán tiến trình vào biến để giữ PID
+$p = Start-Process "$sdk/emulator/emulator.exe" -ArgumentList '-avd','pixel_7_-_api_36_0','-no-snapshot','-read-only','-no-audio','-no-boot-anim' -PassThru   # giữ lại PID
+# sau khi mở, adb devices in ra serial emulator-*; gán đúng serial đó vào $serial (không ghim cứng)
+& "$sdk/platform-tools/adb.exe" devices
+$serial = "emulator-5554"   # ví dụ: thay bằng đúng serial mà adb devices vừa in ra
 # đợi khởi động: lặp lệnh dưới tới khi in ra 1 (máy này boot khoảng 30 s)
-& "$sdk/platform-tools/adb.exe" -s emulator-5554 shell getprop sys.boot_completed
+& "$sdk/platform-tools/adb.exe" -s $serial shell getprop sys.boot_completed
+# (c) SAU khi boot: adb devices phải có ĐÚNG MỘT dòng emulator-* (là máy mình, vì trước đó không có dòng nào)
+& "$sdk/platform-tools/adb.exe" devices
+& "$sdk/platform-tools/adb.exe" -s $serial emu avd name   # (chưa thử) kiểm thêm: phải in ra pixel_7_-_api_36_0
+# (d) chỉ sau (c) mới chạy các lệnh dưới, tất cả kèm -s $serial
 # cài APK debug đã build; đường dẫn tính từ thư mục gốc repo
-& "$sdk/platform-tools/adb.exe" -s emulator-5554 install -r mobile/build/app/outputs/flutter-apk/app-debug.apk
-& "$sdk/platform-tools/adb.exe" -s emulator-5554 shell am start -n vn.medicheck.mobile/.MainActivity
-& "$sdk/platform-tools/adb.exe" -s emulator-5554 shell screencap -p /sdcard/x.png
-& "$sdk/platform-tools/adb.exe" -s emulator-5554 pull /sdcard/x.png <dest>
-& "$sdk/platform-tools/adb.exe" -s emulator-5554 logcat -d -s flutter:V AndroidRuntime:E
-& "$sdk/platform-tools/adb.exe" -s emulator-5554 uninstall vn.medicheck.mobile   # gỡ app sau khi thử
-& "$sdk/platform-tools/adb.exe" -s emulator-5554 emu kill                        # chỉ tắt máy giả lập mình đã mở
+& "$sdk/platform-tools/adb.exe" -s $serial install -r mobile/build/app/outputs/flutter-apk/app-debug.apk
+& "$sdk/platform-tools/adb.exe" -s $serial shell am start -n vn.medicheck.mobile/.MainActivity
+& "$sdk/platform-tools/adb.exe" -s $serial shell screencap -p /sdcard/x.png
+& "$sdk/platform-tools/adb.exe" -s $serial pull /sdcard/x.png "<đường dẫn đích>"
+& "$sdk/platform-tools/adb.exe" -s $serial shell rm /sdcard/x.png   # xóa ảnh trên máy ảo sau khi pull
+& "$sdk/platform-tools/adb.exe" -s $serial logcat -d -s flutter:V AndroidRuntime:E
+& "$sdk/platform-tools/adb.exe" -s $serial uninstall vn.medicheck.mobile   # gỡ app sau khi thử
+& "$sdk/platform-tools/adb.exe" -s $serial emu kill                        # (e) chỉ emu kill máy mình đã mở (PID trong $p); không bao giờ kill emulator không phải do mình mở
 ```
 
-Không dùng `adb kill-server` (máy này dùng chung adb với Visual Studio) và không chạy `wsl --shutdown`.
+Không dùng `adb kill-server` (adb dùng chung với IDE khác) và không chạy `wsl --shutdown`. Không dán output `logcat` vào nhật ký hay PR nếu nó có thể chứa chữ từ đơn thuốc (BR-10).
 
 - **Camera:** máy dev không có webcam nào nhìn thấy từ máy giả lập (`emulator -webcam-list` rỗng) nên Back camera giữ `virtualscene` (mặc định của AVD). Máy nào có webcam thì thêm cờ `-camera-back webcam0` khi mở emulator để chụp thuốc trên tay thật; kiểm webcam thật làm ở ST-12.1/ST-25.3.
 - **Kết quả đo (2026-11-16):** emulator khởi động trong 30 s; trang kiểm kết nối tạm hiện "Đã kết nối (final-2026-11-08)" qua `http://10.0.2.2:8000` (cleartext chạy được ở bản debug). Tắt container server rồi bấm nút thì hiện "Chưa kết nối được" (không bao giờ hiện chữ thành công); bật lại server thì kết nối lại bình thường.
@@ -116,7 +127,7 @@ Lệnh in ra một địa chỉ `https://….trycloudflare.com`, dán vào Cài 
 |---|---|
 | `port 8000` đang dùng | Tắt server cũ (`docker compose down`, hoặc cửa sổ uvicorn), hoặc đổi `"8001:8000"` trong `docker-compose.yml` và đổi địa chỉ trong app |
 | `docker compose` báo không kết nối được daemon | Mở Docker Desktop, đợi "running"; nếu vẫn lỗi, bật ảo hóa trong BIOS hoặc dùng cách 2b |
-| Laptop chậm khi chạy cả Docker và máy giả lập | Tạo `%UserProfile%\.wslconfig` với `[wsl2]` và `memory=4GB`, rồi `wsl --shutdown` |
+| Laptop chậm khi chạy cả Docker và máy giả lập | Tạo `%UserProfile%\.wslconfig` với `[wsl2]` và `memory=4GB`, rồi `wsl --shutdown` (chỉ áp dụng cho laptop trình bày; trên máy dev dùng chung thì KHÔNG làm, hỏi chủ máy) |
 | App báo "Chưa kết nối được" | Mở `http://<địa chỉ>/health` bằng trình duyệt trên cùng thiết bị; kiểm tường lửa; dùng hotspot |
 | Tên thuốc có dấu bị hỏng | Payload phải là UTF-8 (xem `backend/API.md`, ví dụ curl) |
 | `pip` lỗi "No such file" | Đường dẫn quá dài: chuyển repo về `D:\MediCheck` |
