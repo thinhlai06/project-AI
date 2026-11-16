@@ -25,6 +25,7 @@ Mục lục bộ tài liệu. Mỗi file trả lời **một** câu hỏi; khi h
 | Đã sẵn sàng code chưa (kiểm tra tài liệu + môi trường) | [quality/readiness.md](quality/readiness.md) |
 | Làm việc với AI (Claude plan/review, Qoder code), nhánh, PR | [process/ai-workflow.md](process/ai-workflow.md) |
 | Nhật ký vận hành luồng Claude + Qoder (lỗi gặp, bài học, đề xuất luật) | [process/workflow-log.md](process/workflow-log.md) |
+| Những gì đã cài hoặc tạo trên máy khi làm dự án, cách gỡ | [process/machine-installs.md](process/machine-installs.md) |
 | Nghĩa của từng từ | [glossary.md](glossary.md) |
 | Giao diện: màu, chữ, linh kiện, từng màn (nguồn dựng lại cho app) | [design/README.md](design/README.md) |
 | Sơ đồ pipeline (PNG + nguồn Mermaid) | [diagrams/](diagrams/) |

@@ -10,6 +10,7 @@ Flutter 3.50.0 (stable) và Dart 3.14.0, cài ở `D:/flutter`; `pubspec.lock` �
 
 - Thêm `D:/flutter/bin` vào PATH người dùng.
 - Đặt biến `PUB_CACHE=D:/flutter_pub_cache`.
+- Đặt biến `GRADLE_USER_HOME=D:/gradle_home` (như `PUB_CACHE`); nếu thiếu, Gradle tạo bản cache thứ hai ở ổ C.
 - JDK dùng là JetBrains Runtime của Android Studio ở `D:/androistudio/jbr` (Flutter đã cấu hình).
 - Android SDK ở `%LOCALAPPDATA%/Android/Sdk`.
 - Mở terminal mới sau khi đổi biến môi trường.
@@ -79,6 +80,28 @@ File sinh ra bởi drift/build_runner (`*.g.dart`) được commit, vì máy dem
 - `gradlew`, `gradlew.bat` và `gradle-wrapper.jar` không được commit (theo `android/.gitignore` của template); Flutter tự tạo lại khi build.
 - Lần build đầu mất 5-8 phút (ước lượng từ lần dựng thử) và Gradle tự tải thêm thành phần Android SDK.
 - Nếu gặp lỗi Kotlin "Could not close incremental caches" thì thêm `kotlin.incremental=false` vào `android/gradle.properties`; đây chỉ là gợi ý khi lỗi đó xuất hiện (không gặp trong 3 lần build trên máy này).
+
+## Vì sao cần NDK, CMake và platform 35/36/37
+
+Lần build đầu Gradle tự tải và cài các thành phần này (giấy phép Android đã chấp nhận nên không hỏi):
+
+- NDK 28.2 và CMake 3.22.1: biên dịch `libdartjni.so` cho thư viện `jni` (đi kèm `path_provider`).
+- Platform 35: `jni`, `jni_flutter` và `flutter_timezone` biên dịch với compileSdk 35.
+- Platform 36: `flutter_tts` biên dịch với compileSdk 36.
+- Platform 37: compileSdk của app và `flutter_local_notifications`.
+
+Dung lượng và cách gỡ từng thành phần: [docs/process/machine-installs.md](../docs/process/machine-installs.md).
+
+## Màn kiểm tra kết nối tạm (ST-01.3)
+
+Trang tạm `lib/features/settings/health_check_page.dart` gọi `lib/core/api/health_check.dart`, dùng hằng địa chỉ `http://10.0.2.2:8000` trong `main.dart`; ST-04.3 thay trang này bằng SCR-SETTINGS thật và bỏ hằng địa chỉ tạm. Chỉ báo đã kết nối khi HTTP 200 và JSON `ok == true`; mọi lỗi, timeout, mất mạng hay JSON hỏng đều hiện "Chưa kết nối được" (BR-01).
+
+## Cấu hình iOS (ST-01.4)
+
+- `Info.plist` khai báo mô tả camera (`NSCameraUsageDescription`), thư viện ảnh (`NSPhotoLibraryUsageDescription`), mạng nội bộ (`NSLocalNetworkUsageDescription`) và `NSAllowsLocalNetworking`.
+- Không có khóa microphone vì app không ghi âm.
+- Quyền thông báo trên iOS xin lúc chạy, không phải khóa trong `Info.plist`.
+- iOS deployment target 15.0; `file_picker` cần iOS 14 trở lên.
 
 ## Việc cho story sau
 

@@ -7,7 +7,7 @@ Hướng dẫn cho AI coding agent (Claude Code, Cursor, Copilot, Codex…) và 
 MediCheck VN: app Flutter giúp người cao tuổi kiểm thuốc theo đơn qua camera. Repo gồm:
 - `backend/`: server AI (FastAPI, ONNX Runtime CPU) – **đã xong, đã đo an toàn**;
 - `out/onnx_final/`: mô hình đã chốt;
-- `mobile/`: app Flutter – **đang làm** (ST-01.1 và ST-01.2 xong);
+- `mobile/`: app Flutter – **đang làm** (ST-01 xong; tiếp theo ST-02);
 - `docs/`: tài liệu, bắt đầu từ [docs/README.md](docs/README.md).
 
 ## Trước khi làm một việc
