@@ -57,8 +57,31 @@ Không cần GPU. Sau khi build xong, chạy **không cần Internet**.
 
 ## 3. Máy giả lập Android
 
-- Android Studio → Device Manager → tạo máy Pixel có Google Play (để cài giọng tiếng Việt), Android 14 (API 34) trở lên; máy phát triển đang có sẵn `pixel_7_-_api_36_0` và `Medium_Phone_API_37.0`.
-- **Camera:** Advanced settings → Back camera = `Webcam0` (dùng webcam laptop để chụp thuốc trên tay thật).
+Dùng AVD có sẵn `pixel_7_-_api_36_0` (API 36, ảnh Google Play để cài giọng tiếng Việt, 1536 MB RAM): API 36 thỏa yêu cầu "API 34 trở lên". Không dùng `Medium_Phone_API_37.0`: chưa chạy lần nào và sẽ chiếm thêm khoảng 10 GB ở ổ C. AVD này thuộc dự án khác của chủ máy nên chỉ chạy ở chế độ `-no-snapshot -read-only` (không nạp và không lưu snapshot, mọi thay đổi bị bỏ khi tắt) và phải gỡ app sau khi thử; `config.ini` và `snapshots/` đã kiểm là không đổi (2026-11-16). Không sửa `config.ini` của AVD.
+
+Build APK debug bằng `flutter build apk --debug` (chạy trong `mobile/`; đặt `GRADLE_USER_HOME=D:/gradle_home` và `PUB_CACHE=D:/flutter_pub_cache` cho tiến trình build, thiếu thì Gradle tạo bản cache thứ hai ở ổ C). APK debug đo được 188 MB.
+
+Lệnh đã chạy thật ngày 2026-11-16 (PowerShell, đường dẫn viết bằng dấu `/`; `adb` không có trong PATH nên gọi bằng đường dẫn đầy đủ, luôn kèm `-s emulator-5554`):
+
+```powershell
+$sdk = "$env:LOCALAPPDATA/Android/Sdk"
+Start-Process "$sdk/emulator/emulator.exe" -ArgumentList '-avd','pixel_7_-_api_36_0','-no-snapshot','-read-only','-no-audio','-no-boot-anim' -PassThru   # giữ lại PID
+# đợi khởi động: lặp lệnh dưới tới khi in ra 1 (máy này boot khoảng 30 s)
+& "$sdk/platform-tools/adb.exe" -s emulator-5554 shell getprop sys.boot_completed
+# cài APK debug đã build; đường dẫn tính từ thư mục gốc repo
+& "$sdk/platform-tools/adb.exe" -s emulator-5554 install -r mobile/build/app/outputs/flutter-apk/app-debug.apk
+& "$sdk/platform-tools/adb.exe" -s emulator-5554 shell am start -n vn.medicheck.mobile/.MainActivity
+& "$sdk/platform-tools/adb.exe" -s emulator-5554 shell screencap -p /sdcard/x.png
+& "$sdk/platform-tools/adb.exe" -s emulator-5554 pull /sdcard/x.png <dest>
+& "$sdk/platform-tools/adb.exe" -s emulator-5554 logcat -d -s flutter:V AndroidRuntime:E
+& "$sdk/platform-tools/adb.exe" -s emulator-5554 uninstall vn.medicheck.mobile   # gỡ app sau khi thử
+& "$sdk/platform-tools/adb.exe" -s emulator-5554 emu kill                        # chỉ tắt máy giả lập mình đã mở
+```
+
+Không dùng `adb kill-server` (máy này dùng chung adb với Visual Studio) và không chạy `wsl --shutdown`.
+
+- **Camera:** máy dev không có webcam nào nhìn thấy từ máy giả lập (`emulator -webcam-list` rỗng) nên Back camera giữ `virtualscene` (mặc định của AVD). Máy nào có webcam thì thêm cờ `-camera-back webcam0` khi mở emulator để chụp thuốc trên tay thật; kiểm webcam thật làm ở ST-12.1/ST-25.3.
+- **Kết quả đo (2026-11-16):** emulator khởi động trong 30 s; trang kiểm kết nối tạm hiện "Đã kết nối (final-2026-11-08)" qua `http://10.0.2.2:8000` (cleartext chạy được ở bản debug). Tắt container server rồi bấm nút thì hiện "Chưa kết nối được" (không bao giờ hiện chữ thành công); bật lại server thì kết nối lại bình thường.
 - **Ảnh có sẵn (đơn và thuốc):** kéo thả file ảnh hoặc PDF vào cửa sổ máy giả lập, file vào thư mục Download; app chọn bằng bộ chọn file/ảnh của Android (Files, Photos). Hoặc dùng `adb push anh.jpg /sdcard/Download/`. Ảnh muốn hiện trong Photos thì đẩy vào `/sdcard/Pictures/` rồi mở lại Photos. Không cần quyền đặc biệt trong app vì bộ chọn của hệ thống cấp quyền cho từng file.
 - **Giọng nói:** Settings → System → Languages → Text-to-speech → Google → cài giọng Tiếng Việt.
 - **Cleartext HTTP:** bản debug cho phép HTTP tới mọi host (gồm `10.0.2.2` và IP laptop trong mạng nội bộ; cấu hình trong `mobile/android/app/src/debug/res/xml/network_security_config.xml`), chỉ có ở bản debug; bản release chặn HTTP mặc định (ST-01.2).

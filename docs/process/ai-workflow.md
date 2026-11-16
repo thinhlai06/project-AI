@@ -169,17 +169,19 @@ Qoder làm được gì ở chế độ `accept_edits`:
 | `git status`, `git log`, `git diff` (chỉ đọc) | được | được |
 | `git add`, `git commit`, `git switch`, `gh` | bị chặn | **không cho phép** (chỉ Claude) |
 | `python`, `flutter`, `dart` | bị chặn | được, đúng lệnh con đã liệt kê |
-| Lệnh ngoài danh sách (ví dụ `flutter config`) | bị chặn | vẫn bị chặn |
+| Lệnh ngoài danh sách (ví dụ `flutter config`) | bị chặn | chặn lệnh đứng riêng; phần nối thêm sau `;`, `&&`, `|`, `>` vẫn lọt (đo 2026-11-16, xem dưới) |
 
 - Đã chạy thật trong Qoder với danh sách cho phép: `flutter create`, `pub add`, `pub get`, `analyze`, `test` và `build apk --debug` (151 s). Lần build đầy đủ đầu tiên có thể lâu hơn (ước lượng 5-8 phút từ lần dựng thử, chưa đo trong luồng thật). Công cụ shell của Qoder **không** timeout ở lệnh build. `flutter analyze` khoảng 11 s, `flutter test` khoảng 5 s.
 
-**Cách cấp lệnh:** một cờ `--allowed-tools "Bash(<lệnh đầy đủ>:*)"` cho mỗi tiền tố lệnh. Khớp theo tiền tố, nên phải liệt kê từng lệnh con: `Bash(D:/flutter/bin/flutter.bat analyze:*)`, `Bash(D:/flutter/bin/flutter.bat test:*)`, `Bash(D:/flutter/bin/flutter.bat pub get:*)`, `Bash(D:/flutter/bin/flutter.bat pub add:*)`, `Bash(D:/flutter/bin/flutter.bat create:*)`, `Bash(D:/flutter/bin/flutter.bat build apk:*)`. Không cấp tiền tố rộng như `flutter.bat` trần (nó sẽ cho phép cả `config`, `upgrade`, `doctor --android-licenses`). Đây là danh sách cho phép hẹp, không phải `bypass_permissions`. `pub add` chỉ dùng cho gói ADR-015 và task file `P<N>.md` phải ghi đúng tên gói; `create` chỉ cấp cho phase tạo dự án; không cấp sẵn mọi lệnh con cho mọi phase. Khớp theo tiền tố chưa được đo với lệnh nối (`;`, `&&`): đừng giả định nó chặn được.
+**Cách cấp lệnh:** một cờ `--allowed-tools "Bash(<lệnh đầy đủ>:*)"` cho mỗi tiền tố lệnh. Khớp theo tiền tố, nên phải liệt kê từng lệnh con: `Bash(D:/flutter/bin/flutter.bat analyze:*)`, `Bash(D:/flutter/bin/flutter.bat test:*)`, `Bash(D:/flutter/bin/flutter.bat pub get:*)`, `Bash(D:/flutter/bin/flutter.bat pub add:*)`, `Bash(D:/flutter/bin/flutter.bat create:*)`, `Bash(D:/flutter/bin/flutter.bat build apk:*)`. Không cấp tiền tố rộng như `flutter.bat` trần (nó sẽ cho phép cả `config`, `upgrade`, `doctor --android-licenses`). Đây là danh sách cho phép hẹp, không phải chế độ `bypass_permissions`, nhưng tiền tố lệnh không phải ranh giới bảo mật (đo 2026-11-16, xem đoạn dưới). `pub add` chỉ dùng cho gói ADR-015 và task file `P<N>.md` phải ghi đúng tên gói; `create` chỉ cấp cho phase tạo dự án; không cấp sẵn mọi lệnh con cho mọi phase. Khớp theo tiền tố chỉ xét phần đầu lệnh; lệnh nối có thể lọt qua cổng cho phép (đã đo 2026-11-16, xem đoạn dưới).
+
+**Đo ngày 2026-11-16: danh sách cho phép không phải sandbox.** Quy tắc `--allowed-tools "Bash(<tiền tố>:*)"` chỉ khớp phần **đầu** của lệnh: nối thêm bằng `;`, `&&`, `|` hay chuyển hướng `>` vẫn qua cổng và chạy lệnh thứ hai; còn `$(...)`, `&` và tiền tố giả mạo (`git statusx`) thì bị chặn. Ngược lại, quy tắc `--disallowed-tools` áp cho **mọi phần** của lệnh nối (cấm `hostname` chặn được `git --version; hostname`, cả bản `&&` và `|`). Vậy danh sách cho phép là rào chắn chống nhầm lẫn, **không phải ranh giới bảo mật**. Giảm rủi ro (đã áp dụng): chỉ cấp đúng các lệnh con flutter cần cho phase kèm một danh sách cấm rộng; không bao giờ cấp `adb`, `emulator`, `docker` cho Qoder; Claude kiểm `git status` và diff sau mỗi phase. Danh sách cấm đã dùng: các lệnh con git `add`, `commit`, `push`, `pull`, `fetch`, `switch`, `checkout`, `reset`, `restore`, `clean`, `stash`, `rebase`, `merge`, `branch`, `tag`, `rm`, `mv`, `config`, `remote`; rồi `gh`, `docker`, `adb`, `emulator`, `wsl`, `rm`, `rmdir`, `del`, `Remove-Item`, `Move-Item`, `Copy-Item`, `curl`, `wget`, `Invoke-WebRequest`, `Start-Process`, `cmd`, `powershell`, `pwsh`, `bash`, `sh`, `python`, `node`, `npm`, `npx`, `setx`, `reg`, `taskkill`, `Stop-Process`, `winget`, `sdkmanager`, `qodercli`. Cũng đo được: Qoder báo sai cỡ APK (267,6 MB, thực 188 MB), nên cỡ và các số đo khác phải do Claude đo lại.
 
 **Thực tế khi gọi:**
 
 - (a) Đặt việc vào `.ai-work/ST-xx/P<N>.md` và gọi Qoder bằng prompt một dòng "Read <file> and carry out exactly what it says" (tránh việc PowerShell tách sai tham số với prompt dài).
 - (b) `-w` phải là thư mục mà lệnh cần chạy trong đó (với `flutter pub/analyze/test` là `mobile/`), rồi thêm `--add-dir "d:/project AI/.ai-work/ST-xx"` để Qoder đọc được task file.
-- (c) Đặt `PUB_CACHE=D:/flutter_pub_cache` và thêm `D:/flutter/bin` vào PATH của tiến trình PowerShell gọi Qoder **trước** khi khởi động Qoder (tiến trình con kế thừa; PATH của một phiên đang chạy đã cũ).
+- (c) Đặt `PUB_CACHE=D:/flutter_pub_cache` và `GRADLE_USER_HOME=D:/gradle_home`, rồi thêm `D:/flutter/bin` vào PATH của tiến trình PowerShell gọi Qoder **trước** khi khởi động Qoder (tiến trình con kế thừa; PATH của một phiên đang chạy đã cũ). Thiếu `GRADLE_USER_HOME` thì Gradle tạo bản cache thứ hai ở ổ C (đã thấy 6 GB ngày 2026-11-15).
 - (d) Luôn dùng đường dẫn đầy đủ `D:/flutter/bin/flutter.bat`.
 - (e) Công cụ Edit của Qoder có thể ghi lại file với CRLF trong bản làm việc; với `core.autocrlf=true` Git lưu LF, nên kiểm `git ls-files --eol` trước khi commit.
 - (f) Lệnh chạy lâu (build): ghi trong task file "chạy ở foreground, đợi xong, không chuyển sang chạy nền". Qoder `-p` đã thoát khi còn tác vụ nền (ST-01 phase 7: chỉ báo `analyze` và `test`, build vẫn chạy sau đó); gặp vậy Claude tự chạy lại lệnh kiểm và ghi vào workflow-log.
@@ -187,17 +189,27 @@ Qoder làm được gì ở chế độ `accept_edits`:
 **Ma trận giao việc:**
 
 - **Qoder:** mọi việc sửa file; `flutter create`, `pub add`, `pub get`, `analyze`, `test`, `build apk`; đọc git chỉ đọc; tự sửa lỗi analyze/test tối đa 3 vòng.
-- **Claude:** viết task file `P<N>.md`, gọi Qoder, kiểm kết quả bằng lệnh ngắn (vài dòng cuối), mọi lệnh git ghi (`add`, `commit`, `push`), `gh` (PR, review), subagent review, quyết định và hỏi chủ dự án. Claude chỉ tự chạy `flutter create`/`build`/`pub` khi Qoder không làm được (timeout, lỗi môi trường) và ghi lý do vào [workflow-log.md](workflow-log.md); Claude vẫn chạy lại `flutter analyze` và `flutter test` bằng lệnh ngắn để kiểm (mục 4).
+- **Claude:** viết task file `P<N>.md`, gọi Qoder, kiểm kết quả bằng lệnh ngắn (vài dòng cuối), mọi lệnh git ghi (`add`, `commit`, `push`), `gh` (PR, review), subagent review, quyết định và hỏi chủ dự án. Claude chỉ tự chạy `flutter create`/`build`/`pub` khi Qoder không làm được (timeout, lỗi môi trường) và ghi lý do vào [workflow-log.md](workflow-log.md); Claude vẫn chạy lại `flutter analyze` và `flutter test` bằng lệnh ngắn để kiểm (mục 4). `adb` chỉ do Claude chạy và luôn kèm `-s <serial>` (ví dụ `-s emulator-5554`); Qoder không bao giờ được cấp `adb`, `emulator` hay `docker`.
 
 Ví dụ một lần gọi (PowerShell):
 
 ```powershell
 $env:PUB_CACHE = "D:/flutter_pub_cache"
+$env:GRADLE_USER_HOME = "D:/gradle_home"
 $env:PATH = "D:/flutter/bin;" + $env:PATH
 qodercli -p -w "d:/project AI/mobile" --add-dir "d:/project AI/.ai-work/ST-xx" -n "ST-xx-p<N>" --permission-mode accept_edits --allowed-tools "Bash(D:/flutter/bin/flutter.bat analyze:*)" --allowed-tools "Bash(D:/flutter/bin/flutter.bat test:*)" --append-system-prompt "Follow AGENTS.md; never run git write commands or gh; edit only the files in the task file; never type a backslash" "Read d:/project AI/.ai-work/ST-xx/P<N>.md and carry out exactly what it says."
 ```
 
 Khi làm bằng worktree (mục 2b), thay `d:/project AI` bằng thư mục worktree `d:/project AI_wt/ST-xx`.
+
+#### Cài đặt ngoài repo
+
+- Mọi thứ cài hoặc tải ngoài thư mục repo phải ghi vào [machine-installs.md](machine-installs.md) trong cùng PR.
+- Dự án thử và bản clone do subagent tạo phải nằm ở ổ D (ví dụ `D:/project AI_tmp/`) hoặc bị xóa ngay khi xong.
+- Không đóng hay gỡ ứng dụng, phiên làm việc của chủ máy.
+- Không sửa `.wslconfig`.
+- Docker do chủ máy bật thì giữ nguyên trạng thái khi tiếp quản.
+- Số đo Qoder báo (dung lượng, thời gian) phải được Claude đo lại.
 
 ## 4. Claude kiểm sau mỗi lần Qoder chạy
 
@@ -219,36 +231,40 @@ Khối này chạy bằng Git Bash; các khối khác trong tài liệu là Powe
 
 ### 4b. Chạy máy giả lập (Claude làm, không giao Qoder)
 
-Qoder ở `accept_edits` mặc định không chạy được `python` và `flutter` (đo 2026-11-15, cổng quyền chặn); với danh sách cho phép hẹp thì chạy được `flutter` (mục 3b), nhưng việc mở emulator chưa đo (đo ở ST-01.3); cho tới khi có kết quả đó **Claude** là bên mở máy giả lập, cài app, chụp màn hình và dọn dẹp. Prompt giao Qoder không yêu cầu mở emulator, và không nâng quyền để lách (mục 3).
+Qoder ở `accept_edits` mặc định không chạy được `python` và `flutter` (đo 2026-11-15, cổng quyền chặn); với danh sách cho phép hẹp thì chạy được `flutter` (mục 3b). Việc mở máy giả lập, cài app, chụp màn hình và dọn dẹp **đã chạy thật ngày 2026-11-16** (ST-01.3) và do **Claude** làm, không giao Qoder: Qoder không bao giờ được cấp `adb`, `emulator` hay `docker` (mục 3b). AVD của chủ máy chỉ chạy `-no-snapshot -read-only` và gỡ app sau khi thử; camera giữ `virtualscene` vì máy dev không có webcam. Prompt giao Qoder không yêu cầu mở emulator, và không nâng quyền để lách (mục 3).
 
 | Mục | Giá trị trên máy dev (kiểm 2026-11-15) |
 |---|---|
-| AVD | `pixel_7_-_api_36_0` (chính), `Medium_Phone_API_37.0`; `emulator -list-avds` ra đúng hai tên này |
+| AVD | `pixel_7_-_api_36_0` (chính; chạy `-no-snapshot -read-only`, gỡ app sau khi thử), `Medium_Phone_API_37.0` (không dùng: chưa chạy lần nào, sẽ thêm khoảng 10 GB ổ C); `emulator -list-avds` ra đúng hai tên này |
 | Thư mục AVD | `$env:USERPROFILE/.android/avd/` |
 | Android SDK | `$env:LOCALAPPDATA/Android/Sdk`; có `emulator/emulator.exe` và `platform-tools/adb.exe`; **chưa** có trong PATH, `ANDROID_HOME` chưa đặt |
 | Flutter | `D:/flutter/bin/flutter.bat` |
-| Camera | đặt bằng cờ `-camera-back webcam0` (config AVD `pixel_7_-_api_36_0` hiện là `virtualscene`); để chụp thuốc trên tay thật (khuyến nghị, chưa thử) |
-| Server AI | Chạy bằng `docker compose up` (kiểm bằng `GET /health`, cổng 8000); app gọi `http://10.0.2.2:8000` (không thuộc phần đã kiểm) |
+| Camera | giữ `virtualscene` (mặc định AVD `pixel_7_-_api_36_0`): máy dev không có webcam (`emulator -webcam-list` rỗng, đo 2026-11-16). Máy có webcam thì thêm cờ `-camera-back webcam0`; kiểm thật ở ST-12.1/ST-25.3 |
+| Server AI | Chạy bằng `docker compose up` (kiểm bằng `GET /health`, cổng 8000); app gọi `http://10.0.2.2:8000` — đã kiểm 2026-11-16: hiện "Đã kết nối (final-2026-11-08)"; tắt container thì hiện "Chưa kết nối được", bật lại thì hồi |
 
-Quy trình (PowerShell; lệnh **chưa chạy thử** trên máy này: kiểm ở ST-01.3 và sửa mục này nếu khác):
+Quy trình (PowerShell; lệnh **đã chạy thật** trên máy này ngày 2026-11-16, ST-01.3):
 
 ```powershell
 $sdk = "$env:LOCALAPPDATA/Android/Sdk"
-Start-Process "$sdk/emulator/emulator.exe" -ArgumentList '-avd','pixel_7_-_api_36_0','-camera-back','webcam0'
-& "$sdk/platform-tools/adb.exe" wait-for-device
-# boot xong chưa? lặp lệnh dưới tới khi in ra 1 (chưa xong thì in rỗng hoặc 0)
-& "$sdk/platform-tools/adb.exe" shell getprop sys.boot_completed      # 1 = đã khởi động xong
-# chạy app từ đúng worktree hoặc thư mục chính: cd <thư mục>/mobile; cài bằng `flutter install -d <id lấy từ `adb devices`>` (hoặc `flutter run` ở cửa sổ terminal riêng: lệnh này chạy treo ở foreground, nên chụp ảnh ở cửa sổ khác)
+Start-Process "$sdk/emulator/emulator.exe" -ArgumentList '-avd','pixel_7_-_api_36_0','-no-snapshot','-read-only','-no-audio','-no-boot-anim' -PassThru   # giữ PID; AVD của chủ máy: không nạp/lưu snapshot
+# boot xong chưa? lặp lệnh dưới tới khi in ra 1 (chưa xong thì in rỗng hoặc 0; máy này boot khoảng 30 s)
+& "$sdk/platform-tools/adb.exe" -s emulator-5554 shell getprop sys.boot_completed      # 1 = đã khởi động xong
+# cài APK debug đã build bằng `flutter build apk --debug` (không dùng `flutter run`/`flutter install`); đường dẫn tính từ thư mục gốc repo hoặc worktree
+& "$sdk/platform-tools/adb.exe" -s emulator-5554 install -r mobile/build/app/outputs/flutter-apk/app-debug.apk
+& "$sdk/platform-tools/adb.exe" -s emulator-5554 shell am start -n vn.medicheck.mobile/.MainActivity
 New-Item -ItemType Directory -Force "d:/project AI/.ai-work/ST-xx/evidence" | Out-Null
-& "$sdk/platform-tools/adb.exe" shell screencap -p /sdcard/s.png
-& "$sdk/platform-tools/adb.exe" pull /sdcard/s.png "d:/project AI/.ai-work/ST-xx/evidence/<màn>.png"
-& "$sdk/platform-tools/adb.exe" emu kill                               # tắt máy giả lập khi xong
+& "$sdk/platform-tools/adb.exe" -s emulator-5554 shell screencap -p /sdcard/x.png
+& "$sdk/platform-tools/adb.exe" -s emulator-5554 pull /sdcard/x.png "d:/project AI/.ai-work/ST-xx/evidence/<màn>.png"
+& "$sdk/platform-tools/adb.exe" -s emulator-5554 logcat -d -s flutter:V AndroidRuntime:E
+& "$sdk/platform-tools/adb.exe" -s emulator-5554 uninstall vn.medicheck.mobile   # gỡ app sau khi thử (AVD của chủ máy)
+& "$sdk/platform-tools/adb.exe" -s emulator-5554 emu kill                               # tắt máy giả lập khi xong
 ```
 
 - Chỉ một emulator và một bản app tại một thời điểm (2b.3-6). Chụp xong thì `emu kill`; server Docker dùng chung thì để chạy.
+- Không `adb kill-server` (máy dùng chung adb với Visual Studio), không `wsl --shutdown`; mọi lệnh `adb` kèm `-s emulator-5554` và chỉ `emu kill` máy mình đã mở.
 - Ảnh chụp chỉ ở `.ai-work/ST-xx/evidence/`, so với `docs/design/png/<màn>.png`; không commit (mục 6).
 - Emulator không lên sau khoảng 3 phút, hoặc `flutter` báo lỗi giấy phép Android SDK/PATH → dừng và hỏi chủ dự án (mục 7).
-- Ảnh chụp là pixel thật của máy ảo (Pixel 7: 1080×2400 px, khoảng 411×914 dp), không phải khung 390×844 của ảnh chuẩn: so bố cục theo dp và tỉ lệ, không so từng pixel. Muốn đúng 390×844 thì đặt `adb shell wm size` và `adb shell wm density`, xong thì `wm size reset` và `wm density reset` (chưa thử; kiểm ở ST-01.3).
+- Ảnh chụp là pixel thật của máy ảo (Pixel 7: 1080×2400 px, khoảng 411×914 dp), không phải khung 390×844 của ảnh chuẩn: so bố cục theo dp và tỉ lệ, không so từng pixel. Muốn đúng 390×844 thì đặt `adb shell wm size` và `adb shell wm density`, xong thì `wm size reset` và `wm density reset` (chưa thử).
 
 ## 5. Checklist review (mỗi PR)
 
