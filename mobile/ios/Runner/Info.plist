@@ -66,5 +66,16 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>MediCheck dùng máy ảnh để chụp đơn thuốc và các viên thuốc cần đối chiếu với đơn.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>MediCheck cần chọn ảnh đơn thuốc hoặc ảnh viên thuốc có sẵn trong thư viện ảnh của bác.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>MediCheck cần kết nối tới máy kiểm thuốc trong mạng nội bộ để đọc đơn và đối chiếu thuốc.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
 </dict>
 </plist>
